@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "senseoftouchresearch",
+  "private_key_id": "e5927f56c4d0cb4155761b0be0c0b0e177c0de6b",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDW0vvyVWplLhBw\n/8nafj5WL7LlYji+hCa8iSFbhT910bTCQ4RrwtYp7xh4HOQjS8490hSFF+2Ys4OM\ntnQklC53i5yn5PVv4VPleBoMBMhYIUUl3E+59yZ0uFklwmgJvqjQHqBZXlBudHGc\np1shb5QPiR09ESq5D5/F4gjayWtkrjoY+rTvxNRrj8JxNQPMylEliY9rfD6Vy8iy\nhnmiAVG7EXpU2kxeJoXFFflU1tmxQNveo4erWq2s2dPjelVs/jc+gbPPM1cKUTK4\noI5hx0Eldnl+Y+BzFz4V0BC5OdcCqbZcLwHjU+4FonMMWS4LwhK+rL4YMghx6seU\nRxNJqi2fAgMBAAECggEAMie+RPzmQ0s28Xr24LlaynqGdQGyp+BovtnxXNHGWDam\n0jg7QYGSyOWWu+xa41a+hzZ2LgDBK0a2LvMmOKgUFTsWTyiomP9tvASHaEjxkYnr\nAATo5E0swFGOFr/F1IicF0MfQt4/PxqWr/Fu2GaZler4VZqdc+mO7v9v+8zM8wtA\no8Xaf5YPNnkWSxjI3Dqv3WQHI1C5ylhFZJGUP6La72JMnLNy4ax8irmBYi0uas3P\nec4lkLWxNYhvjiXnnRJEy1vtnZi1qS4yDVM+K9SEIfPzUqQnt5f9Kh9eZIPCtG/r\ntpCmV6Bjp3WVpHxoud53TfuwxhhgsESz16hu6FL2YQKBgQD7uDJMKFd3dYzObe3m\nuxKF2Z66O41PMkPgTrmg2jfxiEZwXaj+9ZgtdzWUAgvBejyFF8Ljdh4/3l3W9l5v\n8suCfFS8VRL1RxUj+LmDgr3TsQ5rnG7VtBzlKvlVmhuzph4pRTkYEAxdtwllBPOd\njQeoFax7gg9IJXNdhYeVvajEEQKBgQDaeiwSJ9aWWxyOL23uFqlA3Q9Y+Jb2TCgg\nqJ1vNGKnr4j38kXOBF10G4QBeoDMn/MVruiMiTzdg+ddmsBqZ63MPPw/JMKEXTHu\nd4lKbkrUU0toAJVinv5IfFa7DnwP2ZTmtYwKpZM7pqpenuCzV0X/+elxdBGsKRuC\naWzQPDfGrwKBgEK+L0/0LmT1XTVq/nZ8ScgF0MlueuRx3n9+QEf/NHAtgwfOPb4E\nnqoHfsRU2osdfyiHCVzId/LVYipaPuYOCZn6n3kkUZeJlnhoPcA6DV0xCDLOUrEF\nRdgZ0ey5pPi4ZizpNt9DehPrMWmAq5utxkbyID7LWIP3siQtAKtak4IRAoGAYWLG\nFE23xIvWfba8nL1zMpuXRMSCnkUyOeSPUMucEj0Xo9ZVsVCWy7OcMwCFOzEtLQQr\nWsGt5NvwHPRnQsb2XKzuj8L2BgR4xmB4TTo+lsiOO0zPSgevN2ZdTsJVIMePLQvN\n4c0OhS90j/roFGkZpdGjclQXsJMeVRJjU6sT/bcCgYEA9PASoKGu0wp1O/tr1mTC\n6T+BtvJD++h5bd9YMchzA2tes88okT4v9/WmKsnN1CMgaX+d9Aq1C53jpL5ADcSE\nKsSqHwUKKR0iF09ZQamNLP6oRzgu2/SHDV0u/gZHht6u83AyOs8nnCiVjGe8xmPp\nOSvXj+5KfsWbPfWOyA2BU2c=\n-----END PRIVATE KEY-----\n",
+  "client_email": "admin-822@senseoftouchresearch.iam.gserviceaccount.com",
+  "client_id": "107975169816827909867",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/admin-822%40senseoftouchresearch.iam.gserviceaccount.com"
+}
