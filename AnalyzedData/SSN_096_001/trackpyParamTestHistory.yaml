@@ -16,3 +16,5 @@
   particleXYDiameter: 15, particleZDiameter: 25, topSlice: 110, trackingSeachRadius: 50}
 --- {bottomSlice: 55, brightnessPercentile: 75, gaussianWidth: 3, minParticleMass: 80000,
   particleXYDiameter: 15, particleZDiameter: 25, topSlice: 110, trackingSeachRadius: 50}
+--- {bottomSlice: 55, brightnessPercentile: 75, gaussianWidth: 3, minParticleMass: 80000,
+  particleXYDiameter: 15, particleZDiameter: 25, topSlice: 110, trackingSeachRadius: 50}
