@@ -14,3 +14,19 @@ timestamp: 2018-11-28-004158
 topn: null
 trackingSeachRadius: 50
 trackpy_version: 0.4.1
+---
+diameter: !!python/tuple [25, 15, 15]
+invert: false
+max_iterations: 10
+maxsize: null
+minmass: 2000
+noise_size: 3
+percentile: 75
+preprocess: true
+separation: null
+smoothing_size: null
+source: null
+timestamp: 2018-11-30-004925
+topn: null
+trackingSeachRadius: 50
+trackpy_version: 0.4.1
