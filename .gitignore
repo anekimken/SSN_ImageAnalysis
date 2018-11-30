@@ -1,0 +1,2 @@
+# ignore the cache files from ipycache since these are large and only to speed up execution
+.ipycacheDir/
