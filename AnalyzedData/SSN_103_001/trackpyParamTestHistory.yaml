@@ -36,3 +36,21 @@
   particleXYDiameter: 15, particleZDiameter: 25, topSlice: 50, trackingSeachRadius: 50}
 --- {bottomSlice: 0, brightnessPercentile: 75, gaussianWidth: 3, minParticleMass: 2000,
   particleXYDiameter: 15, particleZDiameter: 25, topSlice: 50, trackingSeachRadius: 50}
+--- {bottomSlice: 0, brightnessPercentile: 75, gaussianWidth: 3, minParticleMass: 2000,
+  particleXYDiameter: 15, particleZDiameter: 25, topSlice: 50, trackingSeachRadius: 50}
+--- {bottomSlice: 0, brightnessPercentile: 75, gaussianWidth: 3, minParticleMass: 2000,
+  particleXYDiameter: 15, particleZDiameter: 25, topSlice: 50, trackingSeachRadius: 50}
+--- {bottomSlice: 0, brightnessPercentile: 75, gaussianWidth: 3, minParticleMass: 2000,
+  particleXYDiameter: 5, particleZDiameter: 7, topSlice: 50, trackingSeachRadius: 50}
+--- {bottomSlice: 0, brightnessPercentile: 75, gaussianWidth: 3, minParticleMass: 2000,
+  particleXYDiameter: 7, particleZDiameter: 9, topSlice: 50, trackingSeachRadius: 50}
+--- {bottomSlice: 0, brightnessPercentile: 75, gaussianWidth: 3, minParticleMass: 100,
+  particleXYDiameter: 7, particleZDiameter: 9, topSlice: 50, trackingSeachRadius: 50}
+--- {bottomSlice: 0, brightnessPercentile: 75, gaussianWidth: 3, minParticleMass: 1000,
+  particleXYDiameter: 15, particleZDiameter: 25, topSlice: 50, trackingSeachRadius: 50}
+--- {bottomSlice: 0, brightnessPercentile: 75, gaussianWidth: 3, minParticleMass: 1000,
+  particleXYDiameter: 15, particleZDiameter: 25, topSlice: 50, trackingSeachRadius: 50}
+--- {bottomSlice: 0, brightnessPercentile: 50, gaussianWidth: 3, minParticleMass: 1000,
+  particleXYDiameter: 15, particleZDiameter: 25, topSlice: 50, trackingSeachRadius: 50}
+--- {bottomSlice: 0, brightnessPercentile: 50, gaussianWidth: 3, minParticleMass: 1000,
+  particleXYDiameter: 15, particleZDiameter: 25, topSlice: 50, trackingSeachRadius: 50}
