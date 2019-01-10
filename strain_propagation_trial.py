@@ -5,7 +5,7 @@ Created on Mon Jan  7 15:24:53 2019
 
 @author: Adam Nekimken
 """
-# TODO: DOCSTRINGS!!!!
+# TODO: UPDATE DOCSTRINGS!!!!
 import sys
 import os
 import pathlib
@@ -54,13 +54,14 @@ class StrainPropagationTrial(object):
         image_array: Numpy array with image data. Can be null if not loaded
 
     """
-    def __init__(self,
-                 filename: str,
-                 load_images: bool = True,
-                 overwrite_metadata: bool = False):
-        self.filename = filename
-        self.load_images = load_images
-        self.overwrite_metadata = overwrite_metadata
+    def __init__(self):
+        pass
+        #          filename: str,
+        #          load_images: bool = True,
+        #          overwrite_metadata: bool = False):
+        # self.filename = filename
+        # self.load_images = load_images
+        # self.overwrite_metadata = overwrite_metadata
 
         # Initialize yaml loader with tuple support
         # PrettySafeLoader.add_constructor(
@@ -68,22 +69,29 @@ class StrainPropagationTrial(object):
         #         PrettySafeLoader.construct_python_tuple)
 
         # Get the experiment ID from the filename and load the data
-        basename = os.path.basename(filename)
-        self.experiment_id = os.path.splitext(basename)[0]
-        self.analyzed_data_location = pathlib.Path(
-                '/Users/adam/Documents/SenseOfTouchResearch/'
-                'SSN_ImageAnalysis/AnalyzedData/' + self.experiment_id + '/')
-        self.metadata_file_path = self.analyzed_data_location.joinpath(
-                 'metadata.yaml')
+        # basename = os.path.basename(filename)
+        # self.experiment_id = os.path.splitext(basename)[0]
+        # self.analyzed_data_location = pathlib.Path(
+        #         '/Users/adam/Documents/SenseOfTouchResearch/'
+        #         'SSN_ImageAnalysis/AnalyzedData/' + self.experiment_id + '/')
+        # self.metadata_file_path = self.analyzed_data_location.joinpath(
+        #          'metadata.yaml')
 
-        # Create directory if necessary
-        if not self.analyzed_data_location.is_dir():
-            self.analyzed_data_location.mkdir()
+        # # Create directory if necessary
+        # if not self.analyzed_data_location.is_dir():
+        #     self.analyzed_data_location.mkdir()
 
-        # This function is what makes the init slow
-        self.image_array, self.metadata = self.load_trial()
+        # # This function is what makes the init slow
+        # self.image_array, self.metadata = self.load_trial()
 
-    def load_trial(self) -> Tuple[np.array, dict]:
+    def load_trial(self,
+                   filename: str,
+                   load_images: bool = True,
+                   overwrite_metadata: bool = False) -> Tuple[np.array, dict]:
+        self.filename = filename
+        self.load_images = load_images
+        self.overwrite_metadata = overwrite_metadata
+
         """Loads the data and metadata for this trial from disk.
 
         Loads the data needed for analyzing the trial. Also handles
@@ -100,29 +108,45 @@ class StrainPropagationTrial(object):
             metadata (dict): All the metadata
 
         """
+        # Get the experiment ID from the filename and load the data
+        basename = os.path.basename(self.filename)
+        self.experiment_id = os.path.splitext(basename)[0]
+        self.analyzed_data_location = pathlib.Path(
+                '/Users/adam/Documents/SenseOfTouchResearch/'
+                'SSN_ImageAnalysis/AnalyzedData/' + self.experiment_id + '/')
+        self.metadata_file_path = self.analyzed_data_location.joinpath(
+                 'metadata.yaml')
+
+        # Create directory if necessary
+        if not self.analyzed_data_location.is_dir():
+            self.analyzed_data_location.mkdir()
+
+        # This function is what makes the init slow
+        # self.image_array, self.metadata = self.load_trial()
+
         # TODO: Load other analyzed data here too
         if (self.load_images is False and  # don't load images
                 self.overwrite_metadata is False and  # don't overwrite
                 self.metadata_file_path.is_file() is True):  # yaml exists
             # only load metadata in this case
-            metadata = self._load_metadata_from_yaml()
+            self.metadata = self._load_metadata_from_yaml()
             # TODO: create empty numpy array of the right size
-            image_array = np.array([2, 2, 2, 2])
+            self.image_array = np.array([2, 2, 2, 2])
 
         else:
-            image_array, images = self._load_images_from_disk()
+            self.image_array, images = self._load_images_from_disk()
             # If we don't have a yaml metadata file yet, we need to get
             # some information from Google Drive and build a yaml file
             if (self.metadata_file_path.is_file() is False or  # no yaml yet
                     self.overwrite_metadata is True):
-                metadata = self._retrieve_metadata(images)
-                self._write_metadata_to_yaml(metadata)
+                self.metadata = self._retrieve_metadata(images)
+                self._write_metadata_to_yaml(self.metadata)
             else:
                 # if we have metadata in a yaml file, no need to go to
                 # Google Drive to get it. Just load from yaml
-                metadata = self._load_metadata_from_yaml()
+                self.metadata = self._load_metadata_from_yaml()
 
-        return image_array, metadata
+        # return image_array, metadata
 
     def test_parameters(self):
             pass
@@ -234,9 +258,11 @@ class PrettySafeLoader(yaml.SafeLoader):  # not sure if I need this anymore
 
 
 if __name__ == '__main__':
-    test_trial = StrainPropagationTrial(
-            '/Users/adam/Documents/''SenseOfTouchResearch/'
+    test_trial = StrainPropagationTrial()
+    my_image, my_metadata = test_trial.load_trial(
+            '/Users/adam/Documents/'
+            'SenseOfTouchResearch/'
             'SSN_data/20181220/SSN_126_001.nd2',
             load_images=False, overwrite_metadata=True)
-    my_metadata = test_trial.metadata
-    my_image = test_trial.image_array
+    # my_metadata = test_trial.metadata
+    # my_image = test_trial.image_array
