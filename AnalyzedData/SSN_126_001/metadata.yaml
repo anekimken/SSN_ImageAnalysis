@@ -12,6 +12,7 @@ notes: 'Neuron not all in one plane. Bleached after a few trials, especially mit
   that were deeper into the worm. 11 total stacks, 4 with actuation: 0, 0, 300, 0,
   300, 0, 300, 0, 300, 0, 0 kPa.'
 num_eggs: 3
+num_timepoints: 11
 pixel_microns: 0.275
 purpose: Baseline measurement
 slice_height_pix: 1200
