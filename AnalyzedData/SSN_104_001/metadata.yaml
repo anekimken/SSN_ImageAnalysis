@@ -1,0 +1,23 @@
+---
+Experiment_id: SSN_104_001
+bleach_time: 2018-11-18 07:45:00
+cultivation_temp: 20
+device_ID: Y4P7-4
+head_orientation: Headfirst
+microscope: Spinning Disk Confocal in CSIF Shriram
+microscope_channel: SDC 561-ALN
+microscope_objective: 40x oil
+neuron: PVM
+notes: getting pretty dim, maybe photobleaching. 300 kpa on stacks 2 and 4.
+num_eggs: 6
+num_timepoints: 5
+pixel_microns: 0.275
+purpose: Baseline measurement
+slice_height_pix: 1200
+slice_width_pix: 600
+timestamp: 2018-11-24 12:22:53
+total_images: 435
+user: anekimke@stanford.edu
+vulva_orientation: East
+worm_life_stage: YA
+worm_strain: NM3573
