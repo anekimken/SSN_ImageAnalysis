@@ -10,6 +10,7 @@ import sys
 import os
 import pathlib
 import datetime
+import time
 import warnings
 from typing import Tuple
 
@@ -23,6 +24,8 @@ import yaml
 
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
+
+import trackpy as tp
 
 # warnings.filterwarnings("ignore", module="matplotlib")
 warnings.filterwarnings("ignore",
@@ -55,34 +58,8 @@ class StrainPropagationTrial(object):
 
     """
     def __init__(self):
-        pass
-        #          filename: str,
-        #          load_images: bool = True,
-        #          overwrite_metadata: bool = False):
-        # self.filename = filename
-        # self.load_images = load_images
-        # self.overwrite_metadata = overwrite_metadata
-
-        # Initialize yaml loader with tuple support
-        # PrettySafeLoader.add_constructor(
-        #         u'tag:yaml.org,2002:python/tuple',
-        #         PrettySafeLoader.construct_python_tuple)
-
-        # Get the experiment ID from the filename and load the data
-        # basename = os.path.basename(filename)
-        # self.experiment_id = os.path.splitext(basename)[0]
-        # self.analyzed_data_location = pathlib.Path(
-        #         '/Users/adam/Documents/SenseOfTouchResearch/'
-        #         'SSN_ImageAnalysis/AnalyzedData/' + self.experiment_id + '/')
-        # self.metadata_file_path = self.analyzed_data_location.joinpath(
-        #          'metadata.yaml')
-
-        # # Create directory if necessary
-        # if not self.analyzed_data_location.is_dir():
-        #     self.analyzed_data_location.mkdir()
-
-        # # This function is what makes the init slow
-        # self.image_array, self.metadata = self.load_trial()
+        self.mito_candidates = None
+        self.latest_test_params = None
 
     def load_trial(self,
                    filename: str,
@@ -116,13 +93,12 @@ class StrainPropagationTrial(object):
                 'SSN_ImageAnalysis/AnalyzedData/' + self.experiment_id + '/')
         self.metadata_file_path = self.analyzed_data_location.joinpath(
                  'metadata.yaml')
+        self.param_test_history_file = self.analyzed_data_location.joinpath(
+                 'trackpyParamTestHistory.yaml')
 
         # Create directory if necessary
         if not self.analyzed_data_location.is_dir():
             self.analyzed_data_location.mkdir()
-
-        # This function is what makes the init slow
-        # self.image_array, self.metadata = self.load_trial()
 
         # TODO: Load other analyzed data here too
         if (self.load_images is False and  # don't load images
@@ -146,10 +122,55 @@ class StrainPropagationTrial(object):
                 # Google Drive to get it. Just load from yaml
                 self.metadata = self._load_metadata_from_yaml()
 
-        # return image_array, metadata
+        self.latest_test_params = self._load_analysis_params()
 
-    def test_parameters(self):
-            pass
+    def test_parameters(self,
+                        gaussianWidth: int,
+                        particleZDiameter: int,
+                        particleXYDiameter: int,
+                        brightnessPercentile: int,
+                        minParticleMass: int,
+                        bottomSlice: int,
+                        topSlice: int,
+                        time_point: int) -> dict:
+        # TODO: docstring
+        # TODO: update formatting of names
+
+        analysisParams = dict(
+                {'gaussianWidth': gaussianWidth,
+                 'particleZDiameter': particleZDiameter,
+                 'particleXYDiameter': particleXYDiameter,
+                 'brightnessPercentile': brightnessPercentile,
+                 'minParticleMass': minParticleMass,
+                 'bottomSlice': bottomSlice,
+                 'topSlice': topSlice})
+        particleDiameter = (particleZDiameter,
+                            particleXYDiameter,
+                            particleXYDiameter)
+
+        with open(self.param_test_history_file, 'a') as output_file:
+            yaml.dump(analysisParams, output_file, explicit_start=True)
+            # dump the latest analysis into the history file
+
+        slicesToAnalyze = self.image_array[time_point, bottomSlice:topSlice]
+    #     for i in range(0,imageCurrent.shape[0]):
+    #         maxProj = dispMaxProjection(
+    # slicesToAnalyze[i])#,metadataCurrent,timePoint)
+
+        # MAYBE: make this a new thread?
+        print('Looking for mitochondria...')
+        start_time = time.time()
+        mitoCandidates = tp.locate(slicesToAnalyze,
+                                   particleDiameter,
+                                   percentile=brightnessPercentile,
+                                   minmass=minParticleMass,
+                                   noise_size=gaussianWidth,
+                                   characterize=True)
+        finish_time = time.time()
+        print('Time to test parameters for locating mitochondria was ' +
+              str(round(finish_time - start_time)) + ' seconds.')
+
+        return mitoCandidates
 
     def run_batch(self):
             pass
@@ -169,6 +190,16 @@ class StrainPropagationTrial(object):
             metadata = yaml.load(yamlfile)
 
         return metadata
+
+    def _load_analysis_params(self) -> dict:
+        """Loads analysis parameters from an existing yaml file."""
+        with open(self.param_test_history_file, 'r') as yamlfile:
+            entire_history = yaml.load_all(yamlfile)
+            trackpy_locate_params = None
+            for trackpy_locate_params in entire_history:  # get latest params
+                pass
+
+        return trackpy_locate_params
 
     def _write_metadata_to_yaml(self, metadata_dict: dict):
         """Takes metadata dict and writes it to a yaml file"""
@@ -202,7 +233,7 @@ class StrainPropagationTrial(object):
         # TODO: add support for number of z_levels
         meta = images.metadata
         keys_to_keep = ['height', 'width',
-                        'date', 'total_images_per_channel',  # 'z_levels'
+                        'date', 'total_images_per_channel', 'z_levels',
                         'channels', 'pixel_microns', 'num_frames']
         metadata_from_scope = {key: (meta[key]) for key in keys_to_keep}
 
@@ -216,8 +247,8 @@ class StrainPropagationTrial(object):
                 'Experiment_id': self.experiment_id,
                 'slice_height_pix': int(combined_metadata['height']),
                 'slice_width_pix': int(combined_metadata['width']),
-                # 'stack_height': int(
-                #         combined_metadata['z_levels'][-1]),
+                'stack_height': int(
+                        combined_metadata['z_levels'][-1] + 1),
                 'num_timepoints': int(
                         combined_metadata['num_frames']),
                 'timestamp': datetime.datetime.strptime(
@@ -258,11 +289,14 @@ class PrettySafeLoader(yaml.SafeLoader):  # not sure if I need this anymore
 
 
 if __name__ == '__main__':
-    test_trial = StrainPropagationTrial()
-    my_image, my_metadata = test_trial.load_trial(
-            '/Users/adam/Documents/'
-            'SenseOfTouchResearch/'
-            'SSN_data/20181220/SSN_126_001.nd2',
-            load_images=False, overwrite_metadata=True)
+    import SSN_image_analysis_GUI
+    controller = SSN_image_analysis_GUI.StrainGUIController()
+    controller.run()
+    # test_trial = StrainPropagationTrial()
+    # my_image, my_metadata = test_trial.load_trial(
+    #         '/Users/adam/Documents/'
+    #         'SenseOfTouchResearch/'
+    #         'SSN_data/20181220/SSN_126_001.nd2',
+    #         load_images=False, overwrite_metadata=True)
     # my_metadata = test_trial.metadata
     # my_image = test_trial.image_array
