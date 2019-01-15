@@ -8,15 +8,16 @@ Created on Fri Jan  4 10:32:39 2019
 # TODO: DOCSTRINGS!!!!
 # TEMP: import numpy for testing
 import numpy as np
-
 import tkinter as tk
-from tkinter import ttk
-import glob
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import time
+# from tkinter import ttk
+# import glob
+# import matplotlib as mpl
+# import matplotlib.pyplot as plt
+# from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 import strain_propagation_trial as ssn_trial
+import strain_propagation_view as ssn_view
 
 
 class StrainGUIController:
@@ -30,18 +31,26 @@ class StrainGUIController:
 
         # Instantiate Model
         self.trial = ssn_trial.StrainPropagationTrial()
-        print('instantiated model')
 
         # Instantiate View
-        self.gui = SSN_analysis_GUI(self.root)
-        print('created view of gui')
+        self.gui = ssn_view.SSN_analysis_GUI(self.root)
 
-        self.gui.file_load_frame.load_trial_button.bind("<Button>",
+        # Bind UI elements to functions
+        # Load trial tab
+        self.gui.file_load_frame.load_trial_button.bind("<ButtonRelease-1>",
                                                         func=self.load_trial)
-        self.gui.file_load_frame.file_tree.bind('<<TreeviewSelect>>',
-                                                self.on_file_selection_changed)
+        self.gui.file_load_frame.file_tree.bind(
+                '<<TreeviewSelect>>', func=self.on_file_selection_changed)
 
-        # TODO: move gui binding functions here
+        # Inspection frame
+        self.gui.inspect_image_frame.update_image_btn.bind(
+                "<ButtonRelease-1>", func=self.update_inspection_image)
+        self.gui.inspect_image_frame.slice_selector.bind(
+                "<ButtonRelease-1>", func=self.update_inspection_image)
+        self.gui.inspect_image_frame.timepoint_selector.bind(
+                "<ButtonRelease-1>", func=self.update_inspection_image)
+        self.gui.inspect_image_frame.test_param_button.bind(
+                "<ButtonRelease-1>", func=self.test_params)
 
     def run(self):
         self.root.title("SSN Image Analysis")
@@ -51,23 +60,40 @@ class StrainGUIController:
         """Loads the data for this trial from disk and sends us to the
         inspection tab to start the analysis
         """
-        # OPTIMIZE: load trial in a separate thread
-        # TODO: add popup window saying file is loading
-        print(self.file_list)
-        self.trial.load_trial(self.file_list[0][0], load_images=False)
+        # OPTIMIZE: load trial in a separate thread?
+        # MAYBE: add popup window saying file is loading
+        print('Loading file', self.file_list[0][0])
+        fr = self.gui.file_load_frame
+        load_images = fr.load_images_box.instate(['selected'])
+        overwrite_metadata = fr.overwrite_metadata_box.instate(['selected'])
+        self.trial.load_trial(self.file_list[0][0],
+                              load_images=load_images,
+                              overwrite_metadata=overwrite_metadata)
 
-        if self.trial.load_images is True:
-            # load inspection image on inspection tab, and switch to it
-            dater_tots = self.trial.image_array[0, 0]
-            # fig = plt.figure(figsize=(1, 2))
-            # ax = fig.add_subplot(111)
-            # ax.imshow(dater_tots, interpolation='none')
+        # load inspection image on inspection tab and related parameters
+        if load_images is True or overwrite_metadata is True:
+            self.update_inspection_image()
 
-            inspection_ax = self.gui.inspect_image_frame.ax
-            inspection_canvas = self.gui.inspect_image_frame.plot_canvas
-            inspection_ax.imshow(dater_tots, interpolation='none')
-            inspection_canvas.draw()
+        image_stack_size = self.trial.metadata['stack_height']
+        self.gui.inspect_image_frame.slice_selector.config(
+                values=list(range(1, image_stack_size + 1)))
+        self.gui.inspect_image_frame.btm_slice_selector.config(
+                values=list(range(1, image_stack_size + 1)))
+        self.gui.inspect_image_frame.top_slice_selector.config(
+                values=list(range(1, image_stack_size + 1)))
+        self.gui.inspect_image_frame.timepoint_selector.config(
+                values=list(range(1, image_stack_size + 1)))
+        self.gui.inspect_image_frame.metadata_notes.config(
+                text=self.trial.metadata['notes'])
+        self.gui.inspect_image_frame.stack_height_label.config(
+                text=('Stack height: ' + str(image_stack_size)))
+        self.gui.inspect_image_frame.neuron_id_label.config(
+                text=('Neuron: ' + self.trial.metadata['neuron']))
+        self.gui.inspect_image_frame.vulva_side_label.config(
+                text=('Vulva side: ' +
+                      self.trial.metadata['vulva_orientation']))
 
+        self._load_last_test_params()
         self.gui.notebook.select(1)
 
     def on_file_selection_changed(self, event):
@@ -94,178 +120,103 @@ class StrainGUIController:
             file_load_frame.run_batch_button.config(state=tk.DISABLED)
         # print(self.file_list)
 
+    def update_inspection_image(self, event=None):
+        insp_frame = self.gui.inspect_image_frame
+        max_proj_checkbox = insp_frame.max_proj_checkbox.instate(['selected'])
+        plot_labels_checkbox = insp_frame.plot_labels_box.instate(['selected'])
+        selected_slice = int(insp_frame.slice_selector.get())
+        selected_timepoint = int(insp_frame.timepoint_selector.get())
+        inspection_ax = insp_frame.ax
+        inspection_ax.clear()
 
-class SSN_analysis_GUI(tk.Frame):
-    """
-    This class implements a GUI for performing all parts of the image analysis
-    process and plots the results. It calls other classes for each of the
-    different frames in its notebook
-    """
-    def __init__(self, root):
-        """
-        Initializes the Analysis gui object
-        """
-        tk.Frame.__init__(self, root)
-        self.root = root
-        w, h = self.root.winfo_screenwidth(), self.root.winfo_screenheight()
-        self.root.geometry("%dx%d+0+0" % (w, h))
-        self.notebook = ttk.Notebook(root)
+        if max_proj_checkbox is True:
+            # max projection
+            stack = self.trial.image_array[selected_timepoint]
+            image_to_display = np.amax(stack, 0)  # collapse z axis
+            image_to_display = image_to_display.squeeze()
+            # maxProjection = np.asarray(maxProjection)
+        else:
+            # single slice
+            image_to_display = self.trial.image_array[
+                    selected_timepoint, selected_slice]
 
-        self.file_load_frame = FileLoadFrame(self.notebook)
-        self.file_load_tab = self.notebook.add(
-                self.file_load_frame, text="Load File(s)")
+        if plot_labels_checkbox is True and \
+                self.trial.mito_candidates is not None:
+            self.trial.mito_candidates.plot(
+                    x='x', y='y', ax=insp_frame.ax, color='#FB8072',
+                    marker='o', linestyle='None')
 
-        self.inspect_image_frame = InspectionFrame(self.notebook)
-        self.notebook.add(self.inspect_image_frame, text="Inspect Images")
+        insp_frame.ax.imshow(image_to_display, interpolation='none')
+        insp_frame.ax.axis('off')
+        insp_frame.plot_canvas.draw()
 
-        self.test_parameter_frame = ParamTestFrame(self.notebook)
-        self.notebook.add(self.test_parameter_frame,
-                          text="Test Analysis Parameters")
+    def test_params(self, event):
+        # TODO: make sure everything happens in the places that make sense
+        # gather parameters
+        insp_frame = self.gui.inspect_image_frame
+        gaussianWidth = int(insp_frame.gaussian_blur_width.get())
+        particleZDiameter = int(insp_frame.z_diameter_selector.get())
+        particleXYDiameter = int(insp_frame.xy_diameter_selector.get())
+        brightnessPercentile = int(
+                insp_frame.brightness_percentile_selector.get())
+        minParticleMass = int(insp_frame.min_particle_mass_selector.get())
+        bottomSlice = int(insp_frame.btm_slice_selector.get())
+        topSlice = int(insp_frame.top_slice_selector.get())
+        time_point = int(insp_frame.timepoint_selector.get())
+        # TODO: validate input
 
-        self.analyze_trial_frame = AnalyzeTrialFrame(self.notebook)
-        self.notebook.add(self.analyze_trial_frame, text="Analyze Trial")
+        # run trackpy analysis
+        self.trial.mito_candidates = self.trial.test_parameters(
+                gaussianWidth,
+                particleZDiameter,
+                particleXYDiameter,
+                brightnessPercentile,
+                minParticleMass,
+                bottomSlice,
+                topSlice,
+                time_point)
 
-        self.plot_results_frame = PlotResultsFrame(self.notebook)
-        self.notebook.add(self.plot_results_frame, text="Plot Results")
+        insp_frame.max_proj_checkbox.state(['selected'])
+        insp_frame.plot_labels_box.state(['selected'])
+        self.update_inspection_image()
+        # self.mito_candidate_axes = self.trial.mito_candidates.plot(
+        #         x='x', y='y', ax=insp_frame.ax, color='#FB8072', marker='o',
+        #         linestyle='None')
+        # insp_frame.plot_canvas.draw()
 
-        self.notebook.pack(expand=1, fill=tk.BOTH)
+        # TODO: save results
 
+    def _load_last_test_params(self, event=None):
+        insp_frame = self.gui.inspect_image_frame
+        params = self.trial.latest_test_params
 
-class FileLoadFrame(tk.Frame):
-    """This class implements the first tab of the GUI, which prompts the
-    user to choose which file or files to analyze
-    """
-    def __init__(self, parent):
-        tk.Frame.__init__(self, parent)
-        self.parent = parent
+        insp_frame.btm_slice_selector.delete(0, 'end')
+        insp_frame.btm_slice_selector.insert(0, params['bottomSlice'])
 
-        # define buttons for starting analysis
-        self.button_frame = tk.Frame(self)
-        self.load_trial_button = tk.Button(self.button_frame,
-                                           text="Load Trial",
-                                           state=tk.DISABLED)
-                                           # command=self.load_trial)
-        self.load_trial_button.pack(side=tk.RIGHT)
-        self.run_batch_button = tk.Button(self.button_frame, text="Run Batch",
-                                          state=tk.DISABLED)
-        self.run_batch_button.pack(side=tk.RIGHT)
-        self.button_frame.pack(side=tk.BOTTOM)
-        # TODO: implement button responses (go to next tab and get started)
+        insp_frame.top_slice_selector.delete(0, 'end')
+        insp_frame.top_slice_selector.insert(0, params['topSlice'])
 
-        # now, we load all the file names into a Treeview for user selection
-        data_location = '/Users/adam/Documents/SenseOfTouchResearch/SSN_data/*'
-        experiment_days = glob.iglob(data_location)
-        self.file_tree = tk.ttk.Treeview(self, height=37,
-                                         columns=("filename", "status"))
-        self.file_tree.heading("filename", text="Full file path")
-        self.file_tree.heading("status", text="Analysis Status")
-        for day in experiment_days:
-            try:
-                int(day[-8:])  # check to make sure this dir is an experiment
-                day_item = self.file_tree.insert('', 'end', text=day[-8:],
-                                                 tags='day')
-                trials = glob.iglob(day + '/*.nd2')
-                for trial in trials:
-                    trial_parts = trial.split('/')
-                    self.file_tree.insert(day_item, 'end',
-                                          text=trial_parts[-1],
-                                          values=trial,
-                                          tags='trial')
-                    # TODO: get analysis status and add to table
-            except ValueError:  # we get here if dir name is not a number
-                pass  # and we ignore these dirs
-        # self.file_tree.bind('<<TreeviewSelect>>',
-        #                     self.on_file_selection_changed)
-        self.file_tree.pack(fill=tk.BOTH, anchor=tk.N)  # fill = tk.X,
+        insp_frame.gaussian_blur_width.delete(0, 'end')
+        insp_frame.gaussian_blur_width.insert(0, params['gaussianWidth'])
 
-        # TODO: add checkbox for overwriting metadata
+        insp_frame.z_diameter_selector.delete(0, 'end')
+        insp_frame.z_diameter_selector.insert(0, params['particleZDiameter'])
 
+        insp_frame.xy_diameter_selector.delete(0, 'end')
+        insp_frame.xy_diameter_selector.insert(0, params['particleZDiameter'])
 
-class InspectionFrame(tk.Frame):
-    def __init__(self, parent):
-        tk.Frame.__init__(self, parent)
-        self.parent = parent
-        # self.trial = trial
-        # label = tk.ttk.Label(self,text="check me out?")
-        # label.grid(column=1, row=1)
-        # label.pack()
+        insp_frame.xy_diameter_selector.delete(0, 'end')
+        insp_frame.xy_diameter_selector.insert(0, params['particleXYDiameter'])
 
-        # TODO: add canvas for showing image
+        insp_frame.brightness_percentile_selector.delete(0, 'end')
+        insp_frame.brightness_percentile_selector.insert(
+                0, params['brightnessPercentile'])
 
-        # Test figure to add to a canvas
-        # X = np.linspace(0, 2 * np.pi, 50)
-        # Y = np.sin(X)
-        self.fig = mpl.figure.Figure(figsize=(1, 2))
-        self.ax = self.fig.add_axes([0, 0, 1, 1])
-        # ax.plot(X, Y)
-
-        # dater_tots = self.trial.image_array[0, 0]
-
-        # Figure with our image
-        # fig = plt.figure(figsize=(1, 2))
-        # ax = fig.add_subplot(111)
-        # # display  image
-        # ax.imshow(dater_tots, interpolation='none')
-
-        # create the canvas with our figure
-        self.plot_canvas = FigureCanvasTkAgg(self.fig, self)
-        self.plot_canvas.draw()
-        self.plot_canvas.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH)
-
-        # TODO: add controls for slice, timepoint, max projection
-
-        # TODO: add text showing stack height and metadata
-
-        # TODO: add button for loading images
+        insp_frame.min_particle_mass_selector.delete(0, 'end')
+        insp_frame.min_particle_mass_selector.insert(
+                0, params['minParticleMass'])
 
 
-class ParamTestFrame(tk.Frame):
-    def __init__(self, parent):
-        tk.Frame.__init__(self, parent)
-        label = tk.ttk.Label(self, text="try me out?")
-        label.grid(column=1, row=1)
-        label.pack()
-
-        # TODO: add canvas for showing results of one frame
-
-        # TODO: add input fields for parameters
-
-        # TODO: add button to start analysis
-
-        # TODO: add text when finished to indicate time and relevant results
-
-
-class AnalyzeTrialFrame(tk.Frame):
-    def __init__(self, parent):
-        tk.Frame.__init__(self, parent)
-        label = tk.ttk.Label(self, text="run me?")
-        label.grid(column=1, row=1)
-        label.pack()
-
-        # TODO: add canvas for showing results of one frame
-
-        # TODO: add input fields for parameters
-
-        # TODO: add button to start analysis
-
-        # TODO: add text when finished to indicate time and relevant results
-
-
-class PlotResultsFrame(tk.Frame):
-    def __init__(self, parent):
-        tk.Frame.__init__(self, parent)
-        label = tk.ttk.Label(self, text="check out my science?")
-        label.grid(column=1, row=1)
-        label.pack()
-
-        # TODO: add canvas for showing results of one frame
-
-        # TODO: add buttons for interesting plots
-
-
-# root = tk.Tk()
-# analysisGUI = SSN_analysis_GUI(root)
-# # TODO: bring new window to top
-# root.mainloop()
-controller = StrainGUIController()
-controller.run()
+if __name__ == '__main__':
+    controller = StrainGUIController()
+    controller.run()

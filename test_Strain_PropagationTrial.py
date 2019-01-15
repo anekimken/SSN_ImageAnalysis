@@ -13,24 +13,23 @@ import datetime
 from strain_propagation_trial import StrainPropagationTrial
 
 
-class TestTrial(unittest.TestCase):
+class TestLoadTrial(unittest.TestCase):
     def setUp(self):
-        pass
-
-    def test_init(self):
-        filename = ('/Users/adam/Documents/SenseOfTouchResearch/'
-                    'SSN_data/20181220/SSN_126_001.nd2')
-        test_cases = [
+        self.filename = ('/Users/adam/Documents/SenseOfTouchResearch/'
+                         'SSN_data/20181220/SSN_126_001.nd2')
+        self.test_cases = [
                 (False, False),
                 (False, True),
                 (True, False),
                 (True, True)]
 
-        for load_image_flag, overwrite_metadata_flag in test_cases:
+    def test_init(self):
+        for load_image_flag, overwrite_metadata_flag in self.test_cases:
             print("Checking case :", load_image_flag,
                   overwrite_metadata_flag)
-            trial = StrainPropagationTrial(
-                    filename,
+            trial = StrainPropagationTrial()
+            trial.load_trial(
+                    self.filename,
                     load_images=load_image_flag,
                     overwrite_metadata=overwrite_metadata_flag)
 
