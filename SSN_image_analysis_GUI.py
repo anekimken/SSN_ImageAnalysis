@@ -9,7 +9,7 @@ Created on Fri Jan  4 10:32:39 2019
 # TEMP: import numpy for testing
 import numpy as np
 import tkinter as tk
-import time
+import threading
 # from tkinter import ttk
 # import glob
 # import matplotlib as mpl
@@ -37,8 +37,8 @@ class StrainGUIController:
 
         # Bind UI elements to functions
         # Load trial tab
-        self.gui.file_load_frame.load_trial_button.bind("<ButtonRelease-1>",
-                                                        func=self.load_trial)
+        self.gui.file_load_frame.load_trial_button.bind(
+                "<ButtonRelease-1>", func=self.load_trial)
         self.gui.file_load_frame.file_tree.bind(
                 '<<TreeviewSelect>>', func=self.on_file_selection_changed)
 
@@ -51,24 +51,42 @@ class StrainGUIController:
                 "<ButtonRelease-1>", func=self.update_inspection_image)
         self.gui.inspect_image_frame.test_param_button.bind(
                 "<ButtonRelease-1>", func=self.test_params)
+        self.gui.inspect_image_frame.status_dropdown.bind(
+                "<<ComboboxSelected>>", func=self.update_status)
 
     def run(self):
         self.root.title("SSN Image Analysis")
         self.root.mainloop()
 
-    def load_trial(self, event):
+    # def start_load_trial(self, event=None):
+    #     load_thread = threading.Thread(target=self.load_trial)
+    #     load_thread.start()
+
+    def load_trial(self, event=None):
         """Loads the data for this trial from disk and sends us to the
         inspection tab to start the analysis
         """
         # OPTIMIZE: load trial in a separate thread?
         # MAYBE: add popup window saying file is loading
-        print('Loading file', self.file_list[0][0])
+        print('Loading file', self.file_list[0][1])
         fr = self.gui.file_load_frame
         load_images = fr.load_images_box.instate(['selected'])
         overwrite_metadata = fr.overwrite_metadata_box.instate(['selected'])
-        self.trial.load_trial(self.file_list[0][0],
+
+        # load_thread = threading.Thread(
+        #         name='load_file_thread',
+        #         target=self.trial.load_trial,
+        #         args=(self.file_list[0][0]),
+        #         kwargs={'load_images': load_images,
+        #                 'overwrite_metadata': overwrite_metadata})
+        # load_thread.start()
+
+        self.trial.load_trial(self.file_list[0][1],
                               load_images=load_images,
                               overwrite_metadata=overwrite_metadata)
+        current_status = self.trial.metadata['analysis_status']
+        self.gui.inspect_image_frame.status_dropdown.set(current_status)
+        # print(self.trial.metadata['analysis_status'])
 
         # load inspection image on inspection tab and related parameters
         if load_images is True or overwrite_metadata is True:
@@ -118,7 +136,6 @@ class StrainGUIController:
         elif len(self.file_list) == 1 and info['tags'] == ['trial']:
             file_load_frame.load_trial_button.config(state=tk.NORMAL)
             file_load_frame.run_batch_button.config(state=tk.DISABLED)
-        # print(self.file_list)
 
     def update_inspection_image(self, event=None):
         insp_frame = self.gui.inspect_image_frame
@@ -129,17 +146,16 @@ class StrainGUIController:
         inspection_ax = insp_frame.ax
         inspection_ax.clear()
 
-        if max_proj_checkbox is True:
-            # max projection
+        if max_proj_checkbox is True:  # max projection
             stack = self.trial.image_array[selected_timepoint]
             image_to_display = np.amax(stack, 0)  # collapse z axis
             image_to_display = image_to_display.squeeze()
             # maxProjection = np.asarray(maxProjection)
-        else:
-            # single slice
+        else:  # single slice
             image_to_display = self.trial.image_array[
                     selected_timepoint, selected_slice]
 
+        print(('mito status: ', self.trial.mito_candidates))
         if plot_labels_checkbox is True and \
                 self.trial.mito_candidates is not None:
             self.trial.mito_candidates.plot(
@@ -150,9 +166,13 @@ class StrainGUIController:
         insp_frame.ax.axis('off')
         insp_frame.plot_canvas.draw()
 
-    def test_params(self, event):
-        # TODO: make sure everything happens in the places that make sense
-        # gather parameters
+    # def test_params(self, event):
+    #     # TODO: decide if I really want threads, and, if so, organize them
+    #     thread = threading.Thread(target=self.test_params_separate_thread)
+    #     thread.start()
+
+    def test_params(self, event=None):
+        # Gather parameters
         insp_frame = self.gui.inspect_image_frame
         gaussianWidth = int(insp_frame.gaussian_blur_width.get())
         particleZDiameter = int(insp_frame.z_diameter_selector.get())
@@ -165,7 +185,19 @@ class StrainGUIController:
         time_point = int(insp_frame.timepoint_selector.get())
         # TODO: validate input
 
-        # run trackpy analysis
+        # run trackpy analysis in new thread
+        # tp_thread = threading.Thread(name='trackpy_locate_thread',
+        #                              target=self.trial.test_parameters,
+        #                              args=(gaussianWidth,
+        #                                    particleZDiameter,
+        #                                    particleXYDiameter,
+        #                                    brightnessPercentile,
+        #                                    minParticleMass,
+        #                                    bottomSlice,
+        #                                    topSlice,
+        #                                    time_point))
+        # tp_thread.start()
+
         self.trial.mito_candidates = self.trial.test_parameters(
                 gaussianWidth,
                 particleZDiameter,
@@ -179,12 +211,13 @@ class StrainGUIController:
         insp_frame.max_proj_checkbox.state(['selected'])
         insp_frame.plot_labels_box.state(['selected'])
         self.update_inspection_image()
-        # self.mito_candidate_axes = self.trial.mito_candidates.plot(
-        #         x='x', y='y', ax=insp_frame.ax, color='#FB8072', marker='o',
-        #         linestyle='None')
-        # insp_frame.plot_canvas.draw()
 
         # TODO: save results
+
+    def update_status(self, event=None):
+        new_status = self.gui.inspect_image_frame.status_dropdown.get()
+        self.trial.metadata['analysis_status'] = new_status
+        self.trial.write_metadata_to_yaml(self.trial.metadata)
 
     def _load_last_test_params(self, event=None):
         insp_frame = self.gui.inspect_image_frame
