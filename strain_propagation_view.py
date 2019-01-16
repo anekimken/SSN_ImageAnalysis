@@ -11,6 +11,7 @@ import tkinter as tk
 from tkinter import ttk
 import glob
 import matplotlib as mpl
+import yaml
 # import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
@@ -21,6 +22,7 @@ class SSN_analysis_GUI(tk.Frame):
     process and plots the results. It calls other classes for each of the
     different frames in its notebook
     """
+
     def __init__(self, root):
         """
         Initializes the Analysis gui object
@@ -43,10 +45,6 @@ class SSN_analysis_GUI(tk.Frame):
 
         self.inspect_image_frame = InspectionFrame(self.notebook, self.dpi)
         self.notebook.add(self.inspect_image_frame, text="Inspect Images")
-
-        self.test_parameter_frame = ParamTestFrame(self.notebook)
-        self.notebook.add(self.test_parameter_frame,
-                          text="Test Analysis Parameters")
 
         self.analyze_trial_frame = AnalyzeTrialFrame(self.notebook)
         self.notebook.add(self.analyze_trial_frame, text="Analyze Trial")
@@ -97,11 +95,21 @@ class FileLoadFrame(tk.Frame):
         # now, we load all the file names into a Treeview for user selection
         data_location = '/Users/adam/Documents/SenseOfTouchResearch/SSN_data/*'
         experiment_days = glob.iglob(data_location)
+        # self.analyzed_data_location = pathlib.Path(
+        #         '/Users/adam/Documents/SenseOfTouchResearch/'
+        #         'SSN_ImageAnalysis/AnalyzedData/' + self.experiment_id + '/')
+        # self.metadata_file_path = self.analyzed_data_location.joinpath(
+        #          'metadata.yaml')
+        # self.param_test_history_file = self.analyzed_data_location.joinpath(
+        #          'trackpyParamTestHistory.yaml')
+
         self.file_tree = tk.ttk.Treeview(self, height=37,
-                                         columns=("filename", "status"))
-        self.file_tree.heading("filename", text="Full file path")
+                                         columns=("status", "filename"))
         self.file_tree.heading("status", text="Analysis Status")
+        self.file_tree.heading("filename", text="Full file path")
         for day in experiment_days:
+            # print(day)
+            # metadata_location = (data_location
             try:
                 int(day[-8:])  # check to make sure this dir is an experiment
                 day_item = self.file_tree.insert('', 'end', text=day[-8:],
@@ -109,18 +117,35 @@ class FileLoadFrame(tk.Frame):
                 trials = glob.iglob(day + '/*.nd2')
                 for trial in trials:
                     trial_parts = trial.split('/')
-                    self.file_tree.insert(day_item, 'end',
-                                          text=trial_parts[-1],
-                                          values=trial,
-                                          tags='trial')
-                    # TODO: get analysis status and add to table
+                    iid = self.file_tree.insert(day_item, 'end',
+                                                text=trial_parts[-1],
+                                                values=trial,
+                                                tags='trial')
+                    metadata_file_path = ('/Users/adam/Documents/'
+                                          'SenseOfTouchResearch/'
+                                          'SSN_ImageAnalysis/AnalyzedData/' +
+                                          trial[-15:-4] + '/metadata.yaml')
+                    try:
+                        metadata = self.load_metadata_from_yaml(
+                                metadata_file_path)
+                        if 'analysis_status' in metadata:
+                            analysis_status = metadata['analysis_status']
+                        else:
+                            analysis_status = 'no parameters tested'
+                    except FileNotFoundError:
+                        analysis_status = 'no metadata.yaml file'
+                    self.file_tree.item(iid, values=(analysis_status, trial))
+
             except ValueError:  # we get here if dir name is not a number
                 pass  # and we ignore these dirs
         self.file_tree.pack(fill=tk.BOTH, anchor=tk.N)  # fill = tk.X,
 
-        # TODO: add checkbox for overwriting metadata
+    def load_metadata_from_yaml(self, metadata_file_path: str) -> dict:
+        """Loads metadata from an existing yaml file."""
+        with open(metadata_file_path, 'r') as yamlfile:
+            metadata = yaml.load(yamlfile)
 
-        # TODO: add checkbox for loading images
+        return metadata
 
 
 class InspectionFrame(tk.Frame):
@@ -296,27 +321,21 @@ class InspectionFrame(tk.Frame):
         self.vulva_side_label.grid(row=save_frame_row, column=1)
         save_frame_row += 1
 
+        self.status_dropdown = ttk.Combobox(
+                self.save_data_frame,
+                state="readonly",
+                values=[
+                        'No metadata.yaml file',
+                        'Not started',
+                        'Testing parameters',
+                        'Testing parameters for batch',
+                        'Strain calculated'])
+        self.status_dropdown.grid(column=1, row=save_frame_row)
+        save_frame_row += 1
+
         self.save_data_frame.grid(row=0, column=2)
 
-        # TODO: add text showing stack height and metadata
-
         # TODO: add button for loading images that aren't yet loaded
-
-
-class ParamTestFrame(tk.Frame):
-    def __init__(self, parent):
-        tk.Frame.__init__(self, parent)
-        label = tk.ttk.Label(self, text="try me out?")
-        label.grid(column=1, row=1)
-        label.pack()
-
-        # TODO: move this stuff to inspection frame. Rename?
-
-        # TODO: add input fields for parameters
-
-        # TODO: add button to start analysis
-
-        # TODO: add text when finished to indicate time and relevant results
 
 
 class AnalyzeTrialFrame(tk.Frame):

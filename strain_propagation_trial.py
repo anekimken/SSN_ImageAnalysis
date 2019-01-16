@@ -60,6 +60,14 @@ class StrainPropagationTrial(object):
     def __init__(self):
         self.mito_candidates = None
         self.latest_test_params = None
+        self.default_test_params = {'gaussianWidth': 3,
+                                    'particleZDiameter': 21,
+                                    'particleXYDiameter': 15,
+                                    'brightnessPercentile': 50,
+                                    'minParticleMass': 200,
+                                    'bottomSlice': 1,
+                                    'topSlice': 2,
+                                    'time_point': 1}
 
     def load_trial(self,
                    filename: str,
@@ -105,7 +113,7 @@ class StrainPropagationTrial(object):
                 self.overwrite_metadata is False and  # don't overwrite
                 self.metadata_file_path.is_file() is True):  # yaml exists
             # only load metadata in this case
-            self.metadata = self._load_metadata_from_yaml()
+            self.metadata = self.load_metadata_from_yaml()
             # TODO: create empty numpy array of the right size
             self.image_array = np.array([2, 2, 2, 2])
 
@@ -116,13 +124,17 @@ class StrainPropagationTrial(object):
             if (self.metadata_file_path.is_file() is False or  # no yaml yet
                     self.overwrite_metadata is True):
                 self.metadata = self._retrieve_metadata(images)
-                self._write_metadata_to_yaml(self.metadata)
+                if 'analysis_status' not in self.metadata:
+                    self.metadata['analysis_status'] = 'Not started'
+                self.write_metadata_to_yaml(self.metadata)
             else:
                 # if we have metadata in a yaml file, no need to go to
                 # Google Drive to get it. Just load from yaml
-                self.metadata = self._load_metadata_from_yaml()
-
-        self.latest_test_params = self._load_analysis_params()
+                self.metadata = self.load_metadata_from_yaml()
+        try:
+            self.latest_test_params = self._load_analysis_params()
+        except FileNotFoundError:
+            self.latest_test_params = self.default_test_params
 
     def test_parameters(self,
                         gaussianWidth: int,
@@ -134,7 +146,7 @@ class StrainPropagationTrial(object):
                         topSlice: int,
                         time_point: int) -> dict:
         # TODO: docstring
-        # TODO: update formatting of names
+        # TODO: update formatting of names here and in saved files
 
         analysisParams = dict(
                 {'gaussianWidth': gaussianWidth,
@@ -160,17 +172,17 @@ class StrainPropagationTrial(object):
         # MAYBE: make this a new thread?
         print('Looking for mitochondria...')
         start_time = time.time()
-        mitoCandidates = tp.locate(slicesToAnalyze,
-                                   particleDiameter,
-                                   percentile=brightnessPercentile,
-                                   minmass=minParticleMass,
-                                   noise_size=gaussianWidth,
-                                   characterize=True)
+        self.mito_candidates = tp.locate(slicesToAnalyze,
+                                         particleDiameter,
+                                         percentile=brightnessPercentile,
+                                         minmass=minParticleMass,
+                                         noise_size=gaussianWidth,
+                                         characterize=True)
         finish_time = time.time()
         print('Time to test parameters for locating mitochondria was ' +
               str(round(finish_time - start_time)) + ' seconds.')
 
-        return mitoCandidates
+        # return self.mito_candidates
 
     def run_batch(self):
             pass
@@ -184,7 +196,7 @@ class StrainPropagationTrial(object):
 
         return image_array, images
 
-    def _load_metadata_from_yaml(self) -> dict:
+    def load_metadata_from_yaml(self) -> dict:
         """Loads metadata from an existing yaml file."""
         with open(self.metadata_file_path, 'r') as yamlfile:
             metadata = yaml.load(yamlfile)
@@ -201,7 +213,7 @@ class StrainPropagationTrial(object):
 
         return trackpy_locate_params
 
-    def _write_metadata_to_yaml(self, metadata_dict: dict):
+    def write_metadata_to_yaml(self, metadata_dict: dict):
         """Takes metadata dict and writes it to a yaml file"""
         with open(self.metadata_file_path, 'w') as output_file:
                 yaml.dump(metadata_dict, output_file,  # create file
@@ -230,7 +242,6 @@ class StrainPropagationTrial(object):
         gdrive_metadata_dict = dict(zip(row_of_keys, row_of_metadata))
 
         # Access the metadata from the file
-        # TODO: add support for number of z_levels
         meta = images.metadata
         keys_to_keep = ['height', 'width',
                         'date', 'total_images_per_channel', 'z_levels',
