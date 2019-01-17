@@ -6,7 +6,7 @@ Created on Mon Jan  7 15:24:53 2019
 @author: Adam Nekimken
 """
 # TODO: UPDATE DOCSTRINGS!!!!
-import sys
+# import sys
 import os
 import pathlib
 import datetime
@@ -16,10 +16,10 @@ from typing import Tuple
 
 import numpy as np
 import pims
-from PIL import Image
+# from PIL import Image
 from nd2reader import ND2Reader
-from scipy import ndimage as ndi
-from scipy import stats
+# from scipy import ndimage as ndi
+# from scipy import stats
 import yaml
 
 import gspread
@@ -59,15 +59,17 @@ class StrainPropagationTrial(object):
     """
     def __init__(self):
         self.mito_candidates = None
+        self.linked_mitos = None
         self.latest_test_params = None
-        self.default_test_params = {'gaussianWidth': 3,
-                                    'particleZDiameter': 21,
-                                    'particleXYDiameter': 15,
-                                    'brightnessPercentile': 50,
-                                    'minParticleMass': 200,
-                                    'bottomSlice': 1,
-                                    'topSlice': 2,
-                                    'time_point': 1}
+        self.default_test_params = {'gaussian_width': 3,
+                                    'particle_z_diameter': 21,
+                                    'particle_xy_diameter': 15,
+                                    'brightness_percentile': 50,
+                                    'min_particle_mass': 200,
+                                    'bottom_slice': 1,
+                                    'top_slice': 2,
+                                    'time_point': 1,
+                                    'linking_radius': 20}
 
     def load_trial(self,
                    filename: str,
@@ -109,6 +111,7 @@ class StrainPropagationTrial(object):
             self.analyzed_data_location.mkdir()
 
         # TODO: Load other analyzed data here too
+        start_time = time.time()
         if (self.load_images is False and  # don't load images
                 self.overwrite_metadata is False and  # don't overwrite
                 self.metadata_file_path.is_file() is True):  # yaml exists
@@ -136,35 +139,39 @@ class StrainPropagationTrial(object):
         except FileNotFoundError:
             self.latest_test_params = self.default_test_params
 
+        finish_time = time.time()
+        print('Loaded file in ' + str(round(finish_time - start_time)) +
+              ' seconds.')
+
     def test_parameters(self,
-                        gaussianWidth: int,
-                        particleZDiameter: int,
-                        particleXYDiameter: int,
-                        brightnessPercentile: int,
-                        minParticleMass: int,
-                        bottomSlice: int,
-                        topSlice: int,
+                        gaussian_width: int,
+                        particle_z_diameter: int,
+                        particle_xy_diameter: int,
+                        brightness_percentile: int,
+                        min_particle_mass: int,
+                        bottom_slice: int,
+                        top_slice: int,
                         time_point: int) -> dict:
         # TODO: docstring
         # TODO: update formatting of names here and in saved files
 
         analysisParams = dict(
-                {'gaussianWidth': gaussianWidth,
-                 'particleZDiameter': particleZDiameter,
-                 'particleXYDiameter': particleXYDiameter,
-                 'brightnessPercentile': brightnessPercentile,
-                 'minParticleMass': minParticleMass,
-                 'bottomSlice': bottomSlice,
-                 'topSlice': topSlice})
-        particleDiameter = (particleZDiameter,
-                            particleXYDiameter,
-                            particleXYDiameter)
+                {'gaussian_width': gaussian_width,
+                 'particle_z_diameter': particle_z_diameter,
+                 'particle_xy_diameter': particle_xy_diameter,
+                 'brightness_percentile': brightness_percentile,
+                 'min_particle_mass': min_particle_mass,
+                 'bottom_slice': bottom_slice,
+                 'top_slice': top_slice})
+        particle_diameter = (particle_z_diameter,
+                             particle_xy_diameter,
+                             particle_xy_diameter)
 
         with open(self.param_test_history_file, 'a') as output_file:
             yaml.dump(analysisParams, output_file, explicit_start=True)
             # dump the latest analysis into the history file
 
-        slicesToAnalyze = self.image_array[time_point, bottomSlice:topSlice]
+        slicesToAnalyze = self.image_array[time_point, bottom_slice:top_slice]
     #     for i in range(0,imageCurrent.shape[0]):
     #         maxProj = dispMaxProjection(
     # slicesToAnalyze[i])#,metadataCurrent,timePoint)
@@ -173,19 +180,86 @@ class StrainPropagationTrial(object):
         print('Looking for mitochondria...')
         start_time = time.time()
         self.mito_candidates = tp.locate(slicesToAnalyze,
-                                         particleDiameter,
-                                         percentile=brightnessPercentile,
-                                         minmass=minParticleMass,
-                                         noise_size=gaussianWidth,
+                                         particle_diameter,
+                                         percentile=brightness_percentile,
+                                         minmass=min_particle_mass,
+                                         noise_size=gaussian_width,
                                          characterize=True)
         finish_time = time.time()
         print('Time to test parameters for locating mitochondria was ' +
               str(round(finish_time - start_time)) + ' seconds.')
 
-        # return self.mito_candidates
+        return self.mito_candidates
 
-    def run_batch(self):
-            pass
+    def run_batch(self,
+                  gaussian_width: int,
+                  particle_z_diameter: int,
+                  particle_xy_diameter: int,
+                  brightness_percentile: int,
+                  min_particle_mass: int,
+                  bottom_slice: int,
+                  top_slice: int,
+                  tracking_seach_radius: int,
+                  last_timepoint: int) -> dict:
+
+        slices_to_analyze = self.image_array[:last_timepoint,
+                                             bottom_slice:top_slice]
+        particle_diameter = (particle_z_diameter,
+                             particle_xy_diameter,
+                             particle_xy_diameter)
+        save_location = self.analyzed_data_location
+        metadata_save_location = str(
+                save_location.joinpath('trackpyBatchParams.yaml'))
+
+        start_time = time.time()
+        # run batch of images with the current set of parameters
+        self.mitos_from_batch = tp.batch(
+                slices_to_analyze,
+                particle_diameter,
+                percentile=brightness_percentile,
+                minmass=min_particle_mass,
+                noise_size=gaussian_width,
+                meta=metadata_save_location)
+        batch_done_time = time.time()
+
+        # link the particles we found between time points
+        linked = tp.link_df(self.mitos_from_batch,
+                            tracking_seach_radius,
+                            pos_columns=['x', 'y', 'z'])
+
+        # only keep trajectories where point appears in all frames
+        self.linked_mitos = tp.filter_stubs(
+                linked, last_timepoint)
+        # local_linked_mitos = self.linked_mitos
+        # numParticles = self.linked_mitos.groupby(
+        #         'particle').nunique().shape[0]
+        link_done_time = time.time()
+
+        # add the search radius to the yaml created by tp.batch
+        # TODO: add top/bottom slice, last timepoint
+        search_radius_dict = dict(
+                {'tracking_seach_radius': tracking_seach_radius})
+        with open(save_location.joinpath('trackpyBatchParams.yaml'),
+                  'a') as yamlfile:
+            yaml.dump(search_radius_dict, yamlfile, default_flow_style=False)
+
+        # load the file of parameters that tp.batch just saved
+        with open(save_location.joinpath('trackpyBatchParams.yaml'),
+                  'r') as yamlfile:
+            cur_yaml = yaml.load(yamlfile)  # , Loader=PrettySafeLoader)
+            # Note the PrettySafeLoader which can load tuples
+
+        # dump the latest analysis into the history file
+        with open(save_location.joinpath('trackpyBatchParamsHistory.yaml'),
+                  'a') as yamlfile:
+            yaml.dump(cur_yaml, yamlfile, explicit_start=True)
+
+        print('Done running file. Batch find took ' +
+              str(round(batch_done_time - start_time)) + ' seconds. ' +
+              'Linking and filtering took ' +
+              str(round(link_done_time - batch_done_time)) + ' seconds.')
+
+        # return self.linked_mitos
 
     def _load_images_from_disk(self) -> Tuple[np.array, ND2Reader]:
         """Accesses the image data from the file."""
@@ -300,8 +374,8 @@ class PrettySafeLoader(yaml.SafeLoader):  # not sure if I need this anymore
 
 
 if __name__ == '__main__':
-    import SSN_image_analysis_GUI
-    controller = SSN_image_analysis_GUI.StrainGUIController()
+    import ssn_image_analysis_gui_controller
+    controller = ssn_image_analysis_gui_controller.StrainGUIController()
     controller.run()
     # test_trial = StrainPropagationTrial()
     # my_image, my_metadata = test_trial.load_trial(
