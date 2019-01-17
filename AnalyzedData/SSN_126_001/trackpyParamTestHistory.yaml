@@ -1,28 +1,48 @@
---- {bottomSlice: 1, brightnessPercentile: 50, gaussianWidth: 1, minParticleMass: 500,
-  particleXYDiameter: 15, particleZDiameter: 21, topSlice: 4}
---- {bottomSlice: 1, brightnessPercentile: 50, gaussianWidth: 1, minParticleMass: 500,
-  particleXYDiameter: 15, particleZDiameter: 21, topSlice: 50}
---- {bottomSlice: 1, brightnessPercentile: 50, gaussianWidth: 1, minParticleMass: 200,
-  particleXYDiameter: 15, particleZDiameter: 21, topSlice: 50}
---- {bottomSlice: 1, brightnessPercentile: 50, gaussianWidth: 1, minParticleMass: 200,
-  particleXYDiameter: 15, particleZDiameter: 21, topSlice: 50}
---- {bottomSlice: 1, brightnessPercentile: 50, gaussianWidth: 1, minParticleMass: 200,
-  particleXYDiameter: 15, particleZDiameter: 21, topSlice: 69}
---- {bottomSlice: 1, brightnessPercentile: 50, gaussianWidth: 1, minParticleMass: 200,
-  particleXYDiameter: 15, particleZDiameter: 21, topSlice: 69}
---- {bottomSlice: 1, brightnessPercentile: 59, gaussianWidth: 1, minParticleMass: 200,
-  particleXYDiameter: 15, particleZDiameter: 21, topSlice: 69}
---- {bottomSlice: 1, brightnessPercentile: 75, gaussianWidth: 1, minParticleMass: 200,
-  particleXYDiameter: 15, particleZDiameter: 21, topSlice: 69}
---- {bottomSlice: 1, brightnessPercentile: 50, gaussianWidth: 3, minParticleMass: 200,
-  particleXYDiameter: 15, particleZDiameter: 21, topSlice: 69}
---- {bottomSlice: 1, brightnessPercentile: 75, gaussianWidth: 3, minParticleMass: 200,
-  particleXYDiameter: 15, particleZDiameter: 21, topSlice: 69}
---- {bottomSlice: 1, brightnessPercentile: 75, gaussianWidth: 3, minParticleMass: 200,
-  particleXYDiameter: 15, particleZDiameter: 21, topSlice: 69}
---- {bottomSlice: 1, brightnessPercentile: 90, gaussianWidth: 3, minParticleMass: 200,
-  particleXYDiameter: 15, particleZDiameter: 21, topSlice: 40}
---- {bottomSlice: 1, brightnessPercentile: 50, gaussianWidth: 3, minParticleMass: 200,
-  particleXYDiameter: 15, particleZDiameter: 21, topSlice: 69}
---- {bottomSlice: 1, brightnessPercentile: 50, gaussianWidth: 3, minParticleMass: 200,
-  particleXYDiameter: 15, particleZDiameter: 21, topSlice: 69}
+--- {bottom_slice: 1, brightness_percentile: 50, gaussian_width: 1, min_particle_mass: 500,
+  particle_xy_diameter: 15, particle_z_diameter: 21, top_slice: 4}
+--- {bottom_slice: 1, brightness_percentile: 50, gaussian_width: 1, min_particle_mass: 500,
+  particle_xy_diameter: 15, particle_z_diameter: 21, top_slice: 50}
+--- {bottom_slice: 1, brightness_percentile: 50, gaussian_width: 1, min_particle_mass: 200,
+  particle_xy_diameter: 15, particle_z_diameter: 21, top_slice: 50}
+--- {bottom_slice: 1, brightness_percentile: 50, gaussian_width: 1, min_particle_mass: 200,
+  particle_xy_diameter: 15, particle_z_diameter: 21, top_slice: 50}
+--- {bottom_slice: 1, brightness_percentile: 50, gaussian_width: 1, min_particle_mass: 200,
+  particle_xy_diameter: 15, particle_z_diameter: 21, top_slice: 69}
+--- {bottom_slice: 1, brightness_percentile: 50, gaussian_width: 1, min_particle_mass: 200,
+  particle_xy_diameter: 15, particle_z_diameter: 21, top_slice: 69}
+--- {bottom_slice: 1, brightness_percentile: 59, gaussian_width: 1, min_particle_mass: 200,
+  particle_xy_diameter: 15, particle_z_diameter: 21, top_slice: 69}
+--- {bottom_slice: 1, brightness_percentile: 75, gaussian_width: 1, min_particle_mass: 200,
+  particle_xy_diameter: 15, particle_z_diameter: 21, top_slice: 69}
+--- {bottom_slice: 1, brightness_percentile: 50, gaussian_width: 3, min_particle_mass: 200,
+  particle_xy_diameter: 15, particle_z_diameter: 21, top_slice: 69}
+--- {bottom_slice: 1, brightness_percentile: 75, gaussian_width: 3, min_particle_mass: 200,
+  particle_xy_diameter: 15, particle_z_diameter: 21, top_slice: 69}
+--- {bottom_slice: 1, brightness_percentile: 75, gaussian_width: 3, min_particle_mass: 200,
+  particle_xy_diameter: 15, particle_z_diameter: 21, top_slice: 69}
+--- {bottom_slice: 1, brightness_percentile: 90, gaussian_width: 3, min_particle_mass: 200,
+  particle_xy_diameter: 15, particle_z_diameter: 21, top_slice: 40}
+--- {bottom_slice: 1, brightness_percentile: 50, gaussian_width: 3, min_particle_mass: 200,
+  particle_xy_diameter: 15, particle_z_diameter: 21, top_slice: 69}
+--- {bottom_slice: 1, brightness_percentile: 50, gaussian_width: 3, min_particle_mass: 200,
+  particle_xy_diameter: 15, particle_z_diameter: 21, top_slice: 69}
+--- {bottom_slice: 1, brightness_percentile: 50, gaussian_width: 3, min_particle_mass: 200,
+  particle_xy_diameter: 15, particle_z_diameter: 21, top_slice: 69}
+--- {bottom_slice: 1, brightness_percentile: 50, gaussian_width: 3, min_particle_mass: 200,
+  particle_xy_diameter: 15, particle_z_diameter: 21, top_slice: 69}
+--- {bottom_slice: 1, brightness_percentile: 65, gaussian_width: 3, min_particle_mass: 200,
+  particle_xy_diameter: 15, particle_z_diameter: 21, top_slice: 69}
+--- {bottom_slice: 1, brightness_percentile: 65, gaussian_width: 3, min_particle_mass: 200,
+  particle_xy_diameter: 15, particle_z_diameter: 21, top_slice: 69}
+--- {bottom_slice: 1, brightness_percentile: 65, gaussian_width: 3, min_particle_mass: 200,
+  particle_xy_diameter: 15, particle_z_diameter: 21, top_slice: 69}
+--- {bottom_slice: 1, brightness_percentile: 65, gaussian_width: 3, min_particle_mass: 200,
+  particle_xy_diameter: 15, particle_z_diameter: 21, top_slice: 69}
+--- {bottom_slice: 1, brightness_percentile: 65, gaussian_width: 3, min_particle_mass: 200,
+  particle_xy_diameter: 15, particle_z_diameter: 21, top_slice: 69}
+--- {bottom_slice: 1, brightness_percentile: 65, gaussian_width: 3, min_particle_mass: 200,
+  particle_xy_diameter: 15, particle_z_diameter: 21, top_slice: 69}
+--- {bottom_slice: 1, brightness_percentile: 65, gaussian_width: 3, min_particle_mass: 200,
+  particle_xy_diameter: 15, particle_z_diameter: 21, top_slice: 69}
+--- {bottom_slice: 1, brightness_percentile: 50, gaussian_width: 3, min_particle_mass: 100,
+  particle_xy_diameter: 15, particle_z_diameter: 21, top_slice: 69}

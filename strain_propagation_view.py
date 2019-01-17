@@ -43,11 +43,11 @@ class SSN_analysis_GUI(tk.Frame):
         self.notebook.pack(expand=1, fill=tk.BOTH)
         self.root.update()
 
-        self.inspect_image_frame = InspectionFrame(self.notebook, self.dpi)
-        self.notebook.add(self.inspect_image_frame, text="Inspect Images")
+        self.analyze_trial_frame = AnalyzeTrialFrame(self.notebook, self.dpi)
+        self.notebook.add(self.analyze_trial_frame, text="Inspect Images")
 
-        self.analyze_trial_frame = AnalyzeTrialFrame(self.notebook)
-        self.notebook.add(self.analyze_trial_frame, text="Analyze Trial")
+        # self.analyze_trial_frame = AnalyzeTrialFrame(self.notebook, self.dpi)
+        # self.notebook.add(self.analyze_trial_frame, text="Analyze Trial")
 
         self.plot_results_frame = PlotResultsFrame(self.notebook)
         self.notebook.add(self.plot_results_frame, text="Plot Results")
@@ -92,16 +92,12 @@ class FileLoadFrame(tk.Frame):
         self.run_batch_button.pack(side=tk.RIGHT)
         self.button_frame.pack(side=tk.BOTTOM)
 
+        self.update_file_tree()
+
+    def update_file_tree(self):
         # now, we load all the file names into a Treeview for user selection
         data_location = '/Users/adam/Documents/SenseOfTouchResearch/SSN_data/*'
         experiment_days = glob.iglob(data_location)
-        # self.analyzed_data_location = pathlib.Path(
-        #         '/Users/adam/Documents/SenseOfTouchResearch/'
-        #         'SSN_ImageAnalysis/AnalyzedData/' + self.experiment_id + '/')
-        # self.metadata_file_path = self.analyzed_data_location.joinpath(
-        #          'metadata.yaml')
-        # self.param_test_history_file = self.analyzed_data_location.joinpath(
-        #          'trackpyParamTestHistory.yaml')
 
         self.file_tree = tk.ttk.Treeview(self, height=37,
                                          columns=("status", "filename"))
@@ -138,7 +134,7 @@ class FileLoadFrame(tk.Frame):
 
             except ValueError:  # we get here if dir name is not a number
                 pass  # and we ignore these dirs
-        self.file_tree.pack(fill=tk.BOTH, anchor=tk.N)  # fill = tk.X,
+        self.file_tree.pack(fill=tk.BOTH, anchor=tk.N)
 
     def load_metadata_from_yaml(self, metadata_file_path: str) -> dict:
         """Loads metadata from an existing yaml file."""
@@ -148,7 +144,7 @@ class FileLoadFrame(tk.Frame):
         return metadata
 
 
-class InspectionFrame(tk.Frame):
+class AnalyzeTrialFrame(tk.Frame):
     def __init__(self, parent, screen_dpi):
         # TODO: docstring
         tk.Frame.__init__(self, parent)
@@ -201,16 +197,15 @@ class InspectionFrame(tk.Frame):
         self.timepoint_selector.grid(row=param_frame_row, column=2)
         param_frame_row += 1
 
-        # Button for toggling mito candidate labels image
-        self.plot_labels_box_status = tk.IntVar(value=1)
-        self.plot_labels_box = ttk.Checkbutton(
+        # dropdown for toggling mito candidate labels image
+        self.plot_labels_drop = ttk.Combobox(
                 self.param_frame,
-                text='Plot mitochondria candidates?',
-                variable=self.plot_labels_box_status)
-        self.plot_labels_box.grid(
-                row=param_frame_row, column=1, sticky=tk.N)
-        self.plot_labels_box.state(['selected', '!alternate'])
-        self.param_frame.grid_rowconfigure(param_frame_row, minsize=50)
+                state="readonly",
+                values=[
+                        'Plot mitochondria for this stack',
+                        'Plot trajectories',
+                        'No overlay'])
+        self.plot_labels_drop.grid(column=1, row=param_frame_row)
 
         # Button for updating image
         self.update_image_btn = ttk.Button(self.param_frame,
@@ -241,7 +236,15 @@ class InspectionFrame(tk.Frame):
         self.top_slice_selector.grid(row=param_frame_row, column=2)
         param_frame_row += 1
 
-        # gaussianWidth,
+        # Selector for last timepoint
+        self.last_time_label = ttk.Label(self.param_frame,
+                                         text='Final timepoint to analyze: ')
+        self.last_time_label.grid(row=param_frame_row, column=1)
+        self.last_time_selector = tk.Spinbox(self.param_frame, values=(1, 2))
+        self.last_time_selector.grid(row=param_frame_row, column=2)
+        param_frame_row += 1
+
+        # gaussian_width,
         self.gaussian_blur_width_label = ttk.Label(
                 self.param_frame, text='Width of Gaussian blur kernel: ')
         self.gaussian_blur_width_label.grid(row=param_frame_row, column=1)
@@ -250,7 +253,7 @@ class InspectionFrame(tk.Frame):
         self.gaussian_blur_width.grid(row=param_frame_row, column=2)
         param_frame_row += 1
 
-        # particleZDiameter,
+        # particle_z_diameter,
         self.z_diameter_label = ttk.Label(self.param_frame,
                                           text='Particle z diameter: ')
         self.z_diameter_label.grid(row=param_frame_row, column=1)
@@ -259,7 +262,7 @@ class InspectionFrame(tk.Frame):
         self.z_diameter_selector.grid(row=param_frame_row, column=2)
         param_frame_row += 1
 
-        #                 particleXYDiameter,
+        #                 particle_xy_diameter,
         self.xy_diameter_label = ttk.Label(self.param_frame,
                                            text='Particle xy diameter: ')
         self.xy_diameter_label.grid(row=param_frame_row, column=1)
@@ -268,7 +271,7 @@ class InspectionFrame(tk.Frame):
         self.xy_diameter_selector.grid(row=param_frame_row, column=2)
         param_frame_row += 1
 
-        #                 brightnessPercentile,
+        #                 brightness_percentile,
         self.brightness_percentile_label = ttk.Label(
                 self.param_frame, text='Brightness percentile: ')
         self.brightness_percentile_label.grid(row=param_frame_row, column=1)
@@ -277,19 +280,34 @@ class InspectionFrame(tk.Frame):
         self.brightness_percentile_selector.grid(row=param_frame_row, column=2)
         param_frame_row += 1
 
-        #                 minParticleMass,
+        #                 min_particle_mass,
         self.min_particle_mass_label = ttk.Label(
                 self.param_frame, text='Minimum particle mass: ')
         self.min_particle_mass_label.grid(row=param_frame_row, column=1)
-        self.min_particle_mass_selector = tk.Entry(self.param_frame)
-        self.min_particle_mass_selector.grid(row=param_frame_row, column=2)
+        self.min_mass_selector = tk.Entry(self.param_frame)
+        self.min_mass_selector.grid(row=param_frame_row, column=2)
         param_frame_row += 1
 
-        # Button to move to next tab
+        # radius for linking particles
+        self.linking_radius_label = ttk.Label(
+                self.param_frame, text='Linking search radius: ')
+        self.linking_radius_label.grid(row=param_frame_row, column=1)
+        self.linking_radius_selector = tk.Spinbox(
+                self.param_frame, values=list(range(1, 100)))
+        self.linking_radius_selector.grid(row=param_frame_row, column=2)
+        param_frame_row += 1
+
+        # Button to move to test parameters
         self.test_param_button = ttk.Button(
-                self.param_frame, text='Start parameter testing')
+                self.param_frame, text='Test parameters on one stack')
         self.test_param_button.grid(
-                row=param_frame_row, column=1, columnspan=2)
+                row=param_frame_row, column=1)
+
+        # Button to analyze all timepoints with these parameters
+        self.full_analysis_button = ttk.Button(
+                self.param_frame, text='Run full analysis')
+        self.full_analysis_button.grid(
+                row=param_frame_row, column=2)
 
         self.param_frame.grid(row=0, column=1)
 
@@ -297,30 +315,34 @@ class InspectionFrame(tk.Frame):
         self.save_data_frame = tk.Frame(self)
         save_frame_row = 0
 
+        # Show notes from metadata
         self.metadata_notes_label = ttk.Label(self.save_data_frame,
                                               text='Notes from metadata:')
         self.metadata_notes_label.grid(row=save_frame_row, column=1)
         save_frame_row += 1
-
         self.metadata_notes = tk.Message(self.save_data_frame)
         self.metadata_notes.grid(row=save_frame_row, column=1)
         save_frame_row += 1
 
+        # Show height of stack
         self.stack_height_label = ttk.Label(self.save_data_frame,
                                             text='Stack height:')
         self.stack_height_label.grid(row=save_frame_row, column=1)
         save_frame_row += 1
 
+        # Show which neuron is being tested
         self.neuron_id_label = ttk.Label(self.save_data_frame,
                                          text='Neuron:')
         self.neuron_id_label.grid(row=save_frame_row, column=1)
         save_frame_row += 1
 
+        # Show which side the worm's vulva is on
         self.vulva_side_label = ttk.Label(self.save_data_frame,
                                           text='Vulva side:')
         self.vulva_side_label.grid(row=save_frame_row, column=1)
         save_frame_row += 1
 
+        # Update status
         self.status_dropdown = ttk.Combobox(
                 self.save_data_frame,
                 state="readonly",
@@ -338,29 +360,6 @@ class InspectionFrame(tk.Frame):
         # TODO: add button for loading images that aren't yet loaded
 
 
-class AnalyzeTrialFrame(tk.Frame):
-    def __init__(self, parent):
-        tk.Frame.__init__(self, parent)
-        label = tk.ttk.Label(self, text="run me?")
-        label.grid(column=1, row=1)
-        label.pack()
-
-        # TODO: add canvas for showing results of one frame
-
-        # TODO: add input fields for parameters
-        #                 trackingSeachRadius
-        # self.top_slice_label = ttk.Label(self.param_frame,
-        #                                  text='Tracking search radius: ')
-        # self.top_slice_label.grid(row=param_frame_row, column=1)
-        # self.top_slice_selector = tk.Spinbox(self.param_frame, values=(1, 2))
-        # self.top_slice_selector.grid(row=param_frame_row, column=2)
-        # param_frame_row += 1
-
-        # TODO: add button to start analysis
-
-        # TODO: add text when finished to indicate time and relevant results
-
-
 class PlotResultsFrame(tk.Frame):
     def __init__(self, parent):
         tk.Frame.__init__(self, parent)
@@ -368,12 +367,12 @@ class PlotResultsFrame(tk.Frame):
         label.grid(column=1, row=1)
         label.pack()
 
-        # TODO: add canvas for showing results of one frame
+        # TODO: add canvas for showing strain results
 
         # TODO: add buttons for interesting plots
 
 
 if __name__ == '__main__':
-    import SSN_image_analysis_GUI
-    controller = SSN_image_analysis_GUI.StrainGUIController()
+    import ssn_image_analysis_gui_controller
+    controller = ssn_image_analysis_gui_controller.StrainGUIController()
     controller.run()
