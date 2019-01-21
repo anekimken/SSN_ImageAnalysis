@@ -16,6 +16,7 @@ from typing import Tuple
 
 import numpy as np
 import pims
+import pandas as pd
 # from PIL import Image
 from nd2reader import ND2Reader
 # from scipy import ndimage as ndi
@@ -57,6 +58,14 @@ class StrainPropagationTrial(object):
         image_array: Numpy array with image data. Can be null if not loaded
 
     """
+    STATUSES = ['No metadata.yaml file',
+                'No analysis status yet',
+                'Not started',
+                'Testing parameters',
+                'Testing parameters for batch',
+                'Strain calculated',
+                'Failed - too close to edge']
+
     def __init__(self):
         self.mito_candidates = None
         self.linked_mitos = None
@@ -105,12 +114,21 @@ class StrainPropagationTrial(object):
                  'metadata.yaml')
         self.param_test_history_file = self.analyzed_data_location.joinpath(
                  'trackpyParamTestHistory.yaml')
+        self.batch_data_file = self.analyzed_data_location.joinpath(
+                 'trackpyBatchResults.yaml')
 
         # Create directory if necessary
         if not self.analyzed_data_location.is_dir():
             self.analyzed_data_location.mkdir()
 
         # TODO: Load other analyzed data here too
+        # Load analyzed data
+        if self.batch_data_file.is_file():
+            with open(self.batch_data_file, 'r') as yamlfile:
+                linked_mitos_dict = yaml.load(yamlfile)
+                self.linked_mitos = pd.DataFrame.from_dict(
+                        linked_mitos_dict, orient='index')
+
         start_time = time.time()
         if (self.load_images is False and  # don't load images
                 self.overwrite_metadata is False and  # don't overwrite
@@ -235,13 +253,16 @@ class StrainPropagationTrial(object):
         #         'particle').nunique().shape[0]
         link_done_time = time.time()
 
-        # add the search radius to the yaml created by tp.batch
+        # add other parameters to the yaml created by tp.batch
         # TODO: add top/bottom slice, last timepoint
-        search_radius_dict = dict(
-                {'tracking_seach_radius': tracking_seach_radius})
+        other_param_dict = dict(
+                {'tracking_seach_radius': tracking_seach_radius,
+                 'bottom_slice': bottom_slice,
+                 'top_slice': top_slice,
+                 'last_timepoint': last_timepoint})
         with open(save_location.joinpath('trackpyBatchParams.yaml'),
                   'a') as yamlfile:
-            yaml.dump(search_radius_dict, yamlfile, default_flow_style=False)
+            yaml.dump(other_param_dict, yamlfile, default_flow_style=False)
 
         # load the file of parameters that tp.batch just saved
         with open(save_location.joinpath('trackpyBatchParams.yaml'),
@@ -253,6 +274,14 @@ class StrainPropagationTrial(object):
         with open(save_location.joinpath('trackpyBatchParamsHistory.yaml'),
                   'a') as yamlfile:
             yaml.dump(cur_yaml, yamlfile, explicit_start=True)
+
+        # save the results to a yaml file
+        linked_mitos_dict = self.linked_mitos.reset_index(
+                drop=True).to_dict(orient='index')
+        with open(save_location.joinpath('trackpyBatchResults.yaml'),
+                  'w') as yamlfile:
+            yaml.dump(linked_mitos_dict, yamlfile,
+                      explicit_start=True, default_flow_style=False)
 
         print('Done running file. Batch find took ' +
               str(round(batch_done_time - start_time)) + ' seconds. ' +
@@ -276,6 +305,12 @@ class StrainPropagationTrial(object):
             metadata = yaml.load(yamlfile)
 
         return metadata
+
+    def get_analysis_status(self) -> str:
+        """Returns analysis status for this trial."""
+        analysis_status = self.metadata['analysis_status']
+
+        return analysis_status
 
     def _load_analysis_params(self) -> dict:
         """Loads analysis parameters from an existing yaml file."""
@@ -377,11 +412,3 @@ if __name__ == '__main__':
     import ssn_image_analysis_gui_controller
     controller = ssn_image_analysis_gui_controller.StrainGUIController()
     controller.run()
-    # test_trial = StrainPropagationTrial()
-    # my_image, my_metadata = test_trial.load_trial(
-    #         '/Users/adam/Documents/'
-    #         'SenseOfTouchResearch/'
-    #         'SSN_data/20181220/SSN_126_001.nd2',
-    #         load_images=False, overwrite_metadata=True)
-    # my_metadata = test_trial.metadata
-    # my_image = test_trial.image_array

@@ -1,0 +1,48 @@
+---
+diameter: !!python/tuple [21, 15, 15]
+invert: false
+max_iterations: 10
+maxsize: null
+minmass: 200
+noise_size: 3
+percentile: 25
+preprocess: true
+separation: null
+smoothing_size: null
+source: null
+timestamp: 2018-12-18-000430
+topn: null
+trackingSeachRadius: 100
+trackpy_version: 0.4.1
+---
+diameter: !!python/tuple [21, 15, 15]
+invert: false
+max_iterations: 10
+maxsize: null
+minmass: 200
+noise_size: 3
+percentile: 25
+preprocess: true
+separation: null
+smoothing_size: null
+source: null
+timestamp: 2018-12-18-000430
+topn: null
+trackingSeachRadius: 100
+trackpy_version: 0.4.1
+---
+diameter: !!python/tuple [21, 15, 15]
+invert: false
+max_iterations: 10
+maxsize: null
+minmass: 200
+noise_size: 3
+percentile: 25
+preprocess: true
+separation: null
+smoothing_size: null
+source: null
+timestamp: 2018-12-18-005911
+topn: null
+trackingSeachRadius: 50
+trackpy_version: 0.4.1

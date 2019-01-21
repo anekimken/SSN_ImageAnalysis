@@ -10,6 +10,8 @@ import numpy as np
 import tkinter as tk
 import threading
 from multiprocessing import Process, Queue
+import glob
+import yaml
 
 import strain_propagation_trial as ssn_trial
 import strain_propagation_view as ssn_view
@@ -38,6 +40,16 @@ class StrainGUIController:
                 '<<TreeviewSelect>>', func=self.on_file_selection_changed)
 
         # Analysis frame
+        self.gui.analyze_trial_frame.plot_canvas._tkcanvas.bind(
+                "<ButtonPress-1>", self.on_button_press)
+        self.gui.analyze_trial_frame.plot_canvas._tkcanvas.bind(
+                "<B1-Motion>", self.on_move_press)
+        self.gui.analyze_trial_frame.plot_canvas._tkcanvas.bind(
+                "<ButtonRelease-1>", self.on_button_release)
+        self.roi = None
+        self.roi_start_x = None
+        self.roi_start_x = None
+
         self.gui.analyze_trial_frame.update_image_btn.bind(
                 "<ButtonRelease-1>", func=self.update_inspection_image)
         self.gui.analyze_trial_frame.slice_selector.bind(
@@ -48,10 +60,16 @@ class StrainGUIController:
                 "<ButtonRelease-1>", func=self.test_params)
         self.gui.analyze_trial_frame.full_analysis_button.bind(
                 "<ButtonRelease-1>", func=self.run_full_analysis)
+        self.gui.analyze_trial_frame.status_dropdown[
+                'values'] = self.trial.STATUSES
         self.gui.analyze_trial_frame.status_dropdown.bind(
                 "<<ComboboxSelected>>", func=self.update_status)
         self.gui.analyze_trial_frame.plot_labels_drop.bind(
                 "<<ComboboxSelected>>", func=self.update_inspection_image)
+
+        # Plotting frame
+        self.gui.plot_results_frame.progress_plot_button.bind(
+                "<ButtonRelease-1>", func=self.get_analysis_progress)
 
     def run(self):
         self.root.title("SSN Image Analysis")
@@ -83,9 +101,11 @@ class StrainGUIController:
         self.trial.load_trial(self.file_list[0][1],
                               load_images=load_images,
                               overwrite_metadata=overwrite_metadata)
+        if 'analysis_status' not in self.trial.metadata:
+            self.trial.metadata['analysis_status'] = 'Not started'
+            self.trial.write_metadata_to_yaml(self.trial.metadata)
         current_status = self.trial.metadata['analysis_status']
         self.gui.analyze_trial_frame.status_dropdown.set(current_status)
-        # print(self.trial.metadata['analysis_status'])
 
         # load inspection image on inspection tab and related parameters
         if load_images is True or overwrite_metadata is True:
@@ -113,7 +133,7 @@ class StrainGUIController:
                 text=('Vulva side: ' +
                       self.trial.metadata['vulva_orientation']))
 
-        self._load_last_test_params()
+        self._display_last_test_params()
         self.gui.notebook.select(1)
 
     def on_file_selection_changed(self, event):
@@ -152,6 +172,7 @@ class StrainGUIController:
         inspection_ax = analysis_frame.ax
         inspection_ax.clear()
 
+        # TODO: move this to view model and send data there instead?
         if max_proj_checkbox is True:  # max projection
             stack = self.trial.image_array[selected_timepoint]
             image_to_display = np.amax(stack, 0)  # collapse z axis
@@ -207,6 +228,43 @@ class StrainGUIController:
         analysis_frame.ax.axis('off')
         analysis_frame.plot_canvas.draw()
 
+    def on_button_press(self, event=None):
+        analysis_frame = self.gui.analyze_trial_frame
+        canvas = analysis_frame.plot_canvas._tkcanvas
+        # save mouse drag start position
+        self.roi_start_x = event.x
+        self.roi_start_y = event.y
+
+        analysis_frame.rect_start_x = event.x
+        analysis_frame.rect_start_y = event.y
+
+        # create rectangle if not yet exist
+        if analysis_frame.rect is None:
+            analysis_frame.rect = canvas.create_rectangle(
+                    0, 0, 1, 1, fill='', outline='white')
+
+    def on_move_press(self, event=None):
+        analysis_frame = self.gui.analyze_trial_frame
+        canvas = analysis_frame.plot_canvas._tkcanvas
+        curX, curY = (event.x, event.y)
+
+        # expand rectangle as you drag the mouse
+        canvas.coords(
+                analysis_frame.rect,
+                analysis_frame.rect_start_x,
+                analysis_frame.rect_start_y,
+                curX,
+                curY)
+
+        # TODO: convert ROI to image space from pixel space
+        self.roi = [analysis_frame.rect_start_x,
+                    analysis_frame.rect_start_y,
+                    curX,
+                    curY]
+
+    def on_button_release(self, event=None):
+        print('Selected ROI: ', self.roi)
+
     # def test_params(self, event):
     #     # TODO: decide if I really want threads, and, if so, organize them
     #     thread = threading.Thread(target=self.test_params_separate_thread)
@@ -253,8 +311,6 @@ class StrainGUIController:
         analysis_frame.plot_labels_drop.set('Plot mitochondria for this stack')
         self.update_inspection_image()
 
-        # TODO: save results
-
     def run_full_analysis(self, event=None):
         print('Looking for mitochondria in all timepoints...')
         analysis_frame = self.gui.analyze_trial_frame
@@ -270,6 +326,19 @@ class StrainGUIController:
                 analysis_frame.linking_radius_selector.get())
         last_timepoint = int(
                 analysis_frame.last_time_selector.get())
+
+        # self.tp_process = Process(target=self.trial.run_batch,
+        #                           args=(gaussian_width,
+        #                                 particle_z_diameter,
+        #                                 particle_xy_diameter,
+        #                                 brightness_percentile,
+        #                                 min_particle_mass,
+        #                                 bottom_slice,
+        #                                 top_slice,
+        #                                 tracking_seach_radius,
+        #                                 last_timepoint))
+        # tp_thread = threading.Thread(target=self.run_tp_process)
+        # tp_thread.start()
 
         # TODO: run as producer in separate process
         # TODO: Create consumer in separate thread that waits for this to stop
@@ -290,6 +359,10 @@ class StrainGUIController:
         analysis_frame.plot_labels_drop.set('Plot trajectories')
         self.update_inspection_image()
 
+    def run_tp_process(self):
+        self.tp_process.start()
+        self.tp_process.join()
+
     def update_status(self, event=None):
         new_status = self.gui.analyze_trial_frame.status_dropdown.get()
         self.trial.metadata['analysis_status'] = new_status
@@ -298,7 +371,39 @@ class StrainGUIController:
         self.gui.file_load_frame.update_file_tree()
         self.gui.root.update()
 
-    def _load_last_test_params(self, event=None):
+    def get_analysis_progress(self, event=None):
+        """Gets the analysis status of all trials and plots their status"""
+
+        all_statuses_dict = {}
+        status_values = self.trial.STATUSES
+        base_dir = '/Users/adam/Documents/SenseOfTouchResearch/'
+        data_location = (base_dir + 'SSN_data/*/SSN_*.nd2')
+        metadata_location = (base_dir + 'SSN_ImageAnalysis/'
+                             'AnalyzedData/')
+
+        # for all subfiles ending in .nd2
+        for nd2_file in glob.glob(data_location):
+            experiment_id = nd2_file[-15:-4]
+            metadata_file = (metadata_location +
+                             experiment_id +
+                             '/metadata.yaml')
+            # try to load metadata
+            try:
+                with open(metadata_file, 'r') as yamlfile:
+                    metadata = yaml.load(yamlfile)
+                    # if metadata exists, get analysis status and store it
+                    all_statuses_dict[experiment_id] = metadata[
+                            'analysis_status']
+            except FileNotFoundError:
+                all_statuses_dict[experiment_id] = 'No metadata.yaml file'
+            except KeyError:
+                all_statuses_dict[experiment_id] = 'No analysis status yet'
+
+        # send all analysis statuses to view module for plotting
+        self.gui.plot_results_frame.plot_progress(all_statuses_dict,
+                                                  status_values)
+
+    def _display_last_test_params(self, event=None):
         analysis_frame = self.gui.analyze_trial_frame
         params = self.trial.latest_test_params
 
@@ -331,7 +436,10 @@ class StrainGUIController:
         analysis_frame.min_mass_selector.insert(
                 0, params['min_particle_mass'])
 
-        # TODO: save/load linking radius parameter
+        # analysis_frame.min_mass_selector.delete(0, 'end')
+        # analysis_frame.min_mass_selector.insert(
+        #         0, params['min_particle_mass'])
+        # TODO: save/load linking radius and last timepoint params
 
 
 if __name__ == '__main__':
