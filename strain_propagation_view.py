@@ -33,7 +33,6 @@ class SSN_analysis_GUI(tk.Frame):
         self.root.geometry("%dx%d+0+0" % (w, h))
         self.dpi = round(self.root.winfo_fpixels('1i'))
         self.notebook = ttk.Notebook(root)
-        # self.notebook.height_in = 4
 
         self.file_load_frame = FileLoadFrame(self.notebook)
         self.file_load_tab = self.notebook.add(
@@ -46,10 +45,7 @@ class SSN_analysis_GUI(tk.Frame):
         self.analyze_trial_frame = AnalyzeTrialFrame(self.notebook, self.dpi)
         self.notebook.add(self.analyze_trial_frame, text="Inspect Images")
 
-        # self.analyze_trial_frame = AnalyzeTrialFrame(self.notebook, self.dpi)
-        # self.notebook.add(self.analyze_trial_frame, text="Analyze Trial")
-
-        self.plot_results_frame = PlotResultsFrame(self.notebook)
+        self.plot_results_frame = PlotResultsFrame(self.notebook, self.dpi)
         self.notebook.add(self.plot_results_frame, text="Plot Results")
 
         self.notebook.pack(expand=1, fill=tk.BOTH)
@@ -149,6 +145,10 @@ class AnalyzeTrialFrame(tk.Frame):
         # TODO: docstring
         tk.Frame.__init__(self, parent)
         self.parent = parent
+
+        self.rect = None
+        self.rect_start_x = None
+        self.rect_start_y = None
 
         # get size for making figure
         notebook_height = self.parent.winfo_height()
@@ -346,12 +346,7 @@ class AnalyzeTrialFrame(tk.Frame):
         self.status_dropdown = ttk.Combobox(
                 self.save_data_frame,
                 state="readonly",
-                values=[
-                        'No metadata.yaml file',
-                        'Not started',
-                        'Testing parameters',
-                        'Testing parameters for batch',
-                        'Strain calculated'])
+                values=['No options loaded yet'])
         self.status_dropdown.grid(column=1, row=save_frame_row)
         save_frame_row += 1
 
@@ -361,15 +356,51 @@ class AnalyzeTrialFrame(tk.Frame):
 
 
 class PlotResultsFrame(tk.Frame):
-    def __init__(self, parent):
+    def __init__(self, parent, screen_dpi):
         tk.Frame.__init__(self, parent)
-        label = tk.ttk.Label(self, text="check out my science?")
-        label.grid(column=1, row=1)
-        label.pack()
+        self.parent = parent
 
-        # TODO: add canvas for showing strain results
+        notebook_height = self.parent.winfo_height()
+        self.notebook_height_in = notebook_height / screen_dpi
+
+        # Create a figure and a canvas for showing images
+        self.fig = mpl.figure.Figure(figsize=(self.notebook_height_in - 1,
+                                              self.notebook_height_in - 1))
+        self.ax = self.fig.add_axes([0.1, 0.2, 0.8, 0.7])
+        self.plot_canvas = FigureCanvasTkAgg(self.fig, self)
+        self.plot_canvas.draw()
+        self.plot_canvas.get_tk_widget().grid(sticky=tk.W + tk.N + tk.S,
+                                              row=0,
+                                              column=0,
+                                              rowspan=3)
+        self.plot_canvas.get_tk_widget().grid_rowconfigure(0, weight=1)
+
+        # Creat a frame to put all the controls and parameters in
+        self.plot_config_frame = tk.Frame(self)
+        config_frame_row = 0
+
+        # Button for analysis progress plots
+        self.progress_plot_button = ttk.Button(self.plot_config_frame,
+                                               text='Plot analysis progress')
+        self.progress_plot_button.grid(row=config_frame_row, column=1)
+        config_frame_row += 1
+
+        self.plot_config_frame.grid(row=0, column=1)
 
         # TODO: add buttons for interesting plots
+
+    def plot_progress(self, all_statuses_dict: dict, status_values: list):
+        status_count = dict.fromkeys(status_values, 0)
+        for experiment_id, status in all_statuses_dict.items():
+            status_count[status] += 1
+
+        self.ax.bar(range(len(status_count)), status_count.values(),
+                    align='center')
+        self.ax.set_xticks(range(len(status_count)))
+        self.ax.set_xticklabels(list(status_count.keys()),
+                                rotation=30, horizontalalignment='right')
+
+        self.plot_canvas.draw()
 
 
 if __name__ == '__main__':

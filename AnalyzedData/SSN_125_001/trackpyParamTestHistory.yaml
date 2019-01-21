@@ -1,6 +1,6 @@
---- {bottomSlice: 1, brightnessPercentile: 50, gaussianWidth: 3, minParticleMass: 200,
-  particleXYDiameter: 15, particleZDiameter: 21, topSlice: 69}
---- {bottomSlice: 1, brightnessPercentile: 50, gaussianWidth: 3, minParticleMass: 200,
-  particleXYDiameter: 15, particleZDiameter: 21, topSlice: 69}
---- {bottomSlice: 1, brightnessPercentile: 75, gaussianWidth: 3, minParticleMass: 200,
-  particleXYDiameter: 15, particleZDiameter: 21, topSlice: 69}
+--- {bottom_slice: 1, brightness_percentile: 50, gaussian_width: 3, min_particle_mass: 200,
+  particle_xy_diameter: 15, particle_z_diameter: 21, top_slice: 69}
+--- {bottom_slice: 1, brightness_percentile: 50, gaussian_width: 3, min_particle_mass: 200,
+  particle_xy_diameter: 15, particle_z_diameter: 21, top_slice: 69}
+--- {bottom_slice: 1, brightness_percentile: 75, gaussian_width: 3, min_particle_mass: 200,
+  particle_xy_diameter: 15, particle_z_diameter: 21, top_slice: 69}
