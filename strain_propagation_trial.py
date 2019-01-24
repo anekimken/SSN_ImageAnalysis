@@ -64,7 +64,8 @@ class StrainPropagationTrial(object):
                 'Testing parameters',
                 'Testing parameters for batch',
                 'Strain calculated',
-                'Failed - too close to edge']
+                'Failed - too close to edge',
+                'Failed - not bright enough']
 
     def __init__(self):
         self.mito_candidates = None
@@ -75,10 +76,11 @@ class StrainPropagationTrial(object):
                                     'particle_xy_diameter': 15,
                                     'brightness_percentile': 50,
                                     'min_particle_mass': 200,
-                                    'bottom_slice': 1,
+                                    'bottom_slice': 0,
                                     'top_slice': 2,
                                     'time_point': 1,
-                                    'linking_radius': 20}
+                                    'tracking_seach_radius': 20,
+                                    'last_timepoint': 11}
 
     def load_trial(self,
                    filename: str,
@@ -116,6 +118,8 @@ class StrainPropagationTrial(object):
                  'trackpyParamTestHistory.yaml')
         self.batch_data_file = self.analyzed_data_location.joinpath(
                  'trackpyBatchResults.yaml')
+        self.batch_history_file = self.analyzed_data_location.joinpath(
+                'trackpyBatchParamsHistory.yaml')
 
         # Create directory if necessary
         if not self.analyzed_data_location.is_dir():
@@ -155,7 +159,9 @@ class StrainPropagationTrial(object):
         try:
             self.latest_test_params = self._load_analysis_params()
         except FileNotFoundError:
+            print('Previous parameter file not found. Using defaults.')
             self.latest_test_params = self.default_test_params
+            self.latest_test_params['top_slice'] = self.image_array.shape[1]
 
         finish_time = time.time()
         print('Loaded file in ' + str(round(finish_time - start_time)) +
@@ -232,8 +238,8 @@ class StrainPropagationTrial(object):
         start_time = time.time()
         # run batch of images with the current set of parameters
         self.mitos_from_batch = tp.batch(
-                slices_to_analyze,
-                particle_diameter,
+                frames=slices_to_analyze,
+                diameter=particle_diameter,
                 percentile=brightness_percentile,
                 minmass=min_particle_mass,
                 noise_size=gaussian_width,
@@ -271,8 +277,7 @@ class StrainPropagationTrial(object):
             # Note the PrettySafeLoader which can load tuples
 
         # dump the latest analysis into the history file
-        with open(save_location.joinpath('trackpyBatchParamsHistory.yaml'),
-                  'a') as yamlfile:
+        with open(self.batch_history_file, 'a') as yamlfile:
             yaml.dump(cur_yaml, yamlfile, explicit_start=True)
 
         # save the results to a yaml file
@@ -282,6 +287,7 @@ class StrainPropagationTrial(object):
                   'w') as yamlfile:
             yaml.dump(linked_mitos_dict, yamlfile,
                       explicit_start=True, default_flow_style=False)
+            # TODO: save all particles found, can be linked later
 
         print('Done running file. Batch find took ' +
               str(round(batch_done_time - start_time)) + ' seconds. ' +
@@ -319,8 +325,14 @@ class StrainPropagationTrial(object):
             trackpy_locate_params = None
             for trackpy_locate_params in entire_history:  # get latest params
                 pass
+        with open(self.batch_history_file, 'r') as yamlfile:
+            entire_history = yaml.load_all(yamlfile)
+            trackpy_batch_params = None
+            for trackpy_batch_params in entire_history:  # get latest params
+                pass
+        all_params = {**trackpy_locate_params, **trackpy_batch_params}
 
-        return trackpy_locate_params
+        return all_params
 
     def write_metadata_to_yaml(self, metadata_dict: dict):
         """Takes metadata dict and writes it to a yaml file"""

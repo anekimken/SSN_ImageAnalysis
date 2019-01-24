@@ -1,6 +1,6 @@
 ---
-Experiment_id: SSN_111_001
-analysis_status: Not started
+Experiment_id: SSN_106_001
+analysis_status: Testing parameters for batch
 bleach_time: 2018-11-25 12:45:00
 cultivation_temp: 20
 device_ID: Y4P7-4
@@ -9,18 +9,17 @@ microscope: Spinning Disk Confocal in CSIF Shriram
 microscope_channel: SDC 561-ALN
 microscope_objective: 40x oil
 neuron: PVM
-notes: 50 ms exposure time. 11 stacks, 300 kPa on even numbered stacks. Fairly big
-  worm.
-num_eggs: 8
-num_timepoints: 11
+notes: 300 kPa actuation on 2nd and 4th stacks, 50 ms exposure time.
+num_eggs: 2
+num_timepoints: 5
 pixel_microns: 0.275
 purpose: Baseline measurement
 slice_height_pix: 1200
 slice_width_pix: 600
-stack_height: 64
-timestamp: 2018-11-30 14:46:58
-total_images: 704
+stack_height: 68
+timestamp: 2018-11-28 14:24:21
+total_images: 340
 user: anekimke@stanford.edu
-vulva_orientation: West
+vulva_orientation: East
 worm_life_stage: YA
 worm_strain: NM3573

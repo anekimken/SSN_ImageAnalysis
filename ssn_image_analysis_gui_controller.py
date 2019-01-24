@@ -8,8 +8,8 @@ Created on Fri Jan  4 10:32:39 2019
 # TODO: DOCSTRINGS!!!!
 import numpy as np
 import tkinter as tk
-import threading
-from multiprocessing import Process, Queue
+# import threading
+# from multiprocessing import Process, Queue
 import glob
 import yaml
 
@@ -36,6 +36,8 @@ class StrainGUIController:
         # Load trial tab
         self.gui.file_load_frame.load_trial_button.bind(
                 "<ButtonRelease-1>", func=self.load_trial)
+        self.gui.file_load_frame.run_multiple_files_button.bind(
+                "<ButtonRelease-1>", func=self.run_multiple_files)
         self.gui.file_load_frame.file_tree.bind(
                 '<<TreeviewSelect>>', func=self.on_file_selection_changed)
 
@@ -46,10 +48,8 @@ class StrainGUIController:
                 "<B1-Motion>", self.on_move_press)
         self.gui.analyze_trial_frame.plot_canvas._tkcanvas.bind(
                 "<ButtonRelease-1>", self.on_button_release)
-        self.roi = None
-        self.roi_start_x = None
-        self.roi_start_x = None
-
+        self.gui.analyze_trial_frame.clear_roi_btn.bind(
+                "<ButtonRelease-1>", self.clear_roi)
         self.gui.analyze_trial_frame.update_image_btn.bind(
                 "<ButtonRelease-1>", func=self.update_inspection_image)
         self.gui.analyze_trial_frame.slice_selector.bind(
@@ -136,135 +136,6 @@ class StrainGUIController:
         self._display_last_test_params()
         self.gui.notebook.select(1)
 
-    def on_file_selection_changed(self, event):
-        """This function keeps track of which files are selected for
-        analysis. If more than one files are selected, the Run Batch option
-        is available, otherwise only the Load Trial button is active.
-        """
-        file_tree = self.gui.file_load_frame.file_tree
-        file_load_frame = self.gui.file_load_frame
-        self.file_list = []
-        selection = file_tree.selection()
-        for this_item in selection:
-            info = file_tree.item(this_item)
-            self.file_list.append(info['values'])
-        if len(self.file_list) > 1:
-            file_load_frame.load_trial_button.config(state=tk.DISABLED)
-            file_load_frame.run_batch_button.config(state=tk.NORMAL)
-        elif len(self.file_list) == 1 and info['tags'] == ['day']:
-            file_load_frame.load_trial_button.config(state=tk.DISABLED)
-            file_load_frame.run_batch_button.config(state=tk.NORMAL)
-            # TODO: add all trials from this day to file_list
-        elif len(self.file_list) == 1 and info['tags'] == ['trial']:
-            file_load_frame.load_trial_button.config(state=tk.NORMAL)
-            file_load_frame.run_batch_button.config(state=tk.DISABLED)
-
-    def spinbox_delay_then_update_image(self, event=None):
-        self.gui.analyze_trial_frame.after(1, self.update_inspection_image)
-
-    def update_inspection_image(self, event=None):
-        analysis_frame = self.gui.analyze_trial_frame
-        plot_mitos_status = analysis_frame.plot_labels_drop.get()
-        max_proj_checkbox = analysis_frame.max_proj_checkbox.instate(
-                ['selected'])
-        selected_slice = int(analysis_frame.slice_selector.get())
-        selected_timepoint = int(analysis_frame.timepoint_selector.get()) - 1
-        inspection_ax = analysis_frame.ax
-        inspection_ax.clear()
-
-        # TODO: move this to view model and send data there instead?
-        if max_proj_checkbox is True:  # max projection
-            stack = self.trial.image_array[selected_timepoint]
-            image_to_display = np.amax(stack, 0)  # collapse z axis
-            image_to_display = image_to_display.squeeze()
-        else:  # single slice
-            image_to_display = self.trial.image_array[
-                    selected_timepoint, selected_slice]
-
-        if plot_mitos_status == 'Plot mitochondria for this stack':
-            if (self.trial.linked_mitos is not None and
-                    selected_timepoint - 1 <=
-                    max(self.trial.linked_mitos['frame'])):
-                mitos_this_frame = self.trial.mitos_from_batch.loc[
-                        self.trial.mitos_from_batch[
-                                'frame'] == selected_timepoint]
-                mitos_this_frame.plot(
-                            x='x', y='y', ax=analysis_frame.ax,
-                            color='#FB8072', marker='o', linestyle='None')
-            elif self.trial.mito_candidates is not None:
-                self.trial.mito_candidates.plot(
-                    x='x', y='y', ax=analysis_frame.ax, color='#FB8072',
-                    marker='o', linestyle='None')
-        elif plot_mitos_status == 'Plot trajectories':
-            if self.trial.linked_mitos is not None:
-                try:
-                    theCount = 0  # ah ah ah ah
-                    for i in range(max(self.trial.linked_mitos['particle'])):
-                        thisParticleTraj = self.trial.linked_mitos.loc[
-                                self.trial.linked_mitos['particle'] == i+1]
-                        if not thisParticleTraj.empty:
-                            theCount += 1
-                            thisParticleTraj.plot(
-                                    x='x',
-                                    y='y',
-                                    ax=analysis_frame.ax,
-                                    color='#FB8072')
-                            analysis_frame.ax.text(
-                                    thisParticleTraj['x'].mean() + 15,
-                                    thisParticleTraj['y'].mean(),
-                                    str(int(thisParticleTraj.iloc[0][
-                                             'particle'])), color='white')
-                            analysis_frame.ax.legend_.remove()
-                except ValueError as err:
-                    if len(self.trial.linked_mitos) == 0:
-                        raise Exception('No particles were found at all '
-                                        'time points. Try expanding search '
-                                        'radius or changing particle finding '
-                                        'parameters.') from err
-                    else:
-                        raise
-
-        analysis_frame.ax.imshow(image_to_display, interpolation='none')
-        analysis_frame.ax.axis('off')
-        analysis_frame.plot_canvas.draw()
-
-    def on_button_press(self, event=None):
-        analysis_frame = self.gui.analyze_trial_frame
-        canvas = analysis_frame.plot_canvas._tkcanvas
-        # save mouse drag start position
-        self.roi_start_x = event.x
-        self.roi_start_y = event.y
-
-        analysis_frame.rect_start_x = event.x
-        analysis_frame.rect_start_y = event.y
-
-        # create rectangle if not yet exist
-        if analysis_frame.rect is None:
-            analysis_frame.rect = canvas.create_rectangle(
-                    0, 0, 1, 1, fill='', outline='white')
-
-    def on_move_press(self, event=None):
-        analysis_frame = self.gui.analyze_trial_frame
-        canvas = analysis_frame.plot_canvas._tkcanvas
-        curX, curY = (event.x, event.y)
-
-        # expand rectangle as you drag the mouse
-        canvas.coords(
-                analysis_frame.rect,
-                analysis_frame.rect_start_x,
-                analysis_frame.rect_start_y,
-                curX,
-                curY)
-
-        # TODO: convert ROI to image space from pixel space
-        self.roi = [analysis_frame.rect_start_x,
-                    analysis_frame.rect_start_y,
-                    curX,
-                    curY]
-
-    def on_button_release(self, event=None):
-        print('Selected ROI: ', self.roi)
-
     # def test_params(self, event):
     #     # TODO: decide if I really want threads, and, if so, organize them
     #     thread = threading.Thread(target=self.test_params_separate_thread)
@@ -281,7 +152,7 @@ class StrainGUIController:
         min_particle_mass = int(analysis_frame.min_mass_selector.get())
         bottom_slice = int(analysis_frame.btm_slice_selector.get())
         top_slice = int(analysis_frame.top_slice_selector.get())
-        time_point = int(analysis_frame.timepoint_selector.get())
+        time_point = int(analysis_frame.timepoint_selector.get()) - 1
         # TODO: validate input
 
         # run trackpy analysis in new thread
@@ -359,9 +230,246 @@ class StrainGUIController:
         analysis_frame.plot_labels_drop.set('Plot trajectories')
         self.update_inspection_image()
 
+    def run_multiple_files(self, event=None):
+        fr = self.gui.file_load_frame
+        overwrite_metadata = fr.overwrite_metadata_box.instate(['selected'])
+        print('Running lots of files...')
+        for i in range(len(self.file_list)):
+            print('Loading file ', self.file_list[i][1])
+            self.trial.load_trial(self.file_list[i][1],
+                                  load_images=True,
+                                  overwrite_metadata=overwrite_metadata)
+            if 'analysis_status' not in self.trial.metadata:
+                self.trial.metadata['analysis_status'] = 'Testing parameters'
+                self.trial.write_metadata_to_yaml(self.trial.metadata)
+
+            params = self.trial.latest_test_params
+
+            print('Looking for particles...')
+            # print(params['gaussian_width'],
+            #       params['particle_z_diameter'],
+            #       params['particle_xy_diameter'],
+            #       params['brightness_percentile'],
+            #       params['min_particle_mass'],
+            #       params['bottom_slice'],
+            #       params['top_slice'],
+            #       params['tracking_seach_radius'],
+            #       params['last_timepoint'])
+            self.trial.run_batch(
+                gaussian_width=params['gaussian_width'],
+                particle_z_diameter=params['particle_z_diameter'],
+                particle_xy_diameter=params['particle_xy_diameter'],
+                brightness_percentile=params['brightness_percentile'],
+                min_particle_mass=params['min_particle_mass'],
+                bottom_slice=params['bottom_slice'],
+                top_slice=params['top_slice'],
+                tracking_seach_radius=params['tracking_seach_radius'],
+                last_timepoint=params['last_timepoint'])
+
+            self.trial = ssn_trial.StrainPropagationTrial()
+            # TODO: !!!DEBUG ME! test this again
+
     def run_tp_process(self):
         self.tp_process.start()
         self.tp_process.join()
+
+    def on_file_selection_changed(self, event):
+        """This function keeps track of which files are selected for
+        analysis. If more than one files are selected, the Run Batch option
+        is available, otherwise only the Load Trial button is active.
+        """
+        file_tree = self.gui.file_load_frame.file_tree
+        file_load_frame = self.gui.file_load_frame
+        self.file_list = []
+        selection = file_tree.selection()
+        for this_item in selection:
+            info = file_tree.item(this_item)
+            self.file_list.append(info['values'])
+        if len(self.file_list) > 1:
+            file_load_frame.load_trial_button.config(state=tk.DISABLED)
+            file_load_frame.run_multiple_files_button.config(state=tk.NORMAL)
+        elif len(self.file_list) == 1 and info['tags'] == ['day']:
+            file_load_frame.load_trial_button.config(state=tk.DISABLED)
+            file_load_frame.run_multiple_files_button.config(state=tk.NORMAL)
+            # TODO: add all trials from this day to file_list
+        elif len(self.file_list) == 1 and info['tags'] == ['trial']:
+            file_load_frame.load_trial_button.config(state=tk.NORMAL)
+            file_load_frame.run_multiple_files_button.config(state=tk.DISABLED)
+
+    def spinbox_delay_then_update_image(self, event=None):
+        self.gui.analyze_trial_frame.after(1, self.update_inspection_image)
+
+    def update_inspection_image(self, event=None):
+        analysis_frame = self.gui.analyze_trial_frame
+        plot_mitos_status = analysis_frame.plot_labels_drop.get()
+        max_proj_checkbox = analysis_frame.max_proj_checkbox.instate(
+                ['selected'])
+        selected_slice = int(analysis_frame.slice_selector.get())
+        selected_timepoint = int(analysis_frame.timepoint_selector.get()) - 1
+        inspection_ax = analysis_frame.ax
+        inspection_ax.clear()
+
+        # TODO: move this to view model and send data there instead?
+        if max_proj_checkbox is True:  # max projection
+            stack = self.trial.image_array[selected_timepoint]
+            image_to_display = np.amax(stack, 0)  # collapse z axis
+            image_to_display = image_to_display.squeeze()
+        else:  # single slice
+            image_to_display = self.trial.image_array[
+                    selected_timepoint, selected_slice]
+
+        if plot_mitos_status == 'Plot mitochondria for this stack':
+            if (self.trial.linked_mitos is not None and
+                    selected_timepoint - 1 <=
+                    max(self.trial.linked_mitos['frame'])):
+                mitos_this_frame = self.trial.mitos_from_batch.loc[
+                        self.trial.mitos_from_batch[
+                                'frame'] == selected_timepoint]
+                mitos_this_frame.plot(
+                            x='x', y='y', ax=analysis_frame.ax,
+                            color='#FB8072', marker='o', linestyle='None')
+            elif self.trial.mito_candidates is not None:
+                self.trial.mito_candidates.plot(
+                    x='x', y='y', ax=analysis_frame.ax, color='#FB8072',
+                    marker='o', linestyle='None')
+        elif plot_mitos_status == 'Plot trajectories':
+            if self.trial.linked_mitos is not None:
+                try:
+                    theCount = 0  # ah ah ah ah
+                    for i in range(max(self.trial.linked_mitos['particle'])):
+                        thisParticleTraj = self.trial.linked_mitos.loc[
+                                self.trial.linked_mitos['particle'] == i+1]
+                        if not thisParticleTraj.empty:
+                            theCount += 1
+                            thisParticleTraj.plot(
+                                    x='x',
+                                    y='y',
+                                    ax=analysis_frame.ax,
+                                    color='#FB8072')
+                            analysis_frame.ax.text(
+                                    thisParticleTraj['x'].mean() + 15,
+                                    thisParticleTraj['y'].mean(),
+                                    str(int(thisParticleTraj.iloc[0][
+                                             'particle'])), color='white')
+                            analysis_frame.ax.legend_.remove()
+                except ValueError as err:
+                    if len(self.trial.linked_mitos) == 0:
+                        raise Exception('No particles were found at all '
+                                        'time points. Try expanding search '
+                                        'radius or changing particle finding '
+                                        'parameters.') from err
+                    else:
+                        raise
+
+        analysis_frame.fig.set_size_inches(
+                forward=True,
+                h=image_to_display.shape[0] / self.gui.dpi,
+                w=image_to_display.shape[1] / self.gui.dpi)
+        analysis_frame.ax.imshow(image_to_display, interpolation='none')
+        analysis_frame.ax.axis('off')
+        analysis_frame.plot_canvas.draw()
+
+    def on_button_press(self, event=None):
+        analysis_frame = self.gui.analyze_trial_frame
+        canvas = analysis_frame.plot_canvas.get_tk_widget()
+        init_size = 100
+        cur_x = canvas.canvasx(event.x)
+        cur_y = canvas.canvasy(event.y)
+        self.roi = [cur_x,
+                    cur_y,
+                    cur_x + init_size,
+                    cur_y + init_size]
+        # TODO: account for scroll in event location
+
+        # create rectangle if not yet exist
+        if analysis_frame.rect is None:
+            analysis_frame.rect = canvas.create_rectangle(
+                    cur_x, cur_y, cur_x + init_size, cur_y + init_size,
+                    fill='', outline='white')
+            for index in range(len(analysis_frame.roi_corners)):
+                if index == 0:
+                    x_shift = 0
+                    y_shift = 0
+                elif index == 1:
+                    x_shift = init_size
+                    y_shift = 0
+                elif index == 2:
+                    x_shift = init_size
+                    y_shift = init_size
+                elif index == 3:
+                    x_shift = 0
+                    y_shift = init_size
+
+                analysis_frame.roi_corners[index] = canvas.create_oval(
+                    cur_x - analysis_frame.drag_btn_size + x_shift,
+                    cur_y - analysis_frame.drag_btn_size + y_shift,
+                    cur_x + analysis_frame.drag_btn_size + x_shift,
+                    cur_y + analysis_frame.drag_btn_size + y_shift,
+                    fill='red', tag='corner')
+
+            canvas.tag_bind('corner', "<Any-Enter>", self.mouseEnter)
+            canvas.tag_bind('corner', "<Any-Leave>", self.mouseLeave)
+
+        analysis_frame.last_coords = (cur_x, cur_y)
+
+    def on_move_press(self, event=None):
+        analysis_frame = self.gui.analyze_trial_frame
+        canvas = analysis_frame.plot_canvas.get_tk_widget()
+        cur_x = canvas.canvasx(event.x)
+        cur_y = canvas.canvasy(event.y)
+
+        if canvas.type(tk.CURRENT) == 'oval':  # if corner selected
+            current_item_coords = canvas.coords(tk.CURRENT)
+            new_bounds = [cur_x - analysis_frame.drag_btn_size,
+                          cur_y - analysis_frame.drag_btn_size,
+                          cur_x + analysis_frame.drag_btn_size,
+                          cur_y + analysis_frame.drag_btn_size]
+            for i in range(len(analysis_frame.roi_corners)):
+                corner_coords = canvas.coords(
+                        analysis_frame.roi_corners[i])
+                compare_coords = [x == y for (x, y) in zip(
+                        current_item_coords, corner_coords)]
+                new_coords = [new_crd if move_bool else old_crd
+                              for old_crd, new_crd, move_bool
+                              in zip(corner_coords,
+                                     new_bounds,
+                                     compare_coords)]
+                if sum(compare_coords) == 0:
+                    opposite_corner_coords = new_coords
+                canvas.coords(analysis_frame.roi_corners[i], new_coords)
+
+            new_rect_coords = [sum(new_bounds[0::2]) / 2,
+                               sum(new_bounds[1::2]) / 2,
+                               sum(opposite_corner_coords[0::2]) / 2,
+                               sum(opposite_corner_coords[1::2]) / 2]
+            canvas.coords(analysis_frame.rect, new_rect_coords)
+            self.roi = new_rect_coords
+        # TODO: convert ROI to image space or display image 1:1
+        # TODO: limit ROI to actual pixel values ie no negatives
+
+    def on_button_release(self, event=None):
+        print('Selected ROI: ', self.roi)
+
+    def mouseEnter(self, event):
+        analysis_frame = self.gui.analyze_trial_frame
+        canvas = analysis_frame.plot_canvas.get_tk_widget()
+        canvas.itemconfig(tk.CURRENT, fill="green")
+        analysis_frame.selected_item = tk.CURRENT
+
+    def mouseLeave(self, event):
+        analysis_frame = self.gui.analyze_trial_frame
+        canvas = analysis_frame.plot_canvas.get_tk_widget()
+        canvas.itemconfig(tk.CURRENT, fill="red")
+        analysis_frame.selected_item = None
+
+    def clear_roi(self, event):
+        analysis_frame = self.gui.analyze_trial_frame
+        canvas = analysis_frame.plot_canvas.get_tk_widget()
+        canvas.delete('corner')
+        canvas.delete(analysis_frame.rect)
+        analysis_frame.rect = None
+        analysis_frame.roi_corners = [None, None, None, None]
+        analysis_frame.roi = [None, None, None, None]
 
     def update_status(self, event=None):
         new_status = self.gui.analyze_trial_frame.status_dropdown.get()
@@ -436,9 +544,14 @@ class StrainGUIController:
         analysis_frame.min_mass_selector.insert(
                 0, params['min_particle_mass'])
 
-        # analysis_frame.min_mass_selector.delete(0, 'end')
-        # analysis_frame.min_mass_selector.insert(
-        #         0, params['min_particle_mass'])
+        analysis_frame.last_time_selector.delete(0, 'end')
+        analysis_frame.last_time_selector.insert(
+                0, params['last_timepoint'])
+
+        analysis_frame.linking_radius_selector.delete(0, 'end')
+        analysis_frame.linking_radius_selector.insert(
+                0, params['tracking_seach_radius'])
+
         # TODO: save/load linking radius and last timepoint params
 
 

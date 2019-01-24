@@ -13,7 +13,8 @@ import glob
 import matplotlib as mpl
 import yaml
 # import matplotlib.pyplot as plt
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.backends.backend_tkagg import (
+        FigureCanvasTkAgg, NavigationToolbar2Tk)
 
 
 class SSN_analysis_GUI(tk.Frame):
@@ -42,7 +43,8 @@ class SSN_analysis_GUI(tk.Frame):
         self.notebook.pack(expand=1, fill=tk.BOTH)
         self.root.update()
 
-        self.analyze_trial_frame = AnalyzeTrialFrame(self.notebook, self.dpi)
+        self.analyze_trial_frame = AnalyzeTrialFrame(
+                self.notebook, self.dpi, self.root)
         self.notebook.add(self.analyze_trial_frame, text="Inspect Images")
 
         self.plot_results_frame = PlotResultsFrame(self.notebook, self.dpi)
@@ -81,11 +83,12 @@ class FileLoadFrame(tk.Frame):
         self.load_trial_button = tk.Button(self.button_frame,
                                            text="Load Trial",
                                            state=tk.DISABLED)
-
         self.load_trial_button.pack(side=tk.RIGHT)
-        self.run_batch_button = tk.Button(self.button_frame, text="Run Batch",
-                                          state=tk.DISABLED)
-        self.run_batch_button.pack(side=tk.RIGHT)
+
+        self.run_multiple_files_button = tk.Button(self.button_frame,
+                                                   text="Run Multiple Files",
+                                                   state=tk.DISABLED)
+        self.run_multiple_files_button.pack(side=tk.RIGHT)
         self.button_frame.pack(side=tk.BOTTOM)
 
         self.update_file_tree()
@@ -141,22 +144,25 @@ class FileLoadFrame(tk.Frame):
 
 
 class AnalyzeTrialFrame(tk.Frame):
-    def __init__(self, parent, screen_dpi):
+    def __init__(self, parent, screen_dpi, root):
         # TODO: docstring
         tk.Frame.__init__(self, parent)
         self.parent = parent
+        self.root = root
 
+        # Variables for drawing ROI
         self.rect = None
-        self.rect_start_x = None
-        self.rect_start_y = None
+        self.drag_btn_size = 5  # radius of oval for dragging ROI
+        self.roi_corners = [None, None, None, None]
+        self.roi = [None, None, None, None]
 
         # get size for making figure
-        notebook_height = self.parent.winfo_height()
+        notebook_height = self.parent.winfo_height() - 100
         self.notebook_height_in = notebook_height / screen_dpi
 
         # Create a figure and a canvas for showing images
-        self.fig = mpl.figure.Figure(figsize=(self.notebook_height_in / 2,
-                                              self.notebook_height_in))
+        self.fig = mpl.figure.Figure(figsize=(600 / screen_dpi,
+                                              1200 / screen_dpi))
         self.ax = self.fig.add_axes([0, 0, 1, 1])
         self.plot_canvas = FigureCanvasTkAgg(self.fig, self)
         self.plot_canvas.draw()
@@ -166,9 +172,22 @@ class AnalyzeTrialFrame(tk.Frame):
                                               rowspan=3)
         self.plot_canvas.get_tk_widget().grid_rowconfigure(0, weight=1)
 
+        self.scrollbar = tk.Scrollbar(
+                self, command=self.plot_canvas.get_tk_widget().yview)
+        self.scrollbar.grid(row=0, column=1, sticky=tk.NE + tk.SE)
+
+        self.plot_canvas.get_tk_widget().config(
+                yscrollcommand=self.scrollbar.set)
+        # TODO: limit scroll to size of image
+
         # Creat a frame to put all the controls and parameters in
         self.param_frame = tk.Frame(self)
         param_frame_row = 0
+
+        # Clear ROI button
+        self.clear_roi_btn = ttk.Button(self.param_frame,
+                                        text='Clear ROI')
+        self.clear_roi_btn.grid(row=param_frame_row, column=1)
 
         # Optional max projection
         self.max_proj_checkbox_status = tk.IntVar(value=1)
@@ -177,7 +196,7 @@ class AnalyzeTrialFrame(tk.Frame):
                 text='Max projection',
                 variable=self.max_proj_checkbox_status)
         self.max_proj_checkbox.grid(
-                row=param_frame_row, column=1, columnspan=2)
+                row=param_frame_row, column=2)
         self.max_proj_checkbox.state(['selected', '!alternate'])
         param_frame_row += 1
 
@@ -309,7 +328,7 @@ class AnalyzeTrialFrame(tk.Frame):
         self.full_analysis_button.grid(
                 row=param_frame_row, column=2)
 
-        self.param_frame.grid(row=0, column=1)
+        self.param_frame.grid(row=0, column=2)
 
         # Frame for saving data etc.
         self.save_data_frame = tk.Frame(self)
@@ -350,7 +369,7 @@ class AnalyzeTrialFrame(tk.Frame):
         self.status_dropdown.grid(column=1, row=save_frame_row)
         save_frame_row += 1
 
-        self.save_data_frame.grid(row=0, column=2)
+        self.save_data_frame.grid(row=0, column=3)
 
         # TODO: add button for loading images that aren't yet loaded
 
