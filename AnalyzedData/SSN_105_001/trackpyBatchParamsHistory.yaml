@@ -30,3 +30,98 @@ timestamp: 2018-12-04-235345
 topn: null
 trackingSeachRadius: 50
 trackpy_version: 0.4.1
+---
+bottom_slice: 0
+diameter: !!python/tuple [17, 15, 15]
+invert: false
+last_timepoint: 5
+max_iterations: 10
+maxsize: null
+minmass: 200
+noise_size: 3
+percentile: 50
+preprocess: true
+separation: null
+smoothing_size: null
+source: null
+timestamp: 2019-01-22-034002
+top_slice: 67
+topn: null
+tracking_seach_radius: 30
+trackpy_version: 0.4.1
+---
+bottom_slice: 0
+diameter: !!python/tuple [17, 15, 15]
+invert: false
+last_timepoint: 5
+max_iterations: 10
+maxsize: null
+minmass: 200
+noise_size: 5
+percentile: 50
+preprocess: true
+separation: null
+smoothing_size: null
+source: null
+timestamp: 2019-01-22-034936
+top_slice: 67
+topn: null
+tracking_seach_radius: 30
+trackpy_version: 0.4.1
+---
+bottom_slice: 0
+diameter: !!python/tuple [17, 15, 15]
+invert: false
+last_timepoint: 5
+max_iterations: 10
+maxsize: null
+minmass: 200
+noise_size: 5
+percentile: 50
+preprocess: true
+separation: null
+smoothing_size: null
+source: null
+timestamp: 2019-01-22-035344
+top_slice: 67
+topn: null
+tracking_seach_radius: 30
+trackpy_version: 0.4.1
+---
+bottom_slice: 0
+diameter: !!python/tuple [17, 15, 15]
+invert: false
+last_timepoint: 5
+max_iterations: 10
+maxsize: null
+minmass: 150
+noise_size: 3
+percentile: 50
+preprocess: true
+separation: null
+smoothing_size: null
+source: null
+timestamp: 2019-01-22-035644
+top_slice: 67
+topn: null
+tracking_seach_radius: 30
+trackpy_version: 0.4.1
+---
+bottom_slice: 0
+diameter: !!python/tuple [17, 15, 15]
+invert: false
+last_timepoint: 1
+max_iterations: 10
+maxsize: null
+minmass: 200
+noise_size: 3
+percentile: 50
+preprocess: true
+separation: null
+smoothing_size: null
+source: null
+timestamp: 2019-01-22-041013
+top_slice: 67
+topn: null
+tracking_seach_radius: 30
+trackpy_version: 0.4.1

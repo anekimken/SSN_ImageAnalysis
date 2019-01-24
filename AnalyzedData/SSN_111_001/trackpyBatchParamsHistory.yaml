@@ -1,8 +1,8 @@
-diameter: !!python/tuple
-- 17
-- 15
-- 15
+---
+bottom_slice: 1
+diameter: !!python/tuple [21, 15, 15]
 invert: false
+last_timepoint: 11
 max_iterations: 10
 maxsize: null
 minmass: 200
@@ -12,10 +12,8 @@ preprocess: true
 separation: null
 smoothing_size: null
 source: null
-timestamp: 2019-01-22-041013
+timestamp: 2019-01-24-003614
+top_slice: 64
 topn: null
+tracking_seach_radius: 20
 trackpy_version: 0.4.1
-bottom_slice: 0
-last_timepoint: 1
-top_slice: 67
-tracking_seach_radius: 30
