@@ -1,0 +1,19 @@
+---
+bottom_slice: 0
+diameter: !!python/tuple [21, 15, 15]
+invert: false
+last_timepoint: 11
+max_iterations: 10
+maxsize: null
+minmass: 200
+noise_size: 3
+percentile: 50
+preprocess: true
+separation: null
+smoothing_size: null
+source: null
+timestamp: 2019-01-28-011358
+top_slice: 51
+topn: null
+tracking_seach_radius: 20
+trackpy_version: 0.4.1

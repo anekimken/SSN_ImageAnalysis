@@ -1,0 +1,27 @@
+---
+Experiment_id: SSN_130_001
+analysis_status: Testing parameters
+bleach_time: 2018-12-17 09:30:00
+cultivation_temp: 20
+device_ID: Y4P7-7
+head_orientation: Headfirst
+microscope: Spinning Disk Confocal in CSIF Shriram
+microscope_channel: SDC 561-ALN
+microscope_objective: 40x oil
+neuron: ALM
+notes: 11 total stacks, messed up normal sequence, but first few should be fine. Towards
+  the end, some of the mitos were near the top, not sure if I can find them with image
+  processing pipeline.
+num_eggs: 0
+num_timepoints: 12
+pixel_microns: 0.275
+purpose: Baseline measurement
+slice_height_pix: 1200
+slice_width_pix: 600
+stack_height: 51
+timestamp: 2018-12-20 12:53:10
+total_images: 612
+user: anekimke@stanford.edu
+vulva_orientation: West
+worm_life_stage: YA
+worm_strain: NM3573

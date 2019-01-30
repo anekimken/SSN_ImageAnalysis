@@ -102,9 +102,8 @@ class FileLoadFrame(tk.Frame):
                                          columns=("status", "filename"))
         self.file_tree.heading("status", text="Analysis Status")
         self.file_tree.heading("filename", text="Full file path")
+        # TODO: show number of stars for analysis here instead of file path
         for day in experiment_days:
-            # print(day)
-            # metadata_location = (data_location
             try:
                 int(day[-8:])  # check to make sure this dir is an experiment
                 day_item = self.file_tree.insert('', 'end', text=day[-8:],
@@ -152,7 +151,7 @@ class AnalyzeTrialFrame(tk.Frame):
 
         # Variables for drawing ROI
         self.rect = None
-        self.drag_btn_size = 5  # radius of oval for dragging ROI
+        self.drag_btn_size = 5  # radius of circle for dragging ROI corner
         self.roi_corners = [None, None, None, None]
         self.roi = [None, None, None, None]
 
@@ -327,6 +326,20 @@ class AnalyzeTrialFrame(tk.Frame):
                 self.param_frame, text='Run full analysis')
         self.full_analysis_button.grid(
                 row=param_frame_row, column=2)
+        param_frame_row += 1
+
+        # Button to link previously found mitochondria
+        self.link_mitos_button = ttk.Button(
+                self.param_frame, text='Link existing data')
+        self.link_mitos_button.grid(
+                row=param_frame_row, column=1)
+
+        # Button to calculate strain
+        self.calc_strain_button = ttk.Button(
+                self.param_frame, text='Calculate strain')
+        self.calc_strain_button.grid(
+                row=param_frame_row, column=2)
+        param_frame_row += 1
 
         self.param_frame.grid(row=0, column=2)
 
@@ -404,6 +417,12 @@ class PlotResultsFrame(tk.Frame):
         self.progress_plot_button.grid(row=config_frame_row, column=1)
         config_frame_row += 1
 
+        # Button for strain plot for one trial
+        self.plot_strain_one_trial_button = ttk.Button(
+                self.plot_config_frame, text='Plot strain- one trial')
+        self.plot_strain_one_trial_button.grid(row=config_frame_row, column=1)
+        config_frame_row += 1
+
         self.plot_config_frame.grid(row=0, column=1)
 
         # TODO: add buttons for interesting plots
@@ -420,6 +439,15 @@ class PlotResultsFrame(tk.Frame):
                                 rotation=30, horizontalalignment='right')
 
         self.plot_canvas.draw()
+
+    def plot_strain_one_trial(self, strain):
+        """Plots the strain results from a np.ndarray"""
+        self.ax.plot(strain.T)
+
+        self.plot_canvas.draw()
+
+    # TODO: function for plotting aggregated plotting data
+    # TODO: controls for selecting what data are plotted
 
 
 if __name__ == '__main__':

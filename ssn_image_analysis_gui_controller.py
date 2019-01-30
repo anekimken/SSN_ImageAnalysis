@@ -28,6 +28,7 @@ class StrainGUIController:
 
         # Instantiate Model
         self.trial = ssn_trial.StrainPropagationTrial()
+        # TODO: don't instantiate model until loading trial so new trials load
 
         # Instantiate View
         self.gui = ssn_view.SSN_analysis_GUI(self.root)
@@ -66,10 +67,17 @@ class StrainGUIController:
                 "<<ComboboxSelected>>", func=self.update_status)
         self.gui.analyze_trial_frame.plot_labels_drop.bind(
                 "<<ComboboxSelected>>", func=self.update_inspection_image)
+        self.gui.analyze_trial_frame.link_mitos_button.bind(
+                "<ButtonRelease-1>", func=self.link_existing_particles)
+        self.gui.analyze_trial_frame.calc_strain_button.bind(
+                "<ButtonRelease-1>", func=self.calculate_strain)
 
         # Plotting frame
         self.gui.plot_results_frame.progress_plot_button.bind(
                 "<ButtonRelease-1>", func=self.get_analysis_progress)
+        self.gui.plot_results_frame.plot_strain_one_trial_button.bind(
+                "<ButtonRelease-1>", func=self.get_analysis_progress)
+        # TODO: write callback for plot strain one trial button
 
     def run(self):
         self.root.title("SSN Image Analysis")
@@ -266,12 +274,29 @@ class StrainGUIController:
                 tracking_seach_radius=params['tracking_seach_radius'],
                 last_timepoint=params['last_timepoint'])
 
-            self.trial = ssn_trial.StrainPropagationTrial()
+            previous_status = self.trial.metadata['analysis_status']
+            if (previous_status == 'No metadata.yaml file' or
+                    previous_status == 'No analysis status yet' or
+                    previous_status == 'Not started'):
+                self.trial.metadata['analysis_status'] = 'Testing parameters'
+                self.trial.write_metadata_to_yaml(self.trial.metadata)
+
+            self.trial = ssn_trial.StrainPropagationTrial()  # clear trial var
             # TODO: !!!DEBUG ME! test this again
 
     def run_tp_process(self):
         self.tp_process.start()
         self.tp_process.join()
+
+    def link_existing_particles(self, event=None):
+        """Link previously found particles into trajectories"""
+        self.trial.link_mitos()
+
+    def calculate_strain(self, event=None):
+        """Calculate strain between mitochondria as a function of time"""
+        self.trial.calculate_strain()
+        self.gui.plot_results_frame.plot_strain_one_trial(self.trial.strain)
+        self.gui.notebook.select(2)
 
     def on_file_selection_changed(self, event):
         """This function keeps track of which files are selected for
