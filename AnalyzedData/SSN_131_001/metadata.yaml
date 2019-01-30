@@ -1,0 +1,25 @@
+---
+Experiment_id: SSN_131_001
+analysis_status: Testing parameters for batch
+bleach_time: 2019-01-22 11:30:00
+cultivation_temp: 20
+device_ID: Y4P7-7
+head_orientation: Tailfirst
+microscope: Spinning Disk Confocal in CSIF Shriram
+microscope_channel: SDC 561-ALN
+microscope_objective: 40x oil
+neuron: PVM
+notes: No actuation
+num_eggs: 0
+num_timepoints: 12
+pixel_microns: 0.275
+purpose: Baseline measurement
+slice_height_pix: 1200
+slice_width_pix: 600
+stack_height: 60
+timestamp: 2019-01-25 13:58:06
+total_images: 720
+user: anekimke@stanford.edu
+vulva_orientation: East
+worm_life_stage: YA
+worm_strain: NM3573

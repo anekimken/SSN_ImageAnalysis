@@ -17,10 +17,9 @@ from typing import Tuple
 import numpy as np
 import pims
 import pandas as pd
-# from PIL import Image
 from nd2reader import ND2Reader
-# from scipy import ndimage as ndi
 # from scipy import stats
+from scipy import spatial
 import yaml
 
 import gspread
@@ -120,6 +119,8 @@ class StrainPropagationTrial(object):
                  'trackpyBatchResults.yaml')
         self.batch_history_file = self.analyzed_data_location.joinpath(
                 'trackpyBatchParamsHistory.yaml')
+        self.unlinked_particles_file = self.analyzed_data_location.joinpath(
+                'unlinkedTrackpyBatchResults.yaml')
 
         # Create directory if necessary
         if not self.analyzed_data_location.is_dir():
@@ -132,6 +133,11 @@ class StrainPropagationTrial(object):
                 linked_mitos_dict = yaml.load(yamlfile)
                 self.linked_mitos = pd.DataFrame.from_dict(
                         linked_mitos_dict, orient='index')
+        if self.unlinked_particles_file.is_file():
+            with open(self.unlinked_particles_file, 'r') as yamlfile:
+                unlinked_mitos_dict = yaml.load(yamlfile)
+                self.mitos_from_batch = pd.DataFrame.from_dict(
+                        unlinked_mitos_dict, orient='index')
 
         start_time = time.time()
         if (self.load_images is False and  # don't load images
@@ -156,12 +162,8 @@ class StrainPropagationTrial(object):
                 # if we have metadata in a yaml file, no need to go to
                 # Google Drive to get it. Just load from yaml
                 self.metadata = self.load_metadata_from_yaml()
-        try:
-            self.latest_test_params = self._load_analysis_params()
-        except FileNotFoundError:
-            print('Previous parameter file not found. Using defaults.')
-            self.latest_test_params = self.default_test_params
-            self.latest_test_params['top_slice'] = self.image_array.shape[1]
+
+        self.latest_test_params = self._load_analysis_params()
 
         finish_time = time.time()
         print('Loaded file in ' + str(round(finish_time - start_time)) +
@@ -243,7 +245,8 @@ class StrainPropagationTrial(object):
                 percentile=brightness_percentile,
                 minmass=min_particle_mass,
                 noise_size=gaussian_width,
-                meta=metadata_save_location)
+                meta=metadata_save_location,
+                characterize=True)
         batch_done_time = time.time()
 
         # link the particles we found between time points
@@ -254,9 +257,6 @@ class StrainPropagationTrial(object):
         # only keep trajectories where point appears in all frames
         self.linked_mitos = tp.filter_stubs(
                 linked, last_timepoint)
-        # local_linked_mitos = self.linked_mitos
-        # numParticles = self.linked_mitos.groupby(
-        #         'particle').nunique().shape[0]
         link_done_time = time.time()
 
         # add other parameters to the yaml created by tp.batch
@@ -287,6 +287,13 @@ class StrainPropagationTrial(object):
                   'w') as yamlfile:
             yaml.dump(linked_mitos_dict, yamlfile,
                       explicit_start=True, default_flow_style=False)
+        mitos_from_batch_dict = self.mitos_from_batch.reset_index(
+                drop=True).to_dict(orient='index')
+        with open(save_location.joinpath('unlinkedTrackpyBatchResults.yaml'),
+                  'w') as yamlfile:
+            yaml.dump(mitos_from_batch_dict, yamlfile,
+                      explicit_start=True, default_flow_style=False)
+
             # TODO: save all particles found, can be linked later
 
         print('Done running file. Batch find took ' +
@@ -295,6 +302,41 @@ class StrainPropagationTrial(object):
               str(round(link_done_time - batch_done_time)) + ' seconds.')
 
         # return self.linked_mitos
+
+    def link_mitos(self):
+        """Links previously found mitochondria into trajectories"""
+        print('linking partiles...')
+        # load positions
+        # link with tp.link_df
+        # save new trajectories
+
+    def calculate_strain(self):
+        """Calculates strain in the TRN using mitochondria positions"""
+        print('Calculating strain!')
+        mitos_df = self.linked_mitos.copy(deep=True)
+        num_trajectories = mitos_df['particle'].nunique()
+        num_frames = mitos_df['frame'].nunique()
+        distances = np.empty([num_frames, num_trajectories - 1])
+        for stack in range(num_frames):
+            # sort mitochondria in this stack by y values
+            current_stack = mitos_df.loc[mitos_df['frame'] == stack]
+            sorted_stack = current_stack.sort_values(['y'])
+            sorted_stack.reset_index(inplace=True, drop=True)
+            for particle in range(num_trajectories - 1):
+                # calculate pairwise distances
+                mito1 = sorted_stack.loc[particle, ['x', 'y', 'z']].values
+                mito2 = sorted_stack.loc[particle + 1, ['x', 'y', 'z']].values
+                distances[stack, particle] = spatial.distance.euclidean(
+                        mito1, mito2)
+
+        # calculate change in distance over time
+        self.strain = (distances - distances[0])/distances[0]
+
+        # save results
+        with open(self.analyzed_data_location.joinpath('strain.yaml'),
+                  'w') as yamlfile:
+            yaml.dump(self.strain, yamlfile,
+                      explicit_start=True, default_flow_style=False)
 
     def _load_images_from_disk(self) -> Tuple[np.array, ND2Reader]:
         """Accesses the image data from the file."""
@@ -320,16 +362,28 @@ class StrainPropagationTrial(object):
 
     def _load_analysis_params(self) -> dict:
         """Loads analysis parameters from an existing yaml file."""
-        with open(self.param_test_history_file, 'r') as yamlfile:
-            entire_history = yaml.load_all(yamlfile)
-            trackpy_locate_params = None
-            for trackpy_locate_params in entire_history:  # get latest params
-                pass
-        with open(self.batch_history_file, 'r') as yamlfile:
-            entire_history = yaml.load_all(yamlfile)
-            trackpy_batch_params = None
-            for trackpy_batch_params in entire_history:  # get latest params
-                pass
+        try:
+            with open(self.param_test_history_file, 'r') as yamlfile:
+                entire_history = yaml.load_all(yamlfile)
+                trackpy_locate_params = None
+                for trackpy_locate_params in entire_history:  # get most recent
+                    pass
+        except FileNotFoundError:
+            print('Previous parameter file not found. Using defaults.')
+            trackpy_locate_params = self.default_test_params
+            trackpy_locate_params['top_slice'] = self.metadata['stack_height']
+
+        try:
+            with open(self.batch_history_file, 'r') as yamlfile:
+                entire_history = yaml.load_all(yamlfile)
+                trackpy_batch_params = None
+                for trackpy_batch_params in entire_history:  # get most recent
+                    pass
+        except FileNotFoundError:
+            print('Previous batch parameter file not found. Using defaults.')
+            trackpy_batch_params = self.default_test_params
+            trackpy_batch_params['top_slice'] = self.metadata['stack_height']
+
         all_params = {**trackpy_locate_params, **trackpy_batch_params}
 
         return all_params
