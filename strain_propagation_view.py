@@ -425,6 +425,21 @@ class PlotResultsFrame(tk.Frame):
 
         self.plot_config_frame.grid(row=0, column=1)
 
+        self.diag_entry = tk.Text(self, height=20, width=50, wrap=tk.NONE)
+        self.diag_entry.insert(tk.END, '')
+        self.diag_v_scrollbar = tk.Scrollbar(self,
+                                             orient='vertical',
+                                             command=self.diag_entry.yview)
+        self.diag_h_scrollbar = tk.Scrollbar(self,
+                                             orient='horizontal',
+                                             command=self.diag_entry.xview)
+        self.diag_entry.config(yscrollcommand=self.diag_v_scrollbar.set)
+        self.diag_entry.config(xscrollcommand=self.diag_h_scrollbar.set)
+        self.diag_entry.grid(row=0, column=2, sticky='nesw')
+
+        self.diag_v_scrollbar.grid(row=0, column=3, sticky='ns')
+        self.diag_h_scrollbar.grid(row=1, column=2, sticky='new')
+
         # TODO: add buttons for interesting plots
 
     def plot_progress(self, all_statuses_dict: dict, status_values: list):
