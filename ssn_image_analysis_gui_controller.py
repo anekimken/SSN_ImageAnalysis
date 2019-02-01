@@ -118,6 +118,10 @@ class StrainGUIController:
         # load inspection image on inspection tab and related parameters
         if load_images is True or overwrite_metadata is True:
             self.update_inspection_image()
+            self.roi = [0,
+                        0,
+                        self.trial.image_array.shape[3],
+                        self.trial.image_array.shape[2]]
 
         image_stack_size = self.trial.metadata['stack_height']
         num_timepoints = self.trial.metadata['num_timepoints']
@@ -140,6 +144,10 @@ class StrainGUIController:
         self.gui.analyze_trial_frame.vulva_side_label.config(
                 text=('Vulva side: ' +
                       self.trial.metadata['vulva_orientation']))
+
+        if self.trial.unlinked_particles_file.is_file():
+            self.gui.plot_results_frame.diag_entry.insert(
+                    tk.END, self.trial.mitos_from_batch.to_string())
 
         self._display_last_test_params()
         self.gui.notebook.select(1)
@@ -206,24 +214,11 @@ class StrainGUIController:
         last_timepoint = int(
                 analysis_frame.last_time_selector.get())
 
-        # self.tp_process = Process(target=self.trial.run_batch,
-        #                           args=(gaussian_width,
-        #                                 particle_z_diameter,
-        #                                 particle_xy_diameter,
-        #                                 brightness_percentile,
-        #                                 min_particle_mass,
-        #                                 bottom_slice,
-        #                                 top_slice,
-        #                                 tracking_seach_radius,
-        #                                 last_timepoint))
-        # tp_thread = threading.Thread(target=self.run_tp_process)
-        # tp_thread.start()
-
-        # TODO: run as producer in separate process
-        # TODO: Create consumer in separate thread that waits for this to stop
-        # https://stackoverflow.com/questions/25204579/python-multiprocessing-and-gui
-        # TODO: kill button for process running analysis
+        # TODO: get subset of array in trial file and zero out other pixels
         self.trial.run_batch(
+                self.trial.image_array[:, :,
+                                       self.roi[1]:self.roi[3],
+                                       self.roi[0]:self.roi[2]],
                 gaussian_width,
                 particle_z_diameter,
                 particle_xy_diameter,
@@ -237,6 +232,7 @@ class StrainGUIController:
         analysis_frame.max_proj_checkbox.state(['selected'])
         analysis_frame.plot_labels_drop.set('Plot trajectories')
         self.update_inspection_image()
+        self.gui.plot_results_frame.diag_text.set(str(self.trial.linked_mitos))
 
     def run_multiple_files(self, event=None):
         fr = self.gui.file_load_frame
@@ -254,16 +250,9 @@ class StrainGUIController:
             params = self.trial.latest_test_params
 
             print('Looking for particles...')
-            # print(params['gaussian_width'],
-            #       params['particle_z_diameter'],
-            #       params['particle_xy_diameter'],
-            #       params['brightness_percentile'],
-            #       params['min_particle_mass'],
-            #       params['bottom_slice'],
-            #       params['top_slice'],
-            #       params['tracking_seach_radius'],
-            #       params['last_timepoint'])
+
             self.trial.run_batch(
+                images_ndarray=self.trial.image_array,
                 gaussian_width=params['gaussian_width'],
                 particle_z_diameter=params['particle_z_diameter'],
                 particle_xy_diameter=params['particle_xy_diameter'],
@@ -282,7 +271,6 @@ class StrainGUIController:
                 self.trial.write_metadata_to_yaml(self.trial.metadata)
 
             self.trial = ssn_trial.StrainPropagationTrial()  # clear trial var
-            # TODO: !!!DEBUG ME! test this again
 
     def run_tp_process(self):
         self.tp_process.start()
@@ -290,7 +278,14 @@ class StrainGUIController:
 
     def link_existing_particles(self, event=None):
         """Link previously found particles into trajectories"""
-        self.trial.link_mitos()
+        analysis_frame = self.gui.analyze_trial_frame
+        tracking_seach_radius = int(
+                analysis_frame.linking_radius_selector.get())
+        last_timepoint = int(
+                analysis_frame.last_time_selector.get())
+
+        self.trial.link_mitos(tracking_seach_radius=tracking_seach_radius,
+                              last_timepoint=last_timepoint)
 
     def calculate_strain(self, event=None):
         """Calculate strain between mitochondria as a function of time"""
@@ -333,6 +328,7 @@ class StrainGUIController:
         selected_timepoint = int(analysis_frame.timepoint_selector.get()) - 1
         inspection_ax = analysis_frame.ax
         inspection_ax.clear()
+        self.gui.plot_results_frame.diag_entry.delete(1.0, tk.END)
 
         # TODO: move this to view model and send data there instead?
         if max_proj_checkbox is True:  # max projection
@@ -353,12 +349,18 @@ class StrainGUIController:
                 mitos_this_frame.plot(
                             x='x', y='y', ax=analysis_frame.ax,
                             color='#FB8072', marker='o', linestyle='None')
+                self.gui.plot_results_frame.diag_entry.insert(
+                        tk.END, mitos_this_frame.to_string())
             elif self.trial.mito_candidates is not None:
                 self.trial.mito_candidates.plot(
                     x='x', y='y', ax=analysis_frame.ax, color='#FB8072',
                     marker='o', linestyle='None')
+                self.gui.plot_results_frame.diag_entry.insert(
+                        tk.END, self.trial.mito_candidates.to_string())
         elif plot_mitos_status == 'Plot trajectories':
             if self.trial.linked_mitos is not None:
+                self.gui.plot_results_frame.diag_entry.insert(
+                        tk.END, self.trial.linked_mitos.to_string())
                 try:
                     theCount = 0  # ah ah ah ah
                     for i in range(max(self.trial.linked_mitos['particle'])):
@@ -473,7 +475,24 @@ class StrainGUIController:
         # TODO: limit ROI to actual pixel values ie no negatives
 
     def on_button_release(self, event=None):
-        print('Selected ROI: ', self.roi)
+        # limit ROI to values that make sense
+        for i in range(len(self.roi)):
+            if i % 2 == 0:
+                # x value
+                max_val = self.trial.image_array.shape[3]
+            else:
+                # y value
+                max_val = self.trial.image_array.shape[2]
+            self.roi[i] = np.clip(self.roi[i], 0, max_val)
+
+        # make sure lower values are listed first
+        xmin = int(min([self.roi[0], self.roi[2]]))
+        xmax = int(max([self.roi[0], self.roi[2]]))
+        ymin = int(min([self.roi[1], self.roi[3]]))
+        ymax = int(max([self.roi[1], self.roi[3]]))
+        self.roi = [xmin, ymin, xmax, ymax]
+
+        # print('Selected ROI: ', self.roi)
 
     def mouseEnter(self, event):
         analysis_frame = self.gui.analyze_trial_frame
@@ -495,6 +514,10 @@ class StrainGUIController:
         analysis_frame.rect = None
         analysis_frame.roi_corners = [None, None, None, None]
         analysis_frame.roi = [None, None, None, None]
+        self.roi = [0,
+                    0,
+                    self.trial.image_array.shape[3],
+                    self.trial.image_array.shape[3]]
 
     def update_status(self, event=None):
         new_status = self.gui.analyze_trial_frame.status_dropdown.get()

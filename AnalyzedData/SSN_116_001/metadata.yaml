@@ -1,5 +1,6 @@
 ---
 Experiment_id: SSN_116_001
+analysis_status: Testing parameters for batch
 bleach_time: 2018-12-04 12:30:00
 cultivation_temp: 20
 device_ID: Y4P7-4
@@ -16,6 +17,7 @@ pixel_microns: 0.275
 purpose: Baseline measurement
 slice_height_pix: 1200
 slice_width_pix: 600
+stack_height: 52
 timestamp: 2018-12-07 14:49:11
 total_images: 572
 user: anekimke@stanford.edu

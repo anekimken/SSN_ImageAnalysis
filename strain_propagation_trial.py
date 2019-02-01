@@ -12,7 +12,7 @@ import pathlib
 import datetime
 import time
 import warnings
-from typing import Tuple
+from typing import Tuple, Any
 
 import numpy as np
 import pims
@@ -166,6 +166,8 @@ class StrainPropagationTrial(object):
         self.latest_test_params = self._load_analysis_params()
 
         finish_time = time.time()
+        local_image = self.image_array
+        local_self = self
         print('Loaded file in ' + str(round(finish_time - start_time)) +
               ' seconds.')
 
@@ -218,6 +220,7 @@ class StrainPropagationTrial(object):
         return self.mito_candidates
 
     def run_batch(self,
+                  images_ndarray:  Any,
                   gaussian_width: int,
                   particle_z_diameter: int,
                   particle_xy_diameter: int,
@@ -228,8 +231,8 @@ class StrainPropagationTrial(object):
                   tracking_seach_radius: int,
                   last_timepoint: int) -> dict:
 
-        slices_to_analyze = self.image_array[:last_timepoint,
-                                             bottom_slice:top_slice]
+        slices_to_analyze = images_ndarray[:last_timepoint,
+                                           bottom_slice:top_slice]
         particle_diameter = (particle_z_diameter,
                              particle_xy_diameter,
                              particle_xy_diameter)
@@ -260,7 +263,6 @@ class StrainPropagationTrial(object):
         link_done_time = time.time()
 
         # add other parameters to the yaml created by tp.batch
-        # TODO: add top/bottom slice, last timepoint
         other_param_dict = dict(
                 {'tracking_seach_radius': tracking_seach_radius,
                  'bottom_slice': bottom_slice,
@@ -303,12 +305,53 @@ class StrainPropagationTrial(object):
 
         # return self.linked_mitos
 
-    def link_mitos(self):
+    def link_mitos(self,
+                   tracking_seach_radius: int,
+                   last_timepoint: int):
         """Links previously found mitochondria into trajectories"""
+
         print('linking partiles...')
-        # load positions
-        # link with tp.link_df
-        # save new trajectories
+
+        save_location = self.analyzed_data_location
+        start_time = time.time()
+
+        # link the particles we found between time points
+        linked = tp.link_df(self.mitos_from_batch,
+                            tracking_seach_radius,
+                            pos_columns=['x', 'y', 'z'])
+
+        # only keep trajectories where point appears in all frames
+        self.linked_mitos = tp.filter_stubs(linked, last_timepoint)
+        link_done_time = time.time()
+
+        # load the file of parameters that tp.batch saved previously
+        with open(save_location.joinpath('trackpyBatchParams.yaml'),
+                  'r') as yamlfile:
+            old_yaml = yaml.load(yamlfile)
+
+        # add other parameters to the yaml created by tp.batch
+        other_param_dict = dict(
+                {'tracking_seach_radius': tracking_seach_radius,
+                 'last_timepoint': last_timepoint})
+        new_param_dict = {**old_yaml, **other_param_dict}
+        with open(save_location.joinpath('trackpyBatchParams.yaml'),
+                  'w') as yamlfile:
+            yaml.dump(new_param_dict, yamlfile, default_flow_style=False)
+
+        # dump the latest analysis into the history file
+        with open(self.batch_history_file, 'a') as yamlfile:
+            yaml.dump(new_param_dict, yamlfile, explicit_start=True)
+
+        # save the results to a yaml file
+        linked_mitos_dict = self.linked_mitos.reset_index(
+                drop=True).to_dict(orient='index')
+        with open(save_location.joinpath('trackpyBatchResults.yaml'),
+                  'w') as yamlfile:
+            yaml.dump(linked_mitos_dict, yamlfile,
+                      explicit_start=True, default_flow_style=False)
+
+        print('Done linking trial file. Linking and filtering took ' +
+              str(round(link_done_time - start_time)) + ' seconds.')
 
     def calculate_strain(self):
         """Calculates strain in the TRN using mitochondria positions"""

@@ -1,6 +1,0 @@
---- {bottomSlice: 14, brightnessPercentile: 75, gaussianWidth: 3, minParticleMass: 100,
-  particleXYDiameter: 15, particleZDiameter: 25, topSlice: 75, trackingSeachRadius: 50}
---- {bottomSlice: 14, brightnessPercentile: 75, gaussianWidth: 3, minParticleMass: 5000,
-  particleXYDiameter: 15, particleZDiameter: 25, topSlice: 75, trackingSeachRadius: 50}
---- {bottomSlice: 14, brightnessPercentile: 75, gaussianWidth: 3, minParticleMass: 1000,
-  particleXYDiameter: 15, particleZDiameter: 25, topSlice: 75, trackingSeachRadius: 50}
