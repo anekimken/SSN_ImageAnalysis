@@ -93,7 +93,7 @@ class StrainGUIController:
         """
         # OPTIMIZE: load trial in a separate thread?
         # MAYBE: add popup window saying file is loading
-        print('Loading file', self.file_list[0][1])
+        print('Loading file', self.file_list[0][0])
         fr = self.gui.file_load_frame
         load_images = fr.load_images_box.instate(['selected'])
         overwrite_metadata = fr.overwrite_metadata_box.instate(['selected'])
@@ -106,7 +106,7 @@ class StrainGUIController:
         #                 'overwrite_metadata': overwrite_metadata})
         # load_thread.start()
 
-        self.trial.load_trial(self.file_list[0][1],
+        self.trial.load_trial(self.file_list[0][0],
                               load_images=load_images,
                               overwrite_metadata=overwrite_metadata)
         if 'analysis_status' not in self.trial.metadata:
@@ -145,9 +145,10 @@ class StrainGUIController:
                 text=('Vulva side: ' +
                       self.trial.metadata['vulva_orientation']))
 
-        if self.trial.unlinked_particles_file.is_file():
-            self.gui.plot_results_frame.diag_entry.insert(
-                    tk.END, self.trial.mitos_from_batch.to_string())
+# TODO: change this to display dataframe on analysis tab
+#        if self.trial.unlinked_particles_file.is_file():
+#            self.gui.plot_results_frame.diag_entry.insert(
+#                    tk.END, self.trial.mitos_from_batch.to_string())
 
         self._display_last_test_params()
         self.gui.notebook.select(1)
@@ -239,8 +240,8 @@ class StrainGUIController:
         overwrite_metadata = fr.overwrite_metadata_box.instate(['selected'])
         print('Running lots of files...')
         for i in range(len(self.file_list)):
-            print('Loading file ', self.file_list[i][1])
-            self.trial.load_trial(self.file_list[i][1],
+            print('Loading file ', self.file_list[i][0])
+            self.trial.load_trial(self.file_list[i][0],
                                   load_images=True,
                                   overwrite_metadata=overwrite_metadata)
             if 'analysis_status' not in self.trial.metadata:
@@ -304,15 +305,11 @@ class StrainGUIController:
         selection = file_tree.selection()
         for this_item in selection:
             info = file_tree.item(this_item)
-            self.file_list.append(info['values'])
+            self.file_list.append(info['tags'])
         if len(self.file_list) > 1:
             file_load_frame.load_trial_button.config(state=tk.DISABLED)
             file_load_frame.run_multiple_files_button.config(state=tk.NORMAL)
-        elif len(self.file_list) == 1 and info['tags'] == ['day']:
-            file_load_frame.load_trial_button.config(state=tk.DISABLED)
-            file_load_frame.run_multiple_files_button.config(state=tk.NORMAL)
-            # TODO: add all trials from this day to file_list
-        elif len(self.file_list) == 1 and info['tags'] == ['trial']:
+        elif len(self.file_list) == 1 and info['tags'] != ['day']:
             file_load_frame.load_trial_button.config(state=tk.NORMAL)
             file_load_frame.run_multiple_files_button.config(state=tk.DISABLED)
 

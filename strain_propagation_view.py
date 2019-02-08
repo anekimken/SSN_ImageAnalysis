@@ -15,6 +15,7 @@ import yaml
 # import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import (
         FigureCanvasTkAgg, NavigationToolbar2Tk)
+from pandastable import Table, TableModel
 
 
 class SSN_analysis_GUI(tk.Frame):
@@ -101,8 +102,8 @@ class FileLoadFrame(tk.Frame):
         self.file_tree = tk.ttk.Treeview(self, height=37,
                                          columns=("status", "filename"))
         self.file_tree.heading("status", text="Analysis Status")
-        self.file_tree.heading("filename", text="Full file path")
-        # TODO: show number of stars for analysis here instead of file path
+        self.file_tree.heading("filename",
+                               text="Rating to prioritize analysis")
         for day in experiment_days:
             try:
                 int(day[-8:])  # check to make sure this dir is an experiment
@@ -114,7 +115,7 @@ class FileLoadFrame(tk.Frame):
                     iid = self.file_tree.insert(day_item, 'end',
                                                 text=trial_parts[-1],
                                                 values=trial,
-                                                tags='trial')
+                                                tags=trial)
                     metadata_file_path = ('/Users/adam/Documents/'
                                           'SenseOfTouchResearch/'
                                           'SSN_ImageAnalysis/AnalyzedData/' +
@@ -126,9 +127,13 @@ class FileLoadFrame(tk.Frame):
                             analysis_status = metadata['analysis_status']
                         else:
                             analysis_status = 'no parameters tested'
+                        if 'trial_rating' in metadata:
+                            rating = metadata['trial_rating']
+                        else:
+                            rating = None
                     except FileNotFoundError:
                         analysis_status = 'no metadata.yaml file'
-                    self.file_tree.item(iid, values=(analysis_status, trial))
+                    self.file_tree.item(iid, values=(analysis_status, rating))
 
             except ValueError:  # we get here if dir name is not a number
                 pass  # and we ignore these dirs
@@ -144,7 +149,7 @@ class FileLoadFrame(tk.Frame):
 
 class AnalyzeTrialFrame(tk.Frame):
     def __init__(self, parent, screen_dpi, root):
-        # TODO: docstring
+        # TODO: make this class less unweildy
         tk.Frame.__init__(self, parent)
         self.parent = parent
         self.root = root
@@ -180,7 +185,12 @@ class AnalyzeTrialFrame(tk.Frame):
         # TODO: limit scroll to size of image
 
         # Creat a frame to put all the controls and parameters in
-        self.param_frame = tk.Frame(self)
+        self.analysis_notebook = ttk.Notebook(self)
+        self.param_frame = tk.Frame(self.analysis_notebook)
+        self.param_frame_tab = self.analysis_notebook.add(
+                self.param_frame, text="Adjust Parameters")
+        self.analysis_notebook.grid(row=0, column=2, sticky=tk.S)
+        self.root.update()
         param_frame_row = 0
 
         # Clear ROI button
@@ -197,13 +207,15 @@ class AnalyzeTrialFrame(tk.Frame):
         self.max_proj_checkbox.grid(
                 row=param_frame_row, column=2)
         self.max_proj_checkbox.state(['selected', '!alternate'])
+
         param_frame_row += 1
 
         # Select slice to show
         self.slice_selector_label = ttk.Label(self.param_frame,
                                               text='Choose slice to display: ')
         self.slice_selector_label.grid(row=param_frame_row, column=1)
-        self.slice_selector = tk.Spinbox(self.param_frame, values=(1, 2))
+        self.slice_selector = tk.Spinbox(self.param_frame,
+                                         values=(1, 2), width=5)
         self.slice_selector.grid(row=param_frame_row, column=2)
         param_frame_row += 1
 
@@ -211,7 +223,8 @@ class AnalyzeTrialFrame(tk.Frame):
         self.timepoint_selector_label = ttk.Label(
                 self.param_frame, text='Choose timepoint to display: ')
         self.timepoint_selector_label.grid(row=param_frame_row, column=1)
-        self.timepoint_selector = tk.Spinbox(self.param_frame, values=(1, 2))
+        self.timepoint_selector = tk.Spinbox(self.param_frame,
+                                             values=(1, 2),  width=5)
         self.timepoint_selector.grid(row=param_frame_row, column=2)
         param_frame_row += 1
 
@@ -220,7 +233,7 @@ class AnalyzeTrialFrame(tk.Frame):
                 self.param_frame,
                 state="readonly",
                 values=[
-                        'Plot mitochondria for this stack',
+                        'Plot only for this stack',
                         'Plot trajectories',
                         'No overlay'])
         self.plot_labels_drop.grid(column=1, row=param_frame_row)
@@ -242,7 +255,8 @@ class AnalyzeTrialFrame(tk.Frame):
         self.btm_slice_label = ttk.Label(self.param_frame,
                                          text='Bottom slice: ')
         self.btm_slice_label.grid(row=param_frame_row, column=1)
-        self.btm_slice_selector = tk.Spinbox(self.param_frame, values=(1, 2))
+        self.btm_slice_selector = tk.Spinbox(self.param_frame,
+                                             values=(1, 2), width=5)
         self.btm_slice_selector.grid(row=param_frame_row, column=2)
         param_frame_row += 1
 
@@ -250,7 +264,8 @@ class AnalyzeTrialFrame(tk.Frame):
         self.top_slice_label = ttk.Label(self.param_frame,
                                          text='Top slice: ')
         self.top_slice_label.grid(row=param_frame_row, column=1)
-        self.top_slice_selector = tk.Spinbox(self.param_frame, values=(1, 2))
+        self.top_slice_selector = tk.Spinbox(self.param_frame,
+                                             values=(1, 2), width=5)
         self.top_slice_selector.grid(row=param_frame_row, column=2)
         param_frame_row += 1
 
@@ -258,7 +273,8 @@ class AnalyzeTrialFrame(tk.Frame):
         self.last_time_label = ttk.Label(self.param_frame,
                                          text='Final timepoint to analyze: ')
         self.last_time_label.grid(row=param_frame_row, column=1)
-        self.last_time_selector = tk.Spinbox(self.param_frame, values=(1, 2))
+        self.last_time_selector = tk.Spinbox(self.param_frame,
+                                             values=(1, 2), width=5)
         self.last_time_selector.grid(row=param_frame_row, column=2)
         param_frame_row += 1
 
@@ -267,7 +283,8 @@ class AnalyzeTrialFrame(tk.Frame):
                 self.param_frame, text='Width of Gaussian blur kernel: ')
         self.gaussian_blur_width_label.grid(row=param_frame_row, column=1)
         self.gaussian_blur_width = tk.Spinbox(self.param_frame,
-                                              values=list(range(0, 10)))
+                                              values=list(range(0, 10)),
+                                              width=5)
         self.gaussian_blur_width.grid(row=param_frame_row, column=2)
         param_frame_row += 1
 
@@ -276,7 +293,8 @@ class AnalyzeTrialFrame(tk.Frame):
                                           text='Particle z diameter: ')
         self.z_diameter_label.grid(row=param_frame_row, column=1)
         self.z_diameter_selector = tk.Spinbox(self.param_frame,
-                                              values=list(range(1, 45, 2)))
+                                              values=list(range(1, 45, 2)),
+                                              width=5)
         self.z_diameter_selector.grid(row=param_frame_row, column=2)
         param_frame_row += 1
 
@@ -285,7 +303,8 @@ class AnalyzeTrialFrame(tk.Frame):
                                            text='Particle xy diameter: ')
         self.xy_diameter_label.grid(row=param_frame_row, column=1)
         self.xy_diameter_selector = tk.Spinbox(self.param_frame,
-                                               values=list(range(1, 45, 2)))
+                                               values=list(range(1, 45, 2)),
+                                               width=5)
         self.xy_diameter_selector.grid(row=param_frame_row, column=2)
         param_frame_row += 1
 
@@ -294,7 +313,7 @@ class AnalyzeTrialFrame(tk.Frame):
                 self.param_frame, text='Brightness percentile: ')
         self.brightness_percentile_label.grid(row=param_frame_row, column=1)
         self.brightness_percentile_selector = tk.Spinbox(
-                self.param_frame, values=list(range(1, 100)))
+                self.param_frame, values=list(range(1, 100)), width=5)
         self.brightness_percentile_selector.grid(row=param_frame_row, column=2)
         param_frame_row += 1
 
@@ -302,7 +321,7 @@ class AnalyzeTrialFrame(tk.Frame):
         self.min_particle_mass_label = ttk.Label(
                 self.param_frame, text='Minimum particle mass: ')
         self.min_particle_mass_label.grid(row=param_frame_row, column=1)
-        self.min_mass_selector = tk.Entry(self.param_frame)
+        self.min_mass_selector = tk.Entry(self.param_frame, width=5)
         self.min_mass_selector.grid(row=param_frame_row, column=2)
         param_frame_row += 1
 
@@ -311,13 +330,13 @@ class AnalyzeTrialFrame(tk.Frame):
                 self.param_frame, text='Linking search radius: ')
         self.linking_radius_label.grid(row=param_frame_row, column=1)
         self.linking_radius_selector = tk.Spinbox(
-                self.param_frame, values=list(range(1, 100)))
+                self.param_frame, values=list(range(1, 100)), width=5)
         self.linking_radius_selector.grid(row=param_frame_row, column=2)
         param_frame_row += 1
 
         # Button to move to test parameters
         self.test_param_button = ttk.Button(
-                self.param_frame, text='Test parameters on one stack')
+                self.param_frame, text='Run one stack')
         self.test_param_button.grid(
                 row=param_frame_row, column=1)
 
@@ -341,50 +360,56 @@ class AnalyzeTrialFrame(tk.Frame):
                 row=param_frame_row, column=2)
         param_frame_row += 1
 
-        self.param_frame.grid(row=0, column=2)
-
-        # Frame for saving data etc.
-        self.save_data_frame = tk.Frame(self)
+        # Controls for saving data etc.
         save_frame_row = 0
 
         # Show notes from metadata
-        self.metadata_notes_label = ttk.Label(self.save_data_frame,
+        self.metadata_notes_label = ttk.Label(self.param_frame,
                                               text='Notes from metadata:')
-        self.metadata_notes_label.grid(row=save_frame_row, column=1)
+        self.metadata_notes_label.grid(row=save_frame_row, column=3)
         save_frame_row += 1
-        self.metadata_notes = tk.Message(self.save_data_frame)
-        self.metadata_notes.grid(row=save_frame_row, column=1)
+        self.metadata_notes = tk.Message(self.param_frame)
+        self.metadata_notes.grid(row=save_frame_row, column=3)
         save_frame_row += 1
 
         # Show height of stack
-        self.stack_height_label = ttk.Label(self.save_data_frame,
+        self.stack_height_label = ttk.Label(self.param_frame,
                                             text='Stack height:')
-        self.stack_height_label.grid(row=save_frame_row, column=1)
+        self.stack_height_label.grid(row=save_frame_row, column=3)
         save_frame_row += 1
 
         # Show which neuron is being tested
-        self.neuron_id_label = ttk.Label(self.save_data_frame,
+        self.neuron_id_label = ttk.Label(self.param_frame,
                                          text='Neuron:')
-        self.neuron_id_label.grid(row=save_frame_row, column=1)
+        self.neuron_id_label.grid(row=save_frame_row, column=3)
         save_frame_row += 1
 
         # Show which side the worm's vulva is on
-        self.vulva_side_label = ttk.Label(self.save_data_frame,
+        self.vulva_side_label = ttk.Label(self.param_frame,
                                           text='Vulva side:')
-        self.vulva_side_label.grid(row=save_frame_row, column=1)
+        self.vulva_side_label.grid(row=save_frame_row, column=3)
         save_frame_row += 1
 
         # Update status
         self.status_dropdown = ttk.Combobox(
-                self.save_data_frame,
+                self.param_frame,
                 state="readonly",
                 values=['No options loaded yet'])
         self.status_dropdown.grid(column=1, row=save_frame_row)
         save_frame_row += 1
 
-        self.save_data_frame.grid(row=0, column=3)
+        self.param_frame.grid_columnconfigure(0, weight=0)
+        self.param_frame.grid_columnconfigure(1, weight=0)
+        self.param_frame.grid_columnconfigure(2, weight=2)
 
-        # TODO: add button for loading images that aren't yet loaded
+        self.analysis_notebook.grid(row=0, column=2, sticky=tk.SW + tk.NE)
+        self.grid_columnconfigure(2, weight=1)
+
+        self.tf = tk.Frame(self.analysis_notebook)
+        self.df_tab = self.analysis_notebook.add(
+                self.tf, text="Explore Data")
+        self.dataframe = Table(self.tf, dataframe=TableModel.getSampleData())
+        self.dataframe.show()
 
 
 class PlotResultsFrame(tk.Frame):
@@ -425,21 +450,6 @@ class PlotResultsFrame(tk.Frame):
 
         self.plot_config_frame.grid(row=0, column=1)
 
-        self.diag_entry = tk.Text(self, height=20, width=50, wrap=tk.NONE)
-        self.diag_entry.insert(tk.END, '')
-        self.diag_v_scrollbar = tk.Scrollbar(self,
-                                             orient='vertical',
-                                             command=self.diag_entry.yview)
-        self.diag_h_scrollbar = tk.Scrollbar(self,
-                                             orient='horizontal',
-                                             command=self.diag_entry.xview)
-        self.diag_entry.config(yscrollcommand=self.diag_v_scrollbar.set)
-        self.diag_entry.config(xscrollcommand=self.diag_h_scrollbar.set)
-        self.diag_entry.grid(row=0, column=2, sticky='nesw')
-
-        self.diag_v_scrollbar.grid(row=0, column=3, sticky='ns')
-        self.diag_h_scrollbar.grid(row=1, column=2, sticky='new')
-
         # TODO: add buttons for interesting plots
 
     def plot_progress(self, all_statuses_dict: dict, status_values: list):
@@ -461,7 +471,6 @@ class PlotResultsFrame(tk.Frame):
 
         self.plot_canvas.draw()
 
-    # TODO: function for plotting aggregated plotting data
     # TODO: controls for selecting what data are plotted
 
 

@@ -90,7 +90,7 @@ def generatePgColormap(cm_name):
     colors = [c + [1.] for c in colors]
     positions = np.linspace(0, 1, len(colors))
     pgMap = pg.ColorMap(positions, colors)
-    
+
     return pgMap
 
 
