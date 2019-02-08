@@ -166,8 +166,6 @@ class StrainPropagationTrial(object):
         self.latest_test_params = self._load_analysis_params()
 
         finish_time = time.time()
-        local_image = self.image_array
-        local_self = self
         print('Loaded file in ' + str(round(finish_time - start_time)) +
               ' seconds.')
 
@@ -458,6 +456,7 @@ class StrainPropagationTrial(object):
         row_of_metadata = metadata_worksheet.row_values(current_id_cell.row)
         row_of_keys = metadata_worksheet.row_values(1)
         gdrive_metadata_dict = dict(zip(row_of_keys, row_of_metadata))
+        print(gdrive_metadata_dict)
 
         # Access the metadata from the file
         meta = images.metadata
@@ -507,7 +506,8 @@ class StrainPropagationTrial(object):
                 'head_orientation': combined_metadata[
                         'Worm head orientation'],
                 'vulva_orientation': combined_metadata[
-                        'Worm vulva orientation']}
+                        'Worm vulva orientation'],
+                'trial_rating': combined_metadata['Trial rating']}
 
         return metadata_dict
 
