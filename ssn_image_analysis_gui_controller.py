@@ -85,28 +85,15 @@ class StrainGUIController:
         self.root.title("SSN Image Analysis")
         self.root.mainloop()
 
-    # def start_load_trial(self, event=None):
-    #     load_thread = threading.Thread(target=self.load_trial)
-    #     load_thread.start()
-
     def load_trial(self, event=None):
         """Loads the data for this trial from disk and sends us to the
         inspection tab to start the analysis
         """
-        # OPTIMIZE: load trial in a separate thread?
         # MAYBE: add popup window saying file is loading
         print('Loading file', self.file_list[0][0])
         fr = self.gui.file_load_frame
         load_images = fr.load_images_box.instate(['selected'])
         overwrite_metadata = fr.overwrite_metadata_box.instate(['selected'])
-
-        # load_thread = threading.Thread(
-        #         name='load_file_thread',
-        #         target=self.trial.load_trial,
-        #         args=(self.file_list[0][0]),
-        #         kwargs={'load_images': load_images,
-        #                 'overwrite_metadata': overwrite_metadata})
-        # load_thread.start()
 
         self.trial.load_trial(self.file_list[0][0],
                               load_images=load_images,
@@ -150,11 +137,6 @@ class StrainGUIController:
         self._display_last_test_params()
         self.gui.notebook.select(1)
 
-    # def test_params(self, event):
-    #     # TODO: decide if I really want threads, and, if so, organize them
-    #     thread = threading.Thread(target=self.test_params_separate_thread)
-    #     thread.start()
-
     def test_params(self, event=None):
         # Gather parameters
         analysis_frame = self.gui.analyze_trial_frame
@@ -167,33 +149,21 @@ class StrainGUIController:
         bottom_slice = int(analysis_frame.btm_slice_selector.get())
         top_slice = int(analysis_frame.top_slice_selector.get())
         time_point = int(analysis_frame.timepoint_selector.get()) - 1
-        # TODO: validate input
-
-        # run trackpy analysis in new thread
-        # tp_thread = threading.Thread(name='trackpy_locate_thread',
-        #                              target=self.trial.test_parameters,
-        #                              args=(gaussian_width,
-        #                                    particle_z_diameter,
-        #                                    particle_xy_diameter,
-        #                                    brightness_percentile,
-        #                                    min_particle_mass,
-        #                                    bottom_slice,
-        #                                    top_slice,
-        #                                    time_point))
-        # tp_thread.start()
 
         self.trial.mito_candidates = self.trial.test_parameters(
-                gaussian_width,
-                particle_z_diameter,
-                particle_xy_diameter,
-                brightness_percentile,
-                min_particle_mass,
-                bottom_slice,
-                top_slice,
-                time_point)
+                images_ndarray=self.trial.image_array,
+                roi=self.roi,
+                gaussian_width=gaussian_width,
+                particle_z_diameter=particle_z_diameter,
+                particle_xy_diameter=particle_xy_diameter,
+                brightness_percentile=brightness_percentile,
+                min_particle_mass=min_particle_mass,
+                bottom_slice=bottom_slice,
+                top_slice=top_slice,
+                time_point=time_point)
 
         analysis_frame.max_proj_checkbox.state(['selected'])
-        analysis_frame.plot_labels_drop.set('Plot mitochondria for this stack')
+        analysis_frame.plot_labels_drop.set('Mitos from param test')
         self.update_inspection_image()
 
     def run_full_analysis(self, event=None):
@@ -214,23 +184,21 @@ class StrainGUIController:
 
         # TODO: get subset of array in trial file and zero out other pixels
         self.trial.run_batch(
-                self.trial.image_array[:, :,
-                                       self.roi[1]:self.roi[3],
-                                       self.roi[0]:self.roi[2]],
-                gaussian_width,
-                particle_z_diameter,
-                particle_xy_diameter,
-                brightness_percentile,
-                min_particle_mass,
-                bottom_slice,
-                top_slice,
-                tracking_seach_radius,
-                last_timepoint)
+                images_ndarray=self.trial.image_array,
+                roi=self.roi,
+                gaussian_width=gaussian_width,
+                particle_z_diameter=particle_z_diameter,
+                particle_xy_diameter=particle_xy_diameter,
+                brightness_percentile=brightness_percentile,
+                min_particle_mass=min_particle_mass,
+                bottom_slice=bottom_slice,
+                top_slice=top_slice,
+                tracking_seach_radius=tracking_seach_radius,
+                last_timepoint=last_timepoint)
 
         analysis_frame.max_proj_checkbox.state(['selected'])
         analysis_frame.plot_labels_drop.set('Plot trajectories')
         self.update_inspection_image()
-        self.gui.plot_results_frame.diag_text.set(str(self.trial.linked_mitos))
 
     def run_multiple_files(self, event=None):
         fr = self.gui.file_load_frame
@@ -251,6 +219,7 @@ class StrainGUIController:
 
             self.trial.run_batch(
                 images_ndarray=self.trial.image_array,
+                roi=self.roi,
                 gaussian_width=params['gaussian_width'],
                 particle_z_diameter=params['particle_z_diameter'],
                 particle_xy_diameter=params['particle_xy_diameter'],
@@ -393,9 +362,12 @@ class StrainGUIController:
                 df_for_plot = self.trial.mitos_from_batch.loc[
                         self.trial.mitos_from_batch[
                                 'frame'] == selected_timepoint]
-            elif self.trial.mito_candidates is not None:
+        elif plot_mitos_status == 'Mitos from param test':
+            if self.trial.mito_candidates is not None:
                 df_for_plot = self.trial.mito_candidates
-
+        # plot data before linking, so no text here
+        if (plot_mitos_status == 'Mitos from param test' or
+                plot_mitos_status == 'Unlinked mitos for this stack'):
             df_for_plot.plot(x='x', y='y', ax=analysis_frame.ax,
                              color='#FB8072', marker='o', linestyle='None')
 
@@ -404,6 +376,8 @@ class StrainGUIController:
             self.gui.analyze_trial_frame.dataframe_widget.updateModel(
                     TableModel(self.gui.analyze_trial_frame.dataframe))
             self.gui.analyze_trial_frame.dataframe_widget.redraw()
+
+        # TODO: show ROI
 
         analysis_frame.fig.set_size_inches(
                 forward=True,
@@ -532,7 +506,9 @@ class StrainGUIController:
         self.roi = [0,
                     0,
                     self.trial.image_array.shape[3],
-                    self.trial.image_array.shape[3]]
+                    self.trial.image_array.shape[2]]
+
+        print('Selected ROI: ', self.roi)
 
     def update_status(self, event=None):
         new_status = self.gui.analyze_trial_frame.status_dropdown.get()

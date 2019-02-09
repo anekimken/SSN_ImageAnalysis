@@ -12,7 +12,7 @@ import pathlib
 import datetime
 import time
 import warnings
-from typing import Tuple, Any
+from typing import Tuple
 
 import numpy as np
 import pims
@@ -170,6 +170,8 @@ class StrainPropagationTrial(object):
               ' seconds.')
 
     def test_parameters(self,
+                        images_ndarray:  np.ndarray,
+                        roi: Tuple['xmin', 'ymin', 'xmax', 'ymax'],
                         gaussian_width: int,
                         particle_z_diameter: int,
                         particle_xy_diameter: int,
@@ -186,7 +188,8 @@ class StrainPropagationTrial(object):
                  'brightness_percentile': brightness_percentile,
                  'min_particle_mass': min_particle_mass,
                  'bottom_slice': bottom_slice,
-                 'top_slice': top_slice})
+                 'top_slice': top_slice,
+                 'roi': roi})
         particle_diameter = (particle_z_diameter,
                              particle_xy_diameter,
                              particle_xy_diameter)
@@ -195,20 +198,26 @@ class StrainPropagationTrial(object):
             yaml.dump(analysisParams, output_file, explicit_start=True)
             # dump the latest analysis into the history file
 
-        slicesToAnalyze = self.image_array[time_point, bottom_slice:top_slice]
-    #     for i in range(0,imageCurrent.shape[0]):
-    #         maxProj = dispMaxProjection(
-    # slicesToAnalyze[i])#,metadataCurrent,timePoint)
+        slices_to_analyze = self.image_array[time_point,
+                                             bottom_slice:top_slice,
+                                             roi[1]:roi[3],
+                                             roi[0]:roi[2]]
 
-        # TODO: make this a new thread?
         print('Looking for mitochondria...')
         start_time = time.time()
-        self.mito_candidates = tp.locate(slicesToAnalyze,
+        self.mito_candidates = tp.locate(slices_to_analyze,
                                          particle_diameter,
                                          percentile=brightness_percentile,
                                          minmass=min_particle_mass,
                                          noise_size=gaussian_width,
                                          characterize=True)
+
+        # Correct for roi offset
+        self.mito_candidates['x'] = (self.mito_candidates['x'] +
+                                     min([roi[0], roi[2]]))
+        self.mito_candidates['y'] = (self.mito_candidates['y'] +
+                                     min([roi[1], roi[3]]))
+
         finish_time = time.time()
         print('Time to test parameters for locating mitochondria was ' +
               str(round(finish_time - start_time)) + ' seconds.')
@@ -216,7 +225,8 @@ class StrainPropagationTrial(object):
         return self.mito_candidates
 
     def run_batch(self,
-                  images_ndarray:  Any,
+                  images_ndarray:  np.ndarray,
+                  roi: Tuple['xmin', 'ymin', 'xmax', 'ymax'],
                   gaussian_width: int,
                   particle_z_diameter: int,
                   particle_xy_diameter: int,
@@ -228,7 +238,9 @@ class StrainPropagationTrial(object):
                   last_timepoint: int) -> dict:
 
         slices_to_analyze = images_ndarray[:last_timepoint,
-                                           bottom_slice:top_slice]
+                                           bottom_slice:top_slice,
+                                           roi[1]:roi[3],
+                                           roi[0]:roi[2]]
         particle_diameter = (particle_z_diameter,
                              particle_xy_diameter,
                              particle_xy_diameter)
@@ -258,21 +270,31 @@ class StrainPropagationTrial(object):
                 linked, last_timepoint)
         link_done_time = time.time()
 
+        # Correct for roi offset
+        self.mitos_from_batch['x'] = (self.mitos_from_batch['x'] +
+                                      min([roi[0], roi[2]]))
+        self.mitos_from_batch['y'] = (self.mitos_from_batch['y'] +
+                                      min([roi[1], roi[3]]))
+        self.linked_mitos['x'] = (self.linked_mitos['x'] +
+                                  min([roi[0], roi[2]]))
+        self.linked_mitos['y'] = (self.linked_mitos['y'] +
+                                  min([roi[1], roi[3]]))
+
         # add other parameters to the yaml created by tp.batch
         other_param_dict = dict(
                 {'tracking_seach_radius': tracking_seach_radius,
                  'bottom_slice': bottom_slice,
                  'top_slice': top_slice,
-                 'last_timepoint': last_timepoint})
+                 'last_timepoint': last_timepoint,
+                 'roi': roi})
         with open(save_location.joinpath('trackpyBatchParams.yaml'),
                   'a') as yamlfile:
             yaml.dump(other_param_dict, yamlfile, default_flow_style=False)
 
-        # load the file of parameters that tp.batch just saved
+        # load the file again now that it has all parameters
         with open(save_location.joinpath('trackpyBatchParams.yaml'),
                   'r') as yamlfile:
-            cur_yaml = yaml.load(yamlfile)  # , Loader=PrettySafeLoader)
-            # Note the PrettySafeLoader which can load tuples
+            cur_yaml = yaml.load(yamlfile)
 
         # dump the latest analysis into the history file
         with open(self.batch_history_file, 'a') as yamlfile:
@@ -291,8 +313,6 @@ class StrainPropagationTrial(object):
                   'w') as yamlfile:
             yaml.dump(mitos_from_batch_dict, yamlfile,
                       explicit_start=True, default_flow_style=False)
-
-            # TODO: save all particles found, can be linked later
 
         print('Done running file. Batch find took ' +
               str(round(batch_done_time - start_time)) + ' seconds. ' +
@@ -325,7 +345,7 @@ class StrainPropagationTrial(object):
                   'r') as yamlfile:
             old_yaml = yaml.load(yamlfile)
 
-        # add other parameters to the yaml created by tp.batch
+        # add parameters used for linking to the yaml created by tp.batch
         other_param_dict = dict(
                 {'tracking_seach_radius': tracking_seach_radius,
                  'last_timepoint': last_timepoint})
