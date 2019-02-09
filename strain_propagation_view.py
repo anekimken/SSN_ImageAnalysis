@@ -207,6 +207,16 @@ class AnalyzeTrialFrame(tk.Frame):
 
         param_frame_row += 1
 
+#        # Optional plot results from batch
+#        self.plot_batch_checkbox_status = tk.IntVar(value=1)
+#        self.plot_one_stack = ttk.Checkbutton(
+#                self.param_frame,
+#                text='Plot results from batch',
+#                variable=self.part_label_checkbox_status)
+#        self.plot_one_stack.grid(
+#                row=param_frame_row, column=1)
+#        self.plot_one_stack.state(['selected', '!alternate'])
+
         # Optional particle labels
         self.part_label_checkbox_status = tk.IntVar(value=1)
         self.part_label_checkbox = ttk.Checkbutton(
@@ -245,6 +255,7 @@ class AnalyzeTrialFrame(tk.Frame):
                         'Plot trajectories',
                         'Linked mitos for this stack',
                         'Unlinked mitos for this stack',
+                        'Mitos from param test',
                         'No overlay'])
         self.plot_labels_drop.grid(column=1, row=param_frame_row)
 
@@ -346,7 +357,7 @@ class AnalyzeTrialFrame(tk.Frame):
 
         # Button to move to test parameters
         self.test_param_button = ttk.Button(
-                self.param_frame, text='Run one stack')
+                self.param_frame, text='Test params')
         self.test_param_button.grid(
                 row=param_frame_row, column=1)
 
