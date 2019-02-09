@@ -13,9 +13,8 @@ import glob
 import matplotlib as mpl
 import yaml
 # import matplotlib.pyplot as plt
-from matplotlib.backends.backend_tkagg import (
-        FigureCanvasTkAgg, NavigationToolbar2Tk)
-from pandastable import Table, TableModel
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from pandastable import Table
 
 
 class SSN_analysis_GUI(tk.Frame):
@@ -149,7 +148,7 @@ class FileLoadFrame(tk.Frame):
 
 class AnalyzeTrialFrame(tk.Frame):
     def __init__(self, parent, screen_dpi, root):
-        # TODO: make this class less unweildy
+        # TODO: make this class less unweildy by breaking into smaller onse
         tk.Frame.__init__(self, parent)
         self.parent = parent
         self.root = root
@@ -174,7 +173,6 @@ class AnalyzeTrialFrame(tk.Frame):
                                               row=0,
                                               column=0,
                                               rowspan=3)
-        self.plot_canvas.get_tk_widget().grid_rowconfigure(0, weight=1)
 
         self.scrollbar = tk.Scrollbar(
                 self, command=self.plot_canvas.get_tk_widget().yview)
@@ -182,14 +180,13 @@ class AnalyzeTrialFrame(tk.Frame):
 
         self.plot_canvas.get_tk_widget().config(
                 yscrollcommand=self.scrollbar.set)
-        # TODO: limit scroll to size of image
 
-        # Creat a frame to put all the controls and parameters in
+        # Creat a notebook to put all the controls and parameters in
         self.analysis_notebook = ttk.Notebook(self)
         self.param_frame = tk.Frame(self.analysis_notebook)
         self.param_frame_tab = self.analysis_notebook.add(
                 self.param_frame, text="Adjust Parameters")
-        self.analysis_notebook.grid(row=0, column=2, sticky=tk.S)
+        self.analysis_notebook.grid(row=0, column=2, sticky=tk.N)
         self.root.update()
         param_frame_row = 0
 
@@ -207,6 +204,18 @@ class AnalyzeTrialFrame(tk.Frame):
         self.max_proj_checkbox.grid(
                 row=param_frame_row, column=2)
         self.max_proj_checkbox.state(['selected', '!alternate'])
+
+        param_frame_row += 1
+
+        # Optional particle labels
+        self.part_label_checkbox_status = tk.IntVar(value=1)
+        self.part_label_checkbox = ttk.Checkbutton(
+                self.param_frame,
+                text='Label particles',
+                variable=self.part_label_checkbox_status)
+        self.part_label_checkbox.grid(
+                row=param_frame_row, column=2)
+        self.part_label_checkbox.state(['selected', '!alternate'])
 
         param_frame_row += 1
 
@@ -233,8 +242,9 @@ class AnalyzeTrialFrame(tk.Frame):
                 self.param_frame,
                 state="readonly",
                 values=[
-                        'Plot only for this stack',
                         'Plot trajectories',
+                        'Linked mitos for this stack',
+                        'Unlinked mitos for this stack',
                         'No overlay'])
         self.plot_labels_drop.grid(column=1, row=param_frame_row)
 
@@ -369,8 +379,8 @@ class AnalyzeTrialFrame(tk.Frame):
         self.metadata_notes_label.grid(row=save_frame_row, column=3)
         save_frame_row += 1
         self.metadata_notes = tk.Message(self.param_frame)
-        self.metadata_notes.grid(row=save_frame_row, column=3)
-        save_frame_row += 1
+        self.metadata_notes.grid(row=save_frame_row, column=3, rowspan=5)
+        save_frame_row += 5
 
         # Show height of stack
         self.stack_height_label = ttk.Label(self.param_frame,
@@ -395,21 +405,17 @@ class AnalyzeTrialFrame(tk.Frame):
                 self.param_frame,
                 state="readonly",
                 values=['No options loaded yet'])
-        self.status_dropdown.grid(column=1, row=save_frame_row)
+        self.status_dropdown.grid(column=3, row=save_frame_row)
         save_frame_row += 1
 
-        self.param_frame.grid_columnconfigure(0, weight=0)
-        self.param_frame.grid_columnconfigure(1, weight=0)
-        self.param_frame.grid_columnconfigure(2, weight=2)
-
-        self.analysis_notebook.grid(row=0, column=2, sticky=tk.SW + tk.NE)
-        self.grid_columnconfigure(2, weight=1)
-
-        self.tf = tk.Frame(self.analysis_notebook)
+        self.explore_data_frame = tk.Frame(self.analysis_notebook)
         self.df_tab = self.analysis_notebook.add(
-                self.tf, text="Explore Data")
-        self.dataframe = Table(self.tf, dataframe=TableModel.getSampleData())
-        self.dataframe.show()
+                self.explore_data_frame, text="Explore Data")
+        self.dataframe = None  # TableModel.getSampleData()
+        self.dataframe_widget = Table(self.explore_data_frame,
+                                      dataframe=self.dataframe)
+
+        self.dataframe_widget.show()
 
 
 class PlotResultsFrame(tk.Frame):
