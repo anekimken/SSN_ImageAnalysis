@@ -178,8 +178,6 @@ class StrainPropagationTrial(object):
                         bottom_slice: int,
                         top_slice: int,
                         time_point: int) -> dict:
-        # TODO: docstring
-        # TODO: update formatting of names here and in saved files
 
         analysisParams = dict(
                 {'gaussian_width': gaussian_width,
@@ -202,7 +200,7 @@ class StrainPropagationTrial(object):
     #         maxProj = dispMaxProjection(
     # slicesToAnalyze[i])#,metadataCurrent,timePoint)
 
-        # MAYBE: make this a new thread?
+        # TODO: make this a new thread?
         print('Looking for mitochondria...')
         start_time = time.time()
         self.mito_candidates = tp.locate(slicesToAnalyze,

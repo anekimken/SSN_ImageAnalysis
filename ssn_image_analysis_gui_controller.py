@@ -5,13 +5,15 @@ Created on Fri Jan  4 10:32:39 2019
 
 @author: Adam Nekimken
 """
-# TODO: DOCSTRINGS!!!!
+
 import numpy as np
 import tkinter as tk
+import pandas as pd
 # import threading
 # from multiprocessing import Process, Queue
 import glob
 import yaml
+from pandastable import TableModel
 
 import strain_propagation_trial as ssn_trial
 import strain_propagation_view as ssn_view
@@ -144,11 +146,6 @@ class StrainGUIController:
         self.gui.analyze_trial_frame.vulva_side_label.config(
                 text=('Vulva side: ' +
                       self.trial.metadata['vulva_orientation']))
-
-# TODO: change this to display dataframe on analysis tab
-#        if self.trial.unlinked_particles_file.is_file():
-#            self.gui.plot_results_frame.diag_entry.insert(
-#                    tk.END, self.trial.mitos_from_batch.to_string())
 
         self._display_last_test_params()
         self.gui.notebook.select(1)
@@ -321,13 +318,16 @@ class StrainGUIController:
         plot_mitos_status = analysis_frame.plot_labels_drop.get()
         max_proj_checkbox = analysis_frame.max_proj_checkbox.instate(
                 ['selected'])
+        particle_label_checkbox = analysis_frame.part_label_checkbox.instate(
+                ['selected'])
         selected_slice = int(analysis_frame.slice_selector.get())
         selected_timepoint = int(analysis_frame.timepoint_selector.get()) - 1
         inspection_ax = analysis_frame.ax
         inspection_ax.clear()
-        self.gui.plot_results_frame.diag_entry.delete(1.0, tk.END)
+        df_for_plot = None
 
-        # TODO: move this to view model and send data there instead?
+        # TODO: move this to view module and send data there instead?
+        # get image that we're going to show
         if max_proj_checkbox is True:  # max projection
             stack = self.trial.image_array[selected_timepoint]
             image_to_display = np.amax(stack, 0)  # collapse z axis
@@ -336,54 +336,74 @@ class StrainGUIController:
             image_to_display = self.trial.image_array[
                     selected_timepoint, selected_slice]
 
-        if plot_mitos_status == 'Plot mitochondria for this stack':
+        # Get dataframe with data we're going to plot on top of image
+        if plot_mitos_status == 'Linked mitos for this stack':
             if (self.trial.linked_mitos is not None and
                     selected_timepoint - 1 <=
                     max(self.trial.linked_mitos['frame'])):
-                mitos_this_frame = self.trial.mitos_from_batch.loc[
-                        self.trial.mitos_from_batch[
+                df_for_plot = self.trial.linked_mitos.loc[
+                        self.trial.linked_mitos[
                                 'frame'] == selected_timepoint]
-                mitos_this_frame.plot(
-                            x='x', y='y', ax=analysis_frame.ax,
-                            color='#FB8072', marker='o', linestyle='None')
-                self.gui.plot_results_frame.diag_entry.insert(
-                        tk.END, mitos_this_frame.to_string())
-            elif self.trial.mito_candidates is not None:
-                self.trial.mito_candidates.plot(
-                    x='x', y='y', ax=analysis_frame.ax, color='#FB8072',
-                    marker='o', linestyle='None')
-                self.gui.plot_results_frame.diag_entry.insert(
-                        tk.END, self.trial.mito_candidates.to_string())
+                particle_marker = 'o'
+                traj_line = 'None'
         elif plot_mitos_status == 'Plot trajectories':
             if self.trial.linked_mitos is not None:
-                self.gui.plot_results_frame.diag_entry.insert(
-                        tk.END, self.trial.linked_mitos.to_string())
-                try:
-                    theCount = 0  # ah ah ah ah
-                    for i in range(max(self.trial.linked_mitos['particle'])):
-                        thisParticleTraj = self.trial.linked_mitos.loc[
-                                self.trial.linked_mitos['particle'] == i+1]
-                        if not thisParticleTraj.empty:
-                            theCount += 1
-                            thisParticleTraj.plot(
-                                    x='x',
-                                    y='y',
-                                    ax=analysis_frame.ax,
-                                    color='#FB8072')
-                            analysis_frame.ax.text(
-                                    thisParticleTraj['x'].mean() + 15,
-                                    thisParticleTraj['y'].mean(),
-                                    str(int(thisParticleTraj.iloc[0][
-                                             'particle'])), color='white')
-                            analysis_frame.ax.legend_.remove()
-                except ValueError as err:
-                    if len(self.trial.linked_mitos) == 0:
-                        raise Exception('No particles were found at all '
-                                        'time points. Try expanding search '
-                                        'radius or changing particle finding '
-                                        'parameters.') from err
-                    else:
-                        raise
+                df_for_plot = self.trial.linked_mitos
+                particle_marker = 'None'
+                traj_line = '-'
+        # Plot data with text
+        try:
+            theCount = 0  # ah ah ah ah
+            for i in range(max(df_for_plot['particle'])):
+                this_particle = df_for_plot.loc[df_for_plot['particle'] == i+1]
+                if not this_particle.empty:
+                    theCount += 1
+                    this_particle.plot(
+                            x='x',
+                            y='y',
+                            ax=analysis_frame.ax,
+                            color='#FB8072',
+                            marker=particle_marker,
+                            linestyle=traj_line)
+                    if particle_label_checkbox is True:
+                        analysis_frame.ax.text(
+                            this_particle['x'].mean() + 15,
+                            this_particle['y'].mean(),
+                            str(int(this_particle.iloc[0][
+                                     'particle'])), color='white')
+                    analysis_frame.ax.legend_.remove()
+        except ValueError as err:
+            if len(self.trial.linked_mitos) == 0:
+                raise Exception('No particles were found at all '
+                                'time points. Try expanding search '
+                                'radius or changing particle finding '
+                                'parameters.') from err
+            else:
+                raise
+        except TypeError:
+            if df_for_plot is None:
+                pass
+            else:
+                raise
+
+        if plot_mitos_status == 'Unlinked mitos for this stack':
+            if (self.trial.mitos_from_batch is not None and
+                    selected_timepoint - 1 <=
+                    max(self.trial.mitos_from_batch['frame'])):
+                df_for_plot = self.trial.mitos_from_batch.loc[
+                        self.trial.mitos_from_batch[
+                                'frame'] == selected_timepoint]
+            elif self.trial.mito_candidates is not None:
+                df_for_plot = self.trial.mito_candidates
+
+            df_for_plot.plot(x='x', y='y', ax=analysis_frame.ax,
+                             color='#FB8072', marker='o', linestyle='None')
+
+        if df_for_plot is not None:
+            self.gui.analyze_trial_frame.dataframe = df_for_plot
+            self.gui.analyze_trial_frame.dataframe_widget.updateModel(
+                    TableModel(self.gui.analyze_trial_frame.dataframe))
+            self.gui.analyze_trial_frame.dataframe_widget.redraw()
 
         analysis_frame.fig.set_size_inches(
                 forward=True,
@@ -403,7 +423,6 @@ class StrainGUIController:
                     cur_y,
                     cur_x + init_size,
                     cur_y + init_size]
-        # TODO: account for scroll in event location
 
         # create rectangle if not yet exist
         if analysis_frame.rect is None:
@@ -469,7 +488,6 @@ class StrainGUIController:
             canvas.coords(analysis_frame.rect, new_rect_coords)
             self.roi = new_rect_coords
         # TODO: convert ROI to image space or display image 1:1
-        # TODO: limit ROI to actual pixel values ie no negatives
 
     def on_button_release(self, event=None):
         # limit ROI to values that make sense
@@ -489,7 +507,7 @@ class StrainGUIController:
         ymax = int(max([self.roi[1], self.roi[3]]))
         self.roi = [xmin, ymin, xmax, ymax]
 
-        # print('Selected ROI: ', self.roi)
+        print('Selected ROI: ', self.roi)
 
     def mouseEnter(self, event):
         analysis_frame = self.gui.analyze_trial_frame
