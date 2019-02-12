@@ -126,7 +126,6 @@ class StrainPropagationTrial(object):
         if not self.analyzed_data_location.is_dir():
             self.analyzed_data_location.mkdir()
 
-        # TODO: Load other analyzed data here too
         # Load analyzed data
         if self.batch_data_file.is_file():
             with open(self.batch_data_file, 'r') as yamlfile:
@@ -145,7 +144,6 @@ class StrainPropagationTrial(object):
                 self.metadata_file_path.is_file() is True):  # yaml exists
             # only load metadata in this case
             self.metadata = self.load_metadata_from_yaml()
-            # TODO: create empty numpy array of the right size
             self.image_array = np.array([2, 2, 2, 2])
 
         else:

@@ -9,8 +9,6 @@ Created on Fri Jan  4 10:32:39 2019
 import numpy as np
 import tkinter as tk
 import pandas as pd
-# import threading
-# from multiprocessing import Process, Queue
 import glob
 import yaml
 from pandastable import TableModel
@@ -51,6 +49,10 @@ class StrainGUIController:
                 "<B1-Motion>", self.on_move_press)
         self.gui.analyze_trial_frame.plot_canvas._tkcanvas.bind(
                 "<ButtonRelease-1>", self.on_button_release)
+        self.gui.analyze_trial_frame.plot_canvas._tkcanvas.bind(
+                "<Enter>", self._bound_to_mousewheel)
+        self.gui.analyze_trial_frame.plot_canvas._tkcanvas.bind(
+                "<Leave>", self._unbound_to_mousewheel)
         self.gui.analyze_trial_frame.clear_roi_btn.bind(
                 "<ButtonRelease-1>", self.clear_roi)
         self.gui.analyze_trial_frame.update_image_btn.bind(
@@ -60,9 +62,9 @@ class StrainGUIController:
         self.gui.analyze_trial_frame.timepoint_selector.bind(
                 "<ButtonRelease-1>", func=self.spinbox_delay_then_update_image)
         self.gui.analyze_trial_frame.test_param_button.bind(
-                "<ButtonRelease-1>", func=self.test_params)
+                "<ButtonRelease-1>", func=self.find_mitos_one_stack)
         self.gui.analyze_trial_frame.full_analysis_button.bind(
-                "<ButtonRelease-1>", func=self.run_full_analysis)
+                "<ButtonRelease-1>", func=self.find_mitos_current_trial)
         self.gui.analyze_trial_frame.status_dropdown[
                 'values'] = self.trial.STATUSES
         self.gui.analyze_trial_frame.status_dropdown.bind(
@@ -71,8 +73,14 @@ class StrainGUIController:
                 "<<ComboboxSelected>>", func=self.update_inspection_image)
         self.gui.analyze_trial_frame.link_mitos_button.bind(
                 "<ButtonRelease-1>", func=self.link_existing_particles)
+        self.gui.analyze_trial_frame.add_to_queue_btn.bind(
+                "<ButtonRelease-1>", func=self.add_trial_to_queue)
         self.gui.analyze_trial_frame.calc_strain_button.bind(
                 "<ButtonRelease-1>", func=self.calculate_strain)
+
+        # Queue frame
+        self.gui.queue_frame.run_queue_button.bind(
+                "<ButtonRelease-1>", func=self.run_queue)
 
         # Plotting frame
         self.gui.plot_results_frame.progress_plot_button.bind(
@@ -137,7 +145,7 @@ class StrainGUIController:
         self._display_last_test_params()
         self.gui.notebook.select(1)
 
-    def test_params(self, event=None):
+    def find_mitos_one_stack(self, event=None):
         # Gather parameters
         analysis_frame = self.gui.analyze_trial_frame
         gaussian_width = int(analysis_frame.gaussian_blur_width.get())
@@ -166,7 +174,7 @@ class StrainGUIController:
         analysis_frame.plot_labels_drop.set('Mitos from param test')
         self.update_inspection_image()
 
-    def run_full_analysis(self, event=None):
+    def find_mitos_current_trial(self, event=None):
         print('Looking for mitochondria in all timepoints...')
         analysis_frame = self.gui.analyze_trial_frame
         gaussian_width = int(analysis_frame.gaussian_blur_width.get())
@@ -182,7 +190,6 @@ class StrainGUIController:
         last_timepoint = int(
                 analysis_frame.last_time_selector.get())
 
-        # TODO: get subset of array in trial file and zero out other pixels
         self.trial.run_batch(
                 images_ndarray=self.trial.image_array,
                 roi=self.roi,
@@ -201,6 +208,7 @@ class StrainGUIController:
         self.update_inspection_image()
 
     def run_multiple_files(self, event=None):
+        # TODO: merge into queue
         fr = self.gui.file_load_frame
         overwrite_metadata = fr.overwrite_metadata_box.instate(['selected'])
         print('Running lots of files...')
@@ -239,9 +247,72 @@ class StrainGUIController:
 
             self.trial = ssn_trial.StrainPropagationTrial()  # clear trial var
 
-    def run_tp_process(self):
-        self.tp_process.start()
-        self.tp_process.join()
+    def run_queue(self, event=None):
+        queue_location = self.gui.queue_frame.queue_location
+
+        with open(queue_location, 'r') as queue_file:
+            entire_queue = yaml.load_all(queue_file)
+            queue_length = len(list(entire_queue))
+        print('Running queue with', queue_length, 'items.')
+        while queue_length > 0:
+            self._run_queue_item()
+
+            # update queue length variable
+            with open(queue_location, 'r') as queue_file:
+                entire_queue = yaml.load_all(queue_file)
+                queue_length = len(list(entire_queue))
+
+        print('Queue is empty.')
+
+    def _run_queue_item(self):
+        """Runs the analysis on the first trial in the queue"""
+
+        data_location = '/Users/adam/Documents/SenseOfTouchResearch/SSN_data/'
+        queue_location = self.gui.queue_frame.queue_location
+
+        # Get first file from queue yaml
+        with open(queue_location, 'r') as queue_file:
+            entire_queue = yaml.load_all(queue_file)
+            params = next(entire_queue)  # get first in line
+
+        # Load file
+        full_filename = glob.glob(data_location + '*/' +
+                                  params['experiment_id'] + '.nd2')
+        print('Running file ', full_filename[0])
+        self.trial = ssn_trial.StrainPropagationTrial()  # clear trial var
+        self.trial.load_trial(full_filename[0],
+                              load_images=True, overwrite_metadata=False)
+
+        self.trial.run_batch(
+                images_ndarray=self.trial.image_array,
+                roi=params['roi'],
+                gaussian_width=params['gaussian_width'],
+                particle_z_diameter=params['particle_z_diameter'],
+                particle_xy_diameter=params['particle_xy_diameter'],
+                brightness_percentile=params['brightness_percentile'],
+                min_particle_mass=params['min_particle_mass'],
+                bottom_slice=params['bottom_slice'],
+                top_slice=params['top_slice'],
+                tracking_seach_radius=params['tracking_seach_radius'],
+                last_timepoint=params['last_timepoint'])
+
+        # Update analysis status in metadata
+        previous_status = self.trial.metadata['analysis_status']
+        if (previous_status == 'No metadata.yaml file' or
+                previous_status == 'No analysis status yet' or
+                previous_status == 'Not started'):
+            self.trial.metadata['analysis_status'] = 'Testing parameters'
+            self.trial.write_metadata_to_yaml(self.trial.metadata)
+
+        # Remove first trial in queue, since we're done with it
+        with open(queue_location, 'r') as queue_file:
+            old_queue = yaml.load_all(queue_file)
+            new_queue = [item for item in old_queue
+                         if item['experiment_id'] != self.trial.experiment_id]
+
+        print(new_queue)
+        with open(queue_location, 'w') as queue_file:
+            yaml.dump_all(new_queue, queue_file, explicit_start=True)
 
     def link_existing_particles(self, event=None):
         """Link previously found particles into trajectories"""
@@ -259,6 +330,53 @@ class StrainGUIController:
         self.trial.calculate_strain()
         self.gui.plot_results_frame.plot_strain_one_trial(self.trial.strain)
         self.gui.notebook.select(2)
+
+    def add_trial_to_queue(self, event=None):
+        """Add trial and analysis parameters to queue for running later"""
+
+        self.queue_location = ('/Users/adam/Documents/SenseOfTouchResearch/'
+                               'SSN_ImageAnalysis/analysis_queue.yaml')
+        analysis_frame = self.gui.analyze_trial_frame
+        gaussian_width = int(analysis_frame.gaussian_blur_width.get())
+        particle_z_diameter = int(analysis_frame.z_diameter_selector.get())
+        particle_xy_diameter = int(analysis_frame.xy_diameter_selector.get())
+        brightness_percentile = int(
+                analysis_frame.brightness_percentile_selector.get())
+        min_particle_mass = int(analysis_frame.min_mass_selector.get())
+        bottom_slice = int(analysis_frame.btm_slice_selector.get())
+        top_slice = int(analysis_frame.top_slice_selector.get())
+        tracking_seach_radius = int(
+                analysis_frame.linking_radius_selector.get())
+        last_timepoint = int(
+                analysis_frame.last_time_selector.get())
+
+        param_dict = {'experiment_id': self.trial.experiment_id,
+                      'roi': self.roi,
+                      'gaussian_width': gaussian_width,
+                      'particle_z_diameter': particle_z_diameter,
+                      'particle_xy_diameter': particle_xy_diameter,
+                      'brightness_percentile': brightness_percentile,
+                      'min_particle_mass': min_particle_mass,
+                      'bottom_slice': bottom_slice,
+                      'top_slice': top_slice,
+                      'tracking_seach_radius': tracking_seach_radius,
+                      'last_timepoint': last_timepoint}
+
+        new_queue = []
+        overwrite_flag = False
+        with open(self.queue_location, 'r') as queue_file:
+            entire_queue = yaml.load_all(queue_file)
+            for queue_member in entire_queue:
+                if (queue_member['experiment_id'] == self.trial.experiment_id):
+                    new_queue.append(param_dict)
+                    overwrite_flag = True
+                else:
+                    new_queue.append(queue_member)
+            if overwrite_flag is False:
+                new_queue.append(param_dict)
+
+        with open(self.queue_location, 'w') as output_file:
+                yaml.dump_all(new_queue, output_file, explicit_start=True)
 
     def on_file_selection_changed(self, event):
         """This function keeps track of which files are selected for
@@ -398,7 +516,7 @@ class StrainGUIController:
                     cur_x + init_size,
                     cur_y + init_size]
 
-        # create rectangle if not yet exist
+        # create rectangle if not yet existing
         if analysis_frame.rect is None:
             analysis_frame.rect = canvas.create_rectangle(
                     cur_x, cur_y, cur_x + init_size, cur_y + init_size,
@@ -461,7 +579,6 @@ class StrainGUIController:
                                sum(opposite_corner_coords[1::2]) / 2]
             canvas.coords(analysis_frame.rect, new_rect_coords)
             self.roi = new_rect_coords
-        # TODO: convert ROI to image space or display image 1:1
 
     def on_button_release(self, event=None):
         # limit ROI to values that make sense
@@ -509,6 +626,19 @@ class StrainGUIController:
                     self.trial.image_array.shape[2]]
 
         print('Selected ROI: ', self.roi)
+
+    def _bound_to_mousewheel(self, event):
+        self.gui.analyze_trial_frame.plot_canvas.get_tk_widget().bind_all(
+                "<MouseWheel>", self._on_mousewheel)
+
+    def _unbound_to_mousewheel(self, event):
+        self.gui.analyze_trial_frame.plot_canvas.get_tk_widget().unbind_all(
+                "<MouseWheel>")
+
+    def _on_mousewheel(self, event):
+        print(event.delta)
+        self.gui.analyze_trial_frame.plot_canvas.get_tk_widget().yview_scroll(
+                -1*(event.delta), 'units')
 
     def update_status(self, event=None):
         new_status = self.gui.analyze_trial_frame.status_dropdown.get()
@@ -590,8 +720,6 @@ class StrainGUIController:
         analysis_frame.linking_radius_selector.delete(0, 'end')
         analysis_frame.linking_radius_selector.insert(
                 0, params['tracking_seach_radius'])
-
-        # TODO: save/load linking radius and last timepoint params
 
 
 if __name__ == '__main__':
