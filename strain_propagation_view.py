@@ -47,6 +47,10 @@ class SSN_analysis_GUI(tk.Frame):
                 self.notebook, self.dpi, self.root)
         self.notebook.add(self.analyze_trial_frame, text="Inspect Images")
 
+        self.queue_frame = AnalysisQueueFrame(self.notebook)
+        self.queue_tab = self.notebook.add(self.queue_frame,
+                                           text='Analysis Queue')
+
         self.plot_results_frame = PlotResultsFrame(self.notebook, self.dpi)
         self.notebook.add(self.plot_results_frame, text="Plot Results")
 
@@ -99,9 +103,9 @@ class FileLoadFrame(tk.Frame):
         experiment_days = glob.iglob(data_location)
 
         self.file_tree = tk.ttk.Treeview(self, height=37,
-                                         columns=("status", "filename"))
+                                         columns=("status", "rating"))
         self.file_tree.heading("status", text="Analysis Status")
-        self.file_tree.heading("filename",
+        self.file_tree.heading("rating",
                                text="Rating to prioritize analysis")
         for day in experiment_days:
             try:
@@ -148,7 +152,6 @@ class FileLoadFrame(tk.Frame):
 
 class AnalyzeTrialFrame(tk.Frame):
     def __init__(self, parent, screen_dpi, root):
-        # TODO: make this class less unweildy by breaking into smaller onse
         tk.Frame.__init__(self, parent)
         self.parent = parent
         self.root = root
@@ -179,7 +182,8 @@ class AnalyzeTrialFrame(tk.Frame):
         self.scrollbar.grid(row=0, column=1, sticky=tk.NE + tk.SE)
 
         self.plot_canvas.get_tk_widget().config(
-                yscrollcommand=self.scrollbar.set)
+                yscrollcommand=self.scrollbar.set,
+                yscrollincrement=5)
 
         # Creat a notebook to put all the controls and parameters in
         self.analysis_notebook = ttk.Notebook(self)
@@ -206,16 +210,6 @@ class AnalyzeTrialFrame(tk.Frame):
         self.max_proj_checkbox.state(['selected', '!alternate'])
 
         param_frame_row += 1
-
-#        # Optional plot results from batch
-#        self.plot_batch_checkbox_status = tk.IntVar(value=1)
-#        self.plot_one_stack = ttk.Checkbutton(
-#                self.param_frame,
-#                text='Plot results from batch',
-#                variable=self.part_label_checkbox_status)
-#        self.plot_one_stack.grid(
-#                row=param_frame_row, column=1)
-#        self.plot_one_stack.state(['selected', '!alternate'])
 
         # Optional particle labels
         self.part_label_checkbox_status = tk.IntVar(value=1)
@@ -374,11 +368,17 @@ class AnalyzeTrialFrame(tk.Frame):
         self.link_mitos_button.grid(
                 row=param_frame_row, column=1)
 
+        # Button to add trial to queue for later analysis
+        self.add_to_queue_btn = ttk.Button(
+                self.param_frame, text='Add to queue')
+        self.add_to_queue_btn.grid(row=param_frame_row, column=2)
+        param_frame_row += 1
+
         # Button to calculate strain
         self.calc_strain_button = ttk.Button(
                 self.param_frame, text='Calculate strain')
-        self.calc_strain_button.grid(
-                row=param_frame_row, column=2)
+        self.calc_strain_button.grid(row=param_frame_row, column=1,
+                                     columnspan=2)
         param_frame_row += 1
 
         # Controls for saving data etc.
@@ -427,6 +427,72 @@ class AnalyzeTrialFrame(tk.Frame):
                                       dataframe=self.dataframe)
 
         self.dataframe_widget.show()
+
+
+class AnalysisQueueFrame(tk.Frame):
+    def __init__(self, parent):
+        tk.Frame.__init__(self, parent)
+        self.parent = parent
+        self.queue_location = ('/Users/adam/Documents/SenseOfTouchResearch/'
+                               'SSN_ImageAnalysis/analysis_queue.yaml')
+        self.queue_tree = tk.ttk.Treeview(self, height=37,
+                                          columns=("param_val", "rating"))
+        self.queue_tree.heading("param_val", text="Value")
+        self.queue_tree.heading("rating", text="Experimenter's rating")
+
+        # define buttons for starting analysis
+        self.button_frame = tk.Frame(self)
+
+        self.run_queue_button = tk.Button(self.button_frame,
+                                          text="Run Queue",
+                                          state=tk.DISABLED)
+        self.run_queue_button.pack(side=tk.RIGHT)
+        self.button_frame.pack(side=tk.BOTTOM)
+
+        # TODO: update queue when changing tabs on gui
+        with open(self.queue_location, 'r') as queue_file:
+            entire_queue = yaml.load_all(queue_file)
+            for queue_member in entire_queue:
+                self.run_queue_button.config(state=tk.NORMAL)
+                experiment_id = queue_member['experiment_id']
+
+                # add to tree, add all but experiment ID to lower level
+                queue_item = self.queue_tree.insert(
+                        '', 'end',
+                        text=experiment_id)
+                metadata_file_path = ('/Users/adam/Documents/'
+                                      'SenseOfTouchResearch/'
+                                      'SSN_ImageAnalysis/AnalyzedData/' +
+                                      experiment_id + '/metadata.yaml')
+                try:
+                    with open(metadata_file_path, 'r') as yamlfile:
+                        metadata = yaml.load(yamlfile)
+                    if 'trial_rating' in metadata:
+                        rating = metadata['trial_rating']
+                    else:
+                        rating = None
+                except FileNotFoundError:
+                        pass
+                self.queue_tree.item(queue_item, values=('', rating))
+
+                for param, value in queue_member.items():
+                    if param == 'experiment_id':
+                        # we already have this in the tree
+                        pass
+                    elif param == 'roi':
+                        roi_str = (str(value[0]) + ', ' +
+                                   str(value[1]) + ', ' +
+                                   str(value[2]) + ', ' +
+                                   str(value[3]))
+                        self.queue_tree.insert(queue_item, 'end',
+                                               text=param,
+                                               values=(roi_str, ''))
+                    else:
+                        self.queue_tree.insert(queue_item, 'end',
+                                               text=param,
+                                               values=(value, ''))
+
+        self.queue_tree.pack(fill=tk.BOTH, anchor=tk.N)
 
 
 class PlotResultsFrame(tk.Frame):
