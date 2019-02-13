@@ -23,71 +23,72 @@ class StrainGUIController:
     Uses Model-View-Controller architecture for doing analysis of data for
     the strain propagation project.
     """
-    def __init__(self):
+    def __init__(self, headless=False):
         self.root = tk.Tk()
 
         # Instantiate Model
         self.trial = ssn_trial.StrainPropagationTrial()
         # TODO: don't instantiate model until loading trial so new trials load
 
-        # Instantiate View
-        self.gui = ssn_view.SSN_analysis_GUI(self.root)
+        if headless is not True:
+            # Instantiate View
+            self.gui = ssn_view.SSN_analysis_GUI(self.root)
 
-        # Bind UI elements to functions
-        # Load trial tab
-        self.gui.file_load_frame.load_trial_button.bind(
-                "<ButtonRelease-1>", func=self.load_trial)
-        self.gui.file_load_frame.run_multiple_files_button.bind(
-                "<ButtonRelease-1>", func=self.run_multiple_files)
-        self.gui.file_load_frame.file_tree.bind(
-                '<<TreeviewSelect>>', func=self.on_file_selection_changed)
+            # Bind UI elements to functions
+            # Load trial tab
+            self.gui.file_load_frame.load_trial_button.bind(
+                    "<ButtonRelease-1>", func=self.load_trial)
+            self.gui.file_load_frame.run_multiple_files_button.bind(
+                    "<ButtonRelease-1>", func=self.run_multiple_files)
+            self.gui.file_load_frame.file_tree.bind(
+                    '<<TreeviewSelect>>', func=self.on_file_selection_changed)
 
-        # Analysis frame
-        self.gui.analyze_trial_frame.plot_canvas._tkcanvas.bind(
-                "<ButtonPress-1>", self.on_button_press)
-        self.gui.analyze_trial_frame.plot_canvas._tkcanvas.bind(
-                "<B1-Motion>", self.on_move_press)
-        self.gui.analyze_trial_frame.plot_canvas._tkcanvas.bind(
-                "<ButtonRelease-1>", self.on_button_release)
-        self.gui.analyze_trial_frame.plot_canvas._tkcanvas.bind(
-                "<Enter>", self._bound_to_mousewheel)
-        self.gui.analyze_trial_frame.plot_canvas._tkcanvas.bind(
-                "<Leave>", self._unbound_to_mousewheel)
-        self.gui.analyze_trial_frame.clear_roi_btn.bind(
-                "<ButtonRelease-1>", self.clear_roi)
-        self.gui.analyze_trial_frame.update_image_btn.bind(
-                "<ButtonRelease-1>", func=self.update_inspection_image)
-        self.gui.analyze_trial_frame.slice_selector.bind(
-                "<ButtonRelease-1>", func=self.spinbox_delay_then_update_image)
-        self.gui.analyze_trial_frame.timepoint_selector.bind(
-                "<ButtonRelease-1>", func=self.spinbox_delay_then_update_image)
-        self.gui.analyze_trial_frame.test_param_button.bind(
-                "<ButtonRelease-1>", func=self.find_mitos_one_stack)
-        self.gui.analyze_trial_frame.full_analysis_button.bind(
-                "<ButtonRelease-1>", func=self.find_mitos_current_trial)
-        self.gui.analyze_trial_frame.status_dropdown[
-                'values'] = self.trial.STATUSES
-        self.gui.analyze_trial_frame.status_dropdown.bind(
-                "<<ComboboxSelected>>", func=self.update_status)
-        self.gui.analyze_trial_frame.plot_labels_drop.bind(
-                "<<ComboboxSelected>>", func=self.update_inspection_image)
-        self.gui.analyze_trial_frame.link_mitos_button.bind(
-                "<ButtonRelease-1>", func=self.link_existing_particles)
-        self.gui.analyze_trial_frame.add_to_queue_btn.bind(
-                "<ButtonRelease-1>", func=self.add_trial_to_queue)
-        self.gui.analyze_trial_frame.calc_strain_button.bind(
-                "<ButtonRelease-1>", func=self.calculate_strain)
+            # Analysis frame
+            self.gui.analyze_trial_frame.plot_canvas._tkcanvas.bind(
+                    "<ButtonPress-1>", self.on_button_press)
+            self.gui.analyze_trial_frame.plot_canvas._tkcanvas.bind(
+                    "<B1-Motion>", self.on_move_press)
+            self.gui.analyze_trial_frame.plot_canvas._tkcanvas.bind(
+                    "<ButtonRelease-1>", self.on_button_release)
+            self.gui.analyze_trial_frame.plot_canvas._tkcanvas.bind(
+                    "<Enter>", self._bound_to_mousewheel)
+            self.gui.analyze_trial_frame.plot_canvas._tkcanvas.bind(
+                    "<Leave>", self._unbound_to_mousewheel)
+            self.gui.analyze_trial_frame.clear_roi_btn.bind(
+                    "<ButtonRelease-1>", self.clear_roi)
+            self.gui.analyze_trial_frame.update_image_btn.bind(
+                    "<ButtonRelease-1>", func=self.update_inspection_image)
+            self.gui.analyze_trial_frame.slice_selector.bind(
+                    "<ButtonRelease-1>", func=self.spinbox_delay_then_update_image)
+            self.gui.analyze_trial_frame.timepoint_selector.bind(
+                    "<ButtonRelease-1>", func=self.spinbox_delay_then_update_image)
+            self.gui.analyze_trial_frame.test_param_button.bind(
+                    "<ButtonRelease-1>", func=self.find_mitos_one_stack)
+            self.gui.analyze_trial_frame.full_analysis_button.bind(
+                    "<ButtonRelease-1>", func=self.find_mitos_current_trial)
+            self.gui.analyze_trial_frame.status_dropdown[
+                    'values'] = self.trial.STATUSES
+            self.gui.analyze_trial_frame.status_dropdown.bind(
+                    "<<ComboboxSelected>>", func=self.update_status)
+            self.gui.analyze_trial_frame.plot_labels_drop.bind(
+                    "<<ComboboxSelected>>", func=self.update_inspection_image)
+            self.gui.analyze_trial_frame.link_mitos_button.bind(
+                    "<ButtonRelease-1>", func=self.link_existing_particles)
+            self.gui.analyze_trial_frame.add_to_queue_btn.bind(
+                    "<ButtonRelease-1>", func=self.add_trial_to_queue)
+            self.gui.analyze_trial_frame.calc_strain_button.bind(
+                    "<ButtonRelease-1>", func=self.calculate_strain)
 
-        # Queue frame
-        self.gui.queue_frame.run_queue_button.bind(
-                "<ButtonRelease-1>", func=self.run_queue)
+            # Queue frame
+            self.gui.queue_frame.run_queue_button.bind(
+                    "<ButtonRelease-1>", func=self.run_queue)
 
-        # Plotting frame
-        self.gui.plot_results_frame.progress_plot_button.bind(
-                "<ButtonRelease-1>", func=self.get_analysis_progress)
-        self.gui.plot_results_frame.plot_strain_one_trial_button.bind(
-                "<ButtonRelease-1>", func=self.get_analysis_progress)
-        # TODO: write callback for plot strain one trial button
+            # Plotting frame
+            self.gui.plot_results_frame.progress_plot_button.bind(
+                    "<ButtonRelease-1>", func=self.get_analysis_progress)
+            self.gui.plot_results_frame.plot_strain_one_trial_button.bind(
+                    "<ButtonRelease-1>", func=self.get_analysis_progress)
+            # TODO: write callback for plot strain one trial button
 
     def run(self):
         self.root.title("SSN Image Analysis")
@@ -115,10 +116,6 @@ class StrainGUIController:
         # load inspection image on inspection tab and related parameters
         if load_images is True or overwrite_metadata is True:
             self.update_inspection_image()
-            self.roi = [0,
-                        0,
-                        self.trial.image_array.shape[3],
-                        self.trial.image_array.shape[2]]
 
         image_stack_size = self.trial.metadata['stack_height']
         num_timepoints = self.trial.metadata['num_timepoints']
@@ -141,9 +138,42 @@ class StrainGUIController:
         self.gui.analyze_trial_frame.vulva_side_label.config(
                 text=('Vulva side: ' +
                       self.trial.metadata['vulva_orientation']))
+        self.roi = self.trial.latest_test_params['roi']
 
         self._display_last_test_params()
         self.gui.notebook.select(1)
+
+        analysis_frame = self.gui.analyze_trial_frame
+        canvas = analysis_frame.plot_canvas.get_tk_widget()
+        if analysis_frame.rect is None:
+            analysis_frame.rect = canvas.create_rectangle(
+                    self.roi[0], self.roi[1], self.roi[2], self.roi[3],
+                    fill='', outline='white', tag='rect')
+            self.root.update_idletasks()
+            for index in range(len(analysis_frame.roi_corners)):
+                if index == 0:
+                    x_coord = self.roi[0]
+                    y_coord = self.roi[1]
+                elif index == 1:
+                    x_coord = self.roi[2]
+                    y_coord = self.roi[1]
+                elif index == 2:
+                    x_coord = self.roi[2]
+                    y_coord = self.roi[3]
+                elif index == 3:
+                    x_coord = self.roi[0]
+                    y_coord = self.roi[3]
+
+                analysis_frame.roi_corners[index] = canvas.create_oval(
+                    x_coord - analysis_frame.drag_btn_size,
+                    y_coord - analysis_frame.drag_btn_size,
+                    x_coord + analysis_frame.drag_btn_size,
+                    y_coord + analysis_frame.drag_btn_size,
+                    fill='red', tag='corner')
+            canvas.tag_bind('corner', "<Any-Enter>", self.mouseEnter)
+            canvas.tag_bind('corner', "<Any-Leave>", self.mouseLeave)
+            canvas.tag_raise('rect')
+            canvas.tag_raise('corner')
 
     def find_mitos_one_stack(self, event=None):
         # Gather parameters
@@ -248,6 +278,7 @@ class StrainGUIController:
             self.trial = ssn_trial.StrainPropagationTrial()  # clear trial var
 
     def run_queue(self, event=None):
+        # TODO: move to other process/thread so I can inspect other trials
         queue_location = self.gui.queue_frame.queue_location
 
         with open(queue_location, 'r') as queue_file:
@@ -255,7 +286,7 @@ class StrainGUIController:
             queue_length = len(list(entire_queue))
         print('Running queue with', queue_length, 'items.')
         while queue_length > 0:
-            self._run_queue_item()
+            self.run_queue_item(queue_location)
 
             # update queue length variable
             with open(queue_location, 'r') as queue_file:
@@ -264,11 +295,10 @@ class StrainGUIController:
 
         print('Queue is empty.')
 
-    def _run_queue_item(self):
+    def run_queue_item(self, queue_location):
         """Runs the analysis on the first trial in the queue"""
 
         data_location = '/Users/adam/Documents/SenseOfTouchResearch/SSN_data/'
-        queue_location = self.gui.queue_frame.queue_location
 
         # Get first file from queue yaml
         with open(queue_location, 'r') as queue_file:
@@ -495,8 +525,6 @@ class StrainGUIController:
                     TableModel(self.gui.analyze_trial_frame.dataframe))
             self.gui.analyze_trial_frame.dataframe_widget.redraw()
 
-        # TODO: show ROI
-
         analysis_frame.fig.set_size_inches(
                 forward=True,
                 h=image_to_display.shape[0] / self.gui.dpi,
@@ -612,7 +640,7 @@ class StrainGUIController:
         canvas.itemconfig(tk.CURRENT, fill="red")
         analysis_frame.selected_item = None
 
-    def clear_roi(self, event):
+    def clear_roi(self, event=None):
         analysis_frame = self.gui.analyze_trial_frame
         canvas = analysis_frame.plot_canvas.get_tk_widget()
         canvas.delete('corner')
@@ -620,10 +648,11 @@ class StrainGUIController:
         analysis_frame.rect = None
         analysis_frame.roi_corners = [None, None, None, None]
         analysis_frame.roi = [None, None, None, None]
-        self.roi = [0,
-                    0,
-                    self.trial.image_array.shape[3],
-                    self.trial.image_array.shape[2]]
+        self.roi = [150, 167, 304, 1132]
+#        [0,
+#                    0,
+#                    self.trial.image_array.shape[3],
+#                    self.trial.image_array.shape[2]]
 
         print('Selected ROI: ', self.roi)
 
@@ -636,7 +665,6 @@ class StrainGUIController:
                 "<MouseWheel>")
 
     def _on_mousewheel(self, event):
-        print(event.delta)
         self.gui.analyze_trial_frame.plot_canvas.get_tk_widget().yview_scroll(
                 -1*(event.delta), 'units')
 
@@ -682,7 +710,8 @@ class StrainGUIController:
 
     def _display_last_test_params(self, event=None):
         analysis_frame = self.gui.analyze_trial_frame
-        params = self.trial.latest_test_params
+        latest_params = self.trial.latest_test_params
+        params = {**self.trial.default_test_params, **latest_params}
 
         analysis_frame.btm_slice_selector.delete(0, 'end')
         analysis_frame.btm_slice_selector.insert(0, params['bottom_slice'])
