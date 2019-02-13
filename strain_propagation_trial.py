@@ -64,7 +64,8 @@ class StrainPropagationTrial(object):
                 'Testing parameters for batch',
                 'Strain calculated',
                 'Failed - too close to edge',
-                'Failed - not bright enough']
+                'Failed - not bright enough',
+                'Failed - too much movement']
 
     def __init__(self):
         self.mito_candidates = None
@@ -144,7 +145,9 @@ class StrainPropagationTrial(object):
                 self.metadata_file_path.is_file() is True):  # yaml exists
             # only load metadata in this case
             self.metadata = self.load_metadata_from_yaml()
-            self.image_array = np.array([2, 2, 2, 2])
+            self.image_array = np.empty((11, 50, 1200, 600))
+            self.image_array[:] = np.nan
+#            self.image_array = np.array([2, 2, 2, 2])
 
         else:
             self.image_array, images = self._load_images_from_disk()
@@ -442,6 +445,17 @@ class StrainPropagationTrial(object):
             trackpy_batch_params['top_slice'] = self.metadata['stack_height']
 
         all_params = {**trackpy_locate_params, **trackpy_batch_params}
+        if 'roi' not in all_params:
+            try:
+                all_params['roi'] = [0,
+                                     0,
+                                     self.image_array.shape[3],
+                                     self.image_array.shape[2]]
+            except NameError:
+                all_params['roi'] = [0,
+                                     0,
+                                     1200,
+                                     600]
 
         return all_params
 
@@ -472,7 +486,6 @@ class StrainPropagationTrial(object):
         row_of_metadata = metadata_worksheet.row_values(current_id_cell.row)
         row_of_keys = metadata_worksheet.row_values(1)
         gdrive_metadata_dict = dict(zip(row_of_keys, row_of_metadata))
-        print(gdrive_metadata_dict)
 
         # Access the metadata from the file
         meta = images.metadata
@@ -487,6 +500,9 @@ class StrainPropagationTrial(object):
         time_str = combined_metadata['Timestamp']
         bleach_date = combined_metadata['Bleach Date']
         bleach_time = combined_metadata['Bleach Time']
+        if 'trial_rating' not in combined_metadata:
+            combined_metadata['Trial rating'] = 'No rating given'
+
         metadata_dict = {
                 'Experiment_id': self.experiment_id,
                 'slice_height_pix': int(combined_metadata['height']),

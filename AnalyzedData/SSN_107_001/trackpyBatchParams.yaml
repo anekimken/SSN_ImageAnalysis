@@ -5,14 +5,13 @@ diameter: !!python/tuple
 invert: false
 max_iterations: 10
 maxsize: null
-minmass: 300
+minmass: 100
 noise_size: 3
 percentile: 25
 preprocess: true
 separation: null
 smoothing_size: null
 source: null
-timestamp: 2018-12-17-211036
+timestamp: 2019-02-13-010902
 topn: null
 trackpy_version: 0.4.1
-trackingSeachRadius: 100
