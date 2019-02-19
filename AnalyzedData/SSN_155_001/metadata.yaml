@@ -1,0 +1,26 @@
+---
+Experiment_id: SSN_155_001
+analysis_status: Testing parameters
+bleach_time: 2019-02-03 01:15:00
+cultivation_temp: 20
+device_ID: Y4P7-3
+head_orientation: Headfirst
+microscope: Spinning Disk Confocal in CSIF Shriram
+microscope_channel: SDC 561-ALN
+microscope_objective: 40x oil
+neuron: ALM
+notes: 'Some bleaching, some movement. '
+num_eggs: 3
+num_timepoints: 11
+pixel_microns: 0.275
+purpose: Baseline measurement
+slice_height_pix: 1052
+slice_width_pix: 600
+stack_height: 58
+timestamp: 2019-02-06 12:06:20
+total_images: 638
+trial_rating: No rating given
+user: anekimke@stanford.edu
+vulva_orientation: East
+worm_life_stage: YA
+worm_strain: NM3573
