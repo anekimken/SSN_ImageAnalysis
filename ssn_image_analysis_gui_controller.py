@@ -453,8 +453,8 @@ class StrainGUIController:
         inspection_ax.clear()
         df_for_plot = None
 
-        # TODO: move this to view module and send data there instead?
         # get image that we're going to show
+        # TODO: change look up table based on particle brightness
         if max_proj_checkbox is True:  # max projection
             stack = self.trial.image_array[selected_timepoint]
             image_to_display = np.amax(stack, 0)  # collapse z axis
