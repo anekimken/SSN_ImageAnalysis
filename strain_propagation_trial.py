@@ -237,7 +237,8 @@ class StrainPropagationTrial(object):
                   bottom_slice: int,
                   top_slice: int,
                   tracking_seach_radius: int,
-                  last_timepoint: int) -> dict:
+                  last_timepoint: int,
+                  notes: str) -> dict:
 
         slices_to_analyze = images_ndarray[:last_timepoint,
                                            bottom_slice:top_slice,
@@ -283,12 +284,15 @@ class StrainPropagationTrial(object):
                                   min([roi[1], roi[3]]))
 
         # add other parameters to the yaml created by tp.batch
+        if notes == 'Notes for analysis run':
+            notes = 'none'
         other_param_dict = dict(
                 {'tracking_seach_radius': tracking_seach_radius,
                  'bottom_slice': bottom_slice,
                  'top_slice': top_slice,
                  'last_timepoint': last_timepoint,
-                 'roi': roi})
+                 'roi': roi,
+                 'notes': notes})
         with open(save_location.joinpath('trackpyBatchParams.yaml'),
                   'a') as yamlfile:
             yaml.dump(other_param_dict, yamlfile, default_flow_style=False)
@@ -335,6 +339,7 @@ class StrainPropagationTrial(object):
         start_time = time.time()
 
         # link the particles we found between time points
+        # TODO: limit mitos_from_batch to selected timepoints
         linked = tp.link_df(self.mitos_from_batch,
                             tracking_seach_radius,
                             pos_columns=['x', 'y', 'z'])

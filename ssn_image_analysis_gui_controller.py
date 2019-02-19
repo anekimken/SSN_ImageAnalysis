@@ -143,6 +143,18 @@ class StrainGUIController:
         self.roi = self.trial.latest_test_params['roi']
 
         self._display_last_test_params()
+
+        # load param history into text field
+        # TODO: test what happens if this file doesn't exist yet
+        with open(self.trial.batch_history_file, 'r') as hist_yaml:
+            param_history = hist_yaml.read()
+            hist_text = self.gui.analyze_trial_frame.param_history
+            hist_text.config(state=tk.NORMAL)
+            hist_text.delete(1.0, tk.END)
+            hist_text.insert(tk.END, param_history)
+            hist_text.config(state=tk.DISABLED)
+            hist_text.yview_moveto(1)
+
         self.gui.notebook.select(1)
 
         analysis_frame = self.gui.analyze_trial_frame
@@ -221,6 +233,7 @@ class StrainGUIController:
                 analysis_frame.linking_radius_selector.get())
         last_timepoint = int(
                 analysis_frame.last_time_selector.get())
+        notes = analysis_frame.notes_entry.get()
 
         self.trial.run_batch(
                 images_ndarray=self.trial.image_array,
@@ -233,7 +246,8 @@ class StrainGUIController:
                 bottom_slice=bottom_slice,
                 top_slice=top_slice,
                 tracking_seach_radius=tracking_seach_radius,
-                last_timepoint=last_timepoint)
+                last_timepoint=last_timepoint,
+                notes=notes)
 
         analysis_frame.max_proj_checkbox.state(['selected'])
         analysis_frame.plot_labels_drop.set('Plot trajectories')
@@ -276,7 +290,8 @@ class StrainGUIController:
                 bottom_slice=params['bottom_slice'],
                 top_slice=params['top_slice'],
                 tracking_seach_radius=params['tracking_seach_radius'],
-                last_timepoint=params['last_timepoint'])
+                last_timepoint=params['last_timepoint'],
+                notes='none')
 
             previous_status = self.trial.metadata['analysis_status']
             if (previous_status == 'No metadata.yaml file' or
@@ -334,7 +349,8 @@ class StrainGUIController:
                 bottom_slice=params['bottom_slice'],
                 top_slice=params['top_slice'],
                 tracking_seach_radius=params['tracking_seach_radius'],
-                last_timepoint=params['last_timepoint'])
+                last_timepoint=params['last_timepoint'],
+                notes=params['notes'])
 
         # Update analysis status in metadata
         previous_status = self.trial.metadata['analysis_status']
@@ -350,7 +366,6 @@ class StrainGUIController:
             new_queue = [item for item in old_queue
                          if item['experiment_id'] != self.trial.experiment_id]
 
-        print(new_queue)
         with open(queue_location, 'w') as queue_file:
             yaml.dump_all(new_queue, queue_file, explicit_start=True)
 
@@ -389,6 +404,7 @@ class StrainGUIController:
                 analysis_frame.linking_radius_selector.get())
         last_timepoint = int(
                 analysis_frame.last_time_selector.get())
+        notes = analysis_frame.notes_entry.get()
 
         param_dict = {'experiment_id': self.trial.experiment_id,
                       'roi': self.roi,
@@ -400,7 +416,8 @@ class StrainGUIController:
                       'bottom_slice': bottom_slice,
                       'top_slice': top_slice,
                       'tracking_seach_radius': tracking_seach_radius,
-                      'last_timepoint': last_timepoint}
+                      'last_timepoint': last_timepoint,
+                      'notes': notes}
 
         new_queue = []
         overwrite_flag = False

@@ -177,3 +177,23 @@ top_slice: 69
 topn: null
 tracking_seach_radius: 40
 trackpy_version: 0.4.1
+---
+bottom_slice: 1
+diameter: !!python/tuple [21, 15, 15]
+invert: false
+last_timepoint: 11
+max_iterations: 10
+maxsize: null
+minmass: 100
+noise_size: 3
+percentile: 50
+preprocess: true
+roi: [280, 46, 461, 1161]
+separation: null
+smoothing_size: null
+source: null
+timestamp: 2019-02-19-052048
+top_slice: 69
+topn: null
+tracking_seach_radius: 40
+trackpy_version: 0.4.1

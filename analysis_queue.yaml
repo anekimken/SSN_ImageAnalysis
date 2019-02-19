@@ -1,0 +1,13 @@
+---
+bottom_slice: 0
+brightness_percentile: 30
+experiment_id: SSN_105_001
+gaussian_width: 3
+last_timepoint: 5
+min_particle_mass: 100
+notes: trying to find mito above cell body
+particle_xy_diameter: 13
+particle_z_diameter: 17
+roi: [328, 44, 524, 1180]
+top_slice: 67
+tracking_seach_radius: 30

@@ -1,5 +1,5 @@
 diameter: !!python/tuple
-- 21
+- 19
 - 15
 - 15
 invert: false
@@ -12,10 +12,15 @@ preprocess: true
 separation: null
 smoothing_size: null
 source: null
-timestamp: 2019-01-28-021159
+timestamp: 2019-02-19-054212
 topn: null
 trackpy_version: 0.4.1
 bottom_slice: 0
 last_timepoint: 11
+roi:
+- 312
+- 38
+- 463
+- 1135
 top_slice: 51
-tracking_seach_radius: 20
+tracking_seach_radius: 25
