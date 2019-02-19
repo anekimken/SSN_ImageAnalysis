@@ -1,4 +1,5 @@
 # ignore the cache files from ipycache since these are large and only to speed up execution
 .ipycacheDir/
 
-AnalyzeData/*/*/*.png
+AnalyzedData/*/*/*.png
+AnalyzedData/*/diag_images
