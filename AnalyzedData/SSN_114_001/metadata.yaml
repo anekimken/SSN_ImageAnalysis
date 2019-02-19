@@ -1,0 +1,27 @@
+---
+Experiment_id: SSN_114_001
+analysis_status: Failed - too close to edge
+bleach_time: 2018-12-04 12:30:00
+cultivation_temp: 20
+device_ID: Y4P7-4
+head_orientation: Tailfirst
+microscope: Spinning Disk Confocal in CSIF Shriram
+microscope_channel: SDC 561-ALN
+microscope_objective: 40x oil
+neuron: PVM
+notes: Small leak where pressure source connects to chip. 11 stacks, with 300 kPa
+  actuation on even-numbered stacks
+num_eggs: 1
+num_timepoints: 11
+pixel_microns: 0.275
+purpose: Baseline measurement
+slice_height_pix: 1200
+slice_width_pix: 600
+stack_height: 64
+timestamp: 2018-12-07 14:11:24
+total_images: 704
+trial_rating: No rating given
+user: anekimke@stanford.edu
+vulva_orientation: East
+worm_life_stage: YA
+worm_strain: NM3573

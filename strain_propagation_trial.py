@@ -6,7 +6,6 @@ Created on Mon Jan  7 15:24:53 2019
 @author: Adam Nekimken
 """
 # TODO: UPDATE DOCSTRINGS!!!!
-# import sys
 import os
 import pathlib
 import datetime
@@ -21,6 +20,7 @@ from nd2reader import ND2Reader
 # from scipy import stats
 from scipy import spatial
 import yaml
+import matplotlib.pyplot as plt
 
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
@@ -65,7 +65,8 @@ class StrainPropagationTrial(object):
                 'Strain calculated',
                 'Failed - too close to edge',
                 'Failed - not bright enough',
-                'Failed - too much movement']
+                'Failed - too much movement',
+                'Failed - neuron overlap']
 
     def __init__(self):
         self.mito_candidates = None
@@ -315,12 +316,13 @@ class StrainPropagationTrial(object):
             yaml.dump(mitos_from_batch_dict, yamlfile,
                       explicit_start=True, default_flow_style=False)
 
+        self.save_diag_figs(images_ndarray, self.linked_mitos,
+                            self.mitos_from_batch, save_location)
+
         print('Done running file. Batch find took ' +
               str(round(batch_done_time - start_time)) + ' seconds. ' +
               'Linking and filtering took ' +
               str(round(link_done_time - batch_done_time)) + ' seconds.')
-
-        # return self.linked_mitos
 
     def link_mitos(self,
                    tracking_seach_radius: int,
@@ -397,6 +399,118 @@ class StrainPropagationTrial(object):
                   'w') as yamlfile:
             yaml.dump(self.strain, yamlfile,
                       explicit_start=True, default_flow_style=False)
+
+    def save_diag_figs(self,
+                       image_array: np.ndarray,
+                       linked_mitos: pd.DataFrame,
+                       mitos_from_batch: pd.DataFrame,
+                       save_location: pathlib.Path):
+        """Saves figs with trajectories and individual particle candidates"""
+        traj_fig_num = 13
+        one_stack_fig_num = 31
+
+        # Create directory if necessary
+        if not save_location.joinpath('diag_images/').is_dir():
+            save_location.joinpath('diag_images/').mkdir()
+
+        # Save image with trajectories
+        image_to_display = np.amax(image_array[0], 0)  # collapse z axis
+        image_to_display = image_to_display.squeeze()
+        trajectory_fig, trajectory_ax = plt.subplots(
+                figsize=(8.5, 8.5*2), num=traj_fig_num)
+        trajectory_fig.set_label('trajectories')
+#        trajectory_fig.axis('off')
+        trajectory_ax.imshow(image_to_display)
+        try:
+            theCount = 0  # ah ah ah ah
+            for i in range(max(linked_mitos['particle'])):
+                this_particle = linked_mitos.loc[
+                        linked_mitos['particle'] == i+1]
+                if not this_particle.empty:
+                    theCount += 1
+                    this_particle.plot(
+                            x='x',
+                            y='y',
+                            ax=trajectory_ax,
+                            color='#FB8072',
+                            marker='None',
+                            linestyle='-')
+                    trajectory_ax.text(
+                            this_particle['x'].mean() + 15,
+                            this_particle['y'].mean(),
+                            str(int(this_particle.iloc[0][
+                                     'particle'])), color='white')
+                    trajectory_ax.legend_.remove()
+
+            trajectory_fig.savefig(save_location.joinpath(
+                     'diag_images/trajectory_fig.png'),
+                        dpi=72, bbox_inches='tight')
+            plt.close(trajectory_fig)
+
+        except ValueError:
+            if len(linked_mitos) == 0:
+                warnings.warn('No particles were found at all '
+                              'time points. Try expanding search '
+                              'radius or changing particle finding '
+                              'parameters.')
+            else:
+                raise
+        except TypeError:
+            if linked_mitos is None:
+                pass
+            else:
+                raise
+        finally:
+            if plt.fignum_exists(traj_fig_num):
+                plt.close(trajectory_fig)
+
+        try:
+            # Save individual images with all particles, linked mitos labeled
+            for stack in range(max(mitos_from_batch['frame'])):
+                image_to_display = np.amax(image_array[stack], 0)  # collapse z
+                image_to_display = image_to_display.squeeze()
+                one_stack_fig, one_stack_ax = plt.subplots(
+                        figsize=(8.5, 8.5*2), num=one_stack_fig_num)
+    #            one_stack_ax.axis('off')
+                one_stack_ax.imshow(image_to_display)
+                df_for_plot = mitos_from_batch.loc[
+                            mitos_from_batch[
+                                    'frame'] == stack]
+                df_for_plot.plot(x='x', y='y', ax=one_stack_ax,
+                                 color='#FB8072', marker='o', linestyle='None')
+                theCount = 0  # ah ah ah ah
+                if len(linked_mitos) != 0:
+                    for i in range(max(linked_mitos['particle'])):
+                        this_particle = linked_mitos.loc[
+                                linked_mitos['particle'] == i+1]
+                        if not this_particle.empty:
+                            theCount += 1
+                            one_stack_ax.text(
+                                    this_particle['x'].mean() + 15,
+                                    this_particle['y'].mean(),
+                                    str(int(this_particle.iloc[0][
+                                             'particle'])), color='white')
+                    one_stack_ax.legend_.remove()
+                one_stack_fig.savefig(save_location.joinpath(
+                 ('diag_images/stack_' + str(stack) + '_fig.png')),
+                    dpi=72, bbox_inches='tight')
+                plt.close(one_stack_fig)
+        except ValueError:
+            if len(mitos_from_batch) == 0:
+                warnings.warn('No particles were found. Try changing particle'
+                              ' finding parameters.')
+            else:
+                raise
+        except TypeError:
+            if linked_mitos is None:
+                pass
+            else:
+                raise
+        finally:
+            if plt.fignum_exists(traj_fig_num):
+                plt.close(trajectory_fig)
+            if plt.fignum_exists(one_stack_fig_num):
+                plt.close(one_stack_fig)
 
     def _load_images_from_disk(self) -> Tuple[np.array, ND2Reader]:
         """Accesses the image data from the file."""

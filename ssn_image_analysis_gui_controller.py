@@ -59,9 +59,11 @@ class StrainGUIController:
             self.gui.analyze_trial_frame.update_image_btn.bind(
                     "<ButtonRelease-1>", func=self.update_inspection_image)
             self.gui.analyze_trial_frame.slice_selector.bind(
-                    "<ButtonRelease-1>", func=self.spinbox_delay_then_update_image)
+                    "<ButtonRelease-1>",
+                    func=self.spinbox_delay_then_update_image)
             self.gui.analyze_trial_frame.timepoint_selector.bind(
-                    "<ButtonRelease-1>", func=self.spinbox_delay_then_update_image)
+                    "<ButtonRelease-1>",
+                    func=self.spinbox_delay_then_update_image)
             self.gui.analyze_trial_frame.test_param_button.bind(
                     "<ButtonRelease-1>", func=self.find_mitos_one_stack)
             self.gui.analyze_trial_frame.full_analysis_button.bind(
@@ -254,6 +256,14 @@ class StrainGUIController:
             params = self.trial.latest_test_params
 
             print('Looking for particles...')
+
+            try:
+                self.roi
+            except AttributeError:
+                self.roi = [0,
+                            0,
+                            self.trial.image_array.shape[3],
+                            self.trial.image_array.shape[2]]
 
             self.trial.run_batch(
                 images_ndarray=self.trial.image_array,
@@ -648,11 +658,10 @@ class StrainGUIController:
         analysis_frame.rect = None
         analysis_frame.roi_corners = [None, None, None, None]
         analysis_frame.roi = [None, None, None, None]
-        self.roi = [150, 167, 304, 1132]
-#        [0,
-#                    0,
-#                    self.trial.image_array.shape[3],
-#                    self.trial.image_array.shape[2]]
+        self.roi = [0,
+                    0,
+                    self.trial.image_array.shape[3],
+                    self.trial.image_array.shape[2]]
 
         print('Selected ROI: ', self.roi)
 

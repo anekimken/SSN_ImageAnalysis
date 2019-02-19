@@ -1,0 +1,28 @@
+---
+Experiment_id: SSN_110_002
+analysis_status: Failed - too close to edge
+bleach_time: 2018-11-25 12:45:00
+cultivation_temp: 20
+device_ID: Y4P7-4
+head_orientation: Headfirst
+microscope: Spinning Disk Confocal in CSIF Shriram
+microscope_channel: SDC 561-ALN
+microscope_objective: 40x oil
+neuron: AVM
+notes: PVM and AVM in FOV, using middle actuator. 50 ms exposure time. 11 stacks,
+  300 kPa on even numbered stacks. Second to last actuation (stack 8) was a few slices
+  late.
+num_eggs: 3
+num_timepoints: 11
+pixel_microns: 0.275
+purpose: Baseline measurement
+slice_height_pix: 1200
+slice_width_pix: 600
+stack_height: 55
+timestamp: 2018-11-30 14:37:49
+total_images: 605
+trial_rating: No rating given
+user: anekimke@stanford.edu
+vulva_orientation: West
+worm_life_stage: YA
+worm_strain: NM3573

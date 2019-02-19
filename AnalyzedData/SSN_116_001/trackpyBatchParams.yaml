@@ -12,10 +12,15 @@ preprocess: true
 separation: null
 smoothing_size: null
 source: null
-timestamp: 2019-01-31-231853
+timestamp: 2019-02-18-052150
 topn: null
 trackpy_version: 0.4.1
 bottom_slice: 0
 last_timepoint: 7
+roi:
+- 147
+- 43
+- 288
+- 965
 top_slice: 52
 tracking_seach_radius: 25

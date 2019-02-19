@@ -78,3 +78,43 @@ timestamp: 2018-12-17-235038
 topn: null
 trackingSeachRadius: 100
 trackpy_version: 0.4.1
+---
+bottom_slice: 0
+diameter: !!python/tuple [21, 15, 15]
+invert: false
+last_timepoint: 11
+max_iterations: 10
+maxsize: null
+minmass: 200
+noise_size: 3
+percentile: 25
+preprocess: true
+roi: [193, 23, 357, 1182]
+separation: null
+smoothing_size: null
+source: null
+timestamp: 2019-02-13-065202
+top_slice: 44
+topn: null
+tracking_seach_radius: 20
+trackpy_version: 0.4.1
+---
+bottom_slice: 0
+diameter: !!python/tuple [21, 15, 15]
+invert: false
+last_timepoint: 11
+max_iterations: 10
+maxsize: null
+minmass: 200
+noise_size: 3
+percentile: 25
+preprocess: true
+roi: [174, 54, 351, 1161]
+separation: null
+smoothing_size: null
+source: null
+timestamp: 2019-02-18-051048
+top_slice: 44
+topn: null
+tracking_seach_radius: 40
+trackpy_version: 0.4.1

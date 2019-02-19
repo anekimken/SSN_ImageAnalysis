@@ -11,7 +11,9 @@ import tkinter as tk
 from tkinter import ttk
 import glob
 import matplotlib as mpl
+import matplotlib.pyplot as plt
 import yaml
+import PIL
 # import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from pandastable import Table
@@ -184,6 +186,13 @@ class AnalyzeTrialFrame(tk.Frame):
         self.plot_canvas.get_tk_widget().config(
                 yscrollcommand=self.scrollbar.set,
                 yscrollincrement=5)
+
+        # TODO: move this to load_trial when load_images is False
+#        im_file = ('/Users/adam/Documents/SenseOfTouchResearch/'
+#                   'SSN_ImageAnalysis/AnalyzedData/SSN_162_001/'
+#                   'diag_images/trajectory_fig.png')
+#        self.saved_photo = plt.imread(im_file)
+#        self.ax.imshow(self.saved_photo)
 
         # Creat a notebook to put all the controls and parameters in
         self.analysis_notebook = ttk.Notebook(self)
