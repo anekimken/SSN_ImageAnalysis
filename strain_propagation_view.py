@@ -428,6 +428,19 @@ class AnalyzeTrialFrame(tk.Frame):
         self.status_dropdown.grid(column=3, row=save_frame_row)
         save_frame_row += 1
 
+        self.notes_entry = ttk.Entry(master=self.param_frame)
+        self.note_entry_default = 'Notes for analysis run'
+        self.notes_entry.insert(0, self.note_entry_default)
+
+        def click_note_entry(event=None):
+            if event.widget.get() == self.note_entry_default:
+                event.widget.delete(0, tk.END)
+
+        self.notes_entry.bind("<ButtonRelease-1>", click_note_entry)
+        self.notes_entry.bind("<FocusIn>", click_note_entry)
+        self.notes_entry.grid(row=save_frame_row, column=3, sticky=tk.N+tk.S)
+        save_frame_row += 1
+
         self.explore_data_frame = tk.Frame(self.analysis_notebook)
         self.df_tab = self.analysis_notebook.add(
                 self.explore_data_frame, text="Explore Data")
@@ -436,6 +449,18 @@ class AnalyzeTrialFrame(tk.Frame):
                                       dataframe=self.dataframe)
 
         self.dataframe_widget.show()
+
+        self.param_history_frame = tk.Frame(self.analysis_notebook)
+        self.param_history_tab = self.analysis_notebook.add(
+                self.param_history_frame, text="Analysis History")
+#        widget_height = self.param_frame.winfo_height()
+        self.param_history = tk.Text(self.param_history_frame,
+                                     state=tk.DISABLED)
+        self.param_history.grid(row=0, column=0, sticky=tk.N + tk.S)
+        self.history_scroll = tk.Scrollbar(self.param_history_frame)
+        self.history_scroll.grid(row=0, column=1, sticky=tk.N + tk.S)
+        self.history_scroll.config(command=self.param_history.yview)
+        self.param_history.config(yscrollcommand=self.history_scroll.set)
 
 
 class AnalysisQueueFrame(tk.Frame):
@@ -548,6 +573,9 @@ class PlotResultsFrame(tk.Frame):
         status_count = dict.fromkeys(status_values, 0)
         for experiment_id, status in all_statuses_dict.items():
             status_count[status] += 1
+
+        status_count.pop('No metadata.yaml file')
+        status_count.pop('No analysis status yet')
 
         self.ax.bar(range(len(status_count)), status_count.values(),
                     align='center')

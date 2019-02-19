@@ -24,6 +24,7 @@ while True:  # queue_length > 0:
     queue_file_size = os.stat(queue_location).st_size
     if queue_file_size > 0:
         controller.run_queue_item(queue_location)
+        # TODO: keep track of which trials were analyzed
 
         # update queue length variable
         with open(queue_location, 'r') as queue_file:
