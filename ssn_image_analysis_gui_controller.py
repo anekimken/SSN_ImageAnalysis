@@ -6,6 +6,7 @@ Created on Fri Jan  4 10:32:39 2019
 @author: Adam Nekimken
 """
 
+import time
 import numpy as np
 import tkinter as tk
 import pandas as pd
@@ -101,6 +102,7 @@ class StrainGUIController:
         inspection tab to start the analysis
         """
         # MAYBE: add popup window saying file is loading
+        start_time = time.time()
         print('Loading file', self.file_list[0][0])
         fr = self.gui.file_load_frame
         load_images = fr.load_images_box.instate(['selected'])
@@ -189,7 +191,13 @@ class StrainGUIController:
             canvas.tag_raise('rect')
             canvas.tag_raise('corner')
 
+        finish_time = time.time()
+        print('Loaded file in ' + str(round(finish_time - start_time)) +
+              ' seconds.')
+
     def find_mitos_one_stack(self, event=None):
+        start_time = time.time()
+
         # Gather parameters
         analysis_frame = self.gui.analyze_trial_frame
         gaussian_width = int(analysis_frame.gaussian_blur_width.get())
@@ -218,7 +226,12 @@ class StrainGUIController:
         analysis_frame.plot_labels_drop.set('Mitos from param test')
         self.update_inspection_image()
 
+        finish_time = time.time()
+        print('Time to test parameters for locating mitochondria was ' +
+              str(round(finish_time - start_time)) + ' seconds.')
+
     def find_mitos_current_trial(self, event=None):
+        start_time = time.time()
         print('Looking for mitochondria in all timepoints...')
         analysis_frame = self.gui.analyze_trial_frame
         gaussian_width = int(analysis_frame.gaussian_blur_width.get())
@@ -252,6 +265,10 @@ class StrainGUIController:
         analysis_frame.max_proj_checkbox.state(['selected'])
         analysis_frame.plot_labels_drop.set('Plot trajectories')
         self.update_inspection_image()
+
+        done_time = time.time()
+        print('Done running file. Batch find took ' +
+              str(round(done_time - start_time)) + ' seconds. ')
 
     def run_multiple_files(self, event=None):
         # TODO: merge into queue
@@ -322,7 +339,7 @@ class StrainGUIController:
 
     def run_queue_item(self, queue_location):
         """Runs the analysis on the first trial in the queue"""
-
+        start_time = time.time()
         data_location = '/Users/adam/Documents/SenseOfTouchResearch/SSN_data/'
 
         # Get first file from queue yaml
@@ -369,8 +386,13 @@ class StrainGUIController:
         with open(queue_location, 'w') as queue_file:
             yaml.dump_all(new_queue, queue_file, explicit_start=True)
 
+        done_time = time.time()
+        print('Finished file ' + full_filename[0] + ' in ' +
+              str(round(done_time - start_time)) + ' seconds. ')
+
     def link_existing_particles(self, event=None):
         """Link previously found particles into trajectories"""
+        start_time = time.time()
         analysis_frame = self.gui.analyze_trial_frame
         tracking_seach_radius = int(
                 analysis_frame.linking_radius_selector.get())
@@ -379,6 +401,10 @@ class StrainGUIController:
 
         self.trial.link_mitos(tracking_seach_radius=tracking_seach_radius,
                               last_timepoint=last_timepoint)
+
+        link_done_time = time.time()
+        print('Done linking trial file. Linking and filtering took ' +
+              str(round(link_done_time - start_time)) + ' seconds.')
 
     def calculate_strain(self, event=None):
         """Calculate strain between mitochondria as a function of time"""
