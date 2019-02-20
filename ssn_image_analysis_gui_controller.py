@@ -12,6 +12,7 @@ import tkinter as tk
 import pandas as pd
 import glob
 import yaml
+import fast_histogram
 from pandastable import TableModel
 
 import strain_propagation_trial as ssn_trial
@@ -64,6 +65,19 @@ class StrainGUIController:
                     func=self.spinbox_delay_then_update_image)
             self.gui.analyze_trial_frame.timepoint_selector.bind(
                     "<ButtonRelease-1>",
+                    func=self.spinbox_delay_then_update_image)
+            self.gui.analyze_trial_frame.min_pixel_disp.bind(
+                    "<ButtonRelease-1>",
+                    func=self.spinbox_delay_then_update_image)
+            self.gui.analyze_trial_frame.max_pixel_disp.bind(
+                    "<ButtonRelease-1>",
+                    func=self.spinbox_delay_then_update_image)
+            self.gui.analyze_trial_frame.unbind_all("<Return>")
+            self.gui.analyze_trial_frame.min_pixel_disp.bind(
+                    "<Return>",
+                    func=self.spinbox_delay_then_update_image)
+            self.gui.analyze_trial_frame.max_pixel_disp.bind(
+                    "<Return>",
                     func=self.spinbox_delay_then_update_image)
             self.gui.analyze_trial_frame.test_param_button.bind(
                     "<ButtonRelease-1>", func=self.find_mitos_one_stack)
@@ -119,6 +133,15 @@ class StrainGUIController:
 
         # load inspection image on inspection tab and related parameters
         if load_images is True or overwrite_metadata is True:
+            min_pixel = int(np.amin(self.trial.image_array))
+            min_spinbox = self.gui.analyze_trial_frame.min_pixel_disp
+            min_spinbox.delete(0, 'end')
+            min_spinbox.insert(0, str(min_pixel))
+            max_pixel = int(np.amax(self.trial.image_array))
+            max_spinbox = self.gui.analyze_trial_frame.max_pixel_disp
+            max_spinbox.delete(0, 'end')
+            max_spinbox.insert(0, str(max_pixel))
+
             self.update_inspection_image()
 
         image_stack_size = self.trial.metadata['stack_height']
@@ -135,6 +158,7 @@ class StrainGUIController:
                 values=list(range(1, num_timepoints + 1)))
         self.gui.analyze_trial_frame.metadata_notes.config(
                 text=self.trial.metadata['notes'])
+
         self.gui.analyze_trial_frame.stack_height_label.config(
                 text=('Stack height: ' + str(image_stack_size)))
         self.gui.analyze_trial_frame.neuron_id_label.config(
@@ -142,6 +166,7 @@ class StrainGUIController:
         self.gui.analyze_trial_frame.vulva_side_label.config(
                 text=('Vulva side: ' +
                       self.trial.metadata['vulva_orientation']))
+
         self.roi = self.trial.latest_test_params['roi']
 
         self._display_last_test_params()
@@ -492,8 +517,10 @@ class StrainGUIController:
                 ['selected'])
         selected_slice = int(analysis_frame.slice_selector.get())
         selected_timepoint = int(analysis_frame.timepoint_selector.get()) - 1
-        inspection_ax = analysis_frame.ax
-        inspection_ax.clear()
+        min_pixel = int(analysis_frame.min_pixel_disp.get())
+        max_pixel = int(analysis_frame.max_pixel_disp.get())
+        analysis_frame.ax.clear()
+        analysis_frame.hist_ax.clear()
         df_for_plot = None
 
         # get image that we're going to show
@@ -582,9 +609,22 @@ class StrainGUIController:
                 forward=True,
                 h=image_to_display.shape[0] / self.gui.dpi,
                 w=image_to_display.shape[1] / self.gui.dpi)
-        analysis_frame.ax.imshow(image_to_display, interpolation='none')
+        analysis_frame.ax.imshow(image_to_display, interpolation='none',
+                                 vmin=min_pixel, vmax=max_pixel)
         analysis_frame.ax.axis('off')
         analysis_frame.plot_canvas.draw()
+
+        min_pixel = int(np.amin(image_to_display))
+        max_pixel = int(np.amax(image_to_display))
+        bins = max_pixel - min_pixel + 1
+        bin_list = list(range(min_pixel, max_pixel+1))
+        hist_array = fast_histogram.histogram1d(image_to_display,
+                                                bins=bins,
+                                                range=(min_pixel, max_pixel))
+
+        analysis_frame.hist_ax.bar(bin_list, hist_array, width=1)
+        analysis_frame.hist_ax.set_yscale('log')
+        analysis_frame.histogram_canvas.draw()
 
     def on_button_press(self, event=None):
         analysis_frame = self.gui.analyze_trial_frame
