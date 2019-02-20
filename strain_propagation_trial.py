@@ -9,7 +9,6 @@ Created on Mon Jan  7 15:24:53 2019
 import os
 import pathlib
 import datetime
-import time
 import warnings
 from typing import Tuple
 
@@ -140,7 +139,6 @@ class StrainPropagationTrial(object):
                 self.mitos_from_batch = pd.DataFrame.from_dict(
                         unlinked_mitos_dict, orient='index')
 
-        start_time = time.time()
         if (self.load_images is False and  # don't load images
                 self.overwrite_metadata is False and  # don't overwrite
                 self.metadata_file_path.is_file() is True):  # yaml exists
@@ -166,10 +164,6 @@ class StrainPropagationTrial(object):
                 self.metadata = self.load_metadata_from_yaml()
 
         self.latest_test_params = self._load_analysis_params()
-
-        finish_time = time.time()
-        print('Loaded file in ' + str(round(finish_time - start_time)) +
-              ' seconds.')
 
     def test_parameters(self,
                         images_ndarray:  np.ndarray,
@@ -206,7 +200,7 @@ class StrainPropagationTrial(object):
                                              roi[0]:roi[2]]
 
         print('Looking for mitochondria...')
-        start_time = time.time()
+
         self.mito_candidates = tp.locate(slices_to_analyze,
                                          particle_diameter,
                                          percentile=brightness_percentile,
@@ -219,10 +213,6 @@ class StrainPropagationTrial(object):
                                      min([roi[0], roi[2]]))
         self.mito_candidates['y'] = (self.mito_candidates['y'] +
                                      min([roi[1], roi[3]]))
-
-        finish_time = time.time()
-        print('Time to test parameters for locating mitochondria was ' +
-              str(round(finish_time - start_time)) + ' seconds.')
 
         return self.mito_candidates
 
@@ -251,7 +241,6 @@ class StrainPropagationTrial(object):
         metadata_save_location = str(
                 save_location.joinpath('trackpyBatchParams.yaml'))
 
-        start_time = time.time()
         # run batch of images with the current set of parameters
         self.mitos_from_batch = tp.batch(
                 frames=slices_to_analyze,
@@ -261,7 +250,6 @@ class StrainPropagationTrial(object):
                 noise_size=gaussian_width,
                 meta=metadata_save_location,
                 characterize=True)
-        batch_done_time = time.time()
 
         # link the particles we found between time points
         linked = tp.link_df(self.mitos_from_batch,
@@ -271,7 +259,6 @@ class StrainPropagationTrial(object):
         # only keep trajectories where point appears in all frames
         self.linked_mitos = tp.filter_stubs(
                 linked, last_timepoint)
-        link_done_time = time.time()
 
         # Correct for roi offset
         self.mitos_from_batch['x'] = (self.mitos_from_batch['x'] +
@@ -323,11 +310,6 @@ class StrainPropagationTrial(object):
         self.save_diag_figs(images_ndarray, self.linked_mitos,
                             self.mitos_from_batch, save_location)
 
-        print('Done running file. Batch find took ' +
-              str(round(batch_done_time - start_time)) + ' seconds. ' +
-              'Linking and filtering took ' +
-              str(round(link_done_time - batch_done_time)) + ' seconds.')
-
     def link_mitos(self,
                    tracking_seach_radius: int,
                    last_timepoint: int):
@@ -336,7 +318,6 @@ class StrainPropagationTrial(object):
         print('linking partiles...')
 
         save_location = self.analyzed_data_location
-        start_time = time.time()
 
         # link the particles we found between time points
         # TODO: limit mitos_from_batch to selected timepoints
@@ -346,7 +327,6 @@ class StrainPropagationTrial(object):
 
         # only keep trajectories where point appears in all frames
         self.linked_mitos = tp.filter_stubs(linked, last_timepoint)
-        link_done_time = time.time()
 
         # load the file of parameters that tp.batch saved previously
         with open(save_location.joinpath('trackpyBatchParams.yaml'),
@@ -373,9 +353,6 @@ class StrainPropagationTrial(object):
                   'w') as yamlfile:
             yaml.dump(linked_mitos_dict, yamlfile,
                       explicit_start=True, default_flow_style=False)
-
-        print('Done linking trial file. Linking and filtering took ' +
-              str(round(link_done_time - start_time)) + ' seconds.')
 
     def calculate_strain(self):
         """Calculates strain in the TRN using mitochondria positions"""
