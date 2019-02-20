@@ -447,13 +447,11 @@ class AnalyzeTrialFrame(tk.Frame):
         self.dataframe = None  # TableModel.getSampleData()
         self.dataframe_widget = Table(self.explore_data_frame,
                                       dataframe=self.dataframe)
-
         self.dataframe_widget.show()
 
         self.param_history_frame = tk.Frame(self.analysis_notebook)
         self.param_history_tab = self.analysis_notebook.add(
                 self.param_history_frame, text="Analysis History")
-#        widget_height = self.param_frame.winfo_height()
         self.param_history = tk.Text(self.param_history_frame,
                                      state=tk.DISABLED)
         self.param_history.grid(row=0, column=0, sticky=tk.N + tk.S)
@@ -461,6 +459,37 @@ class AnalyzeTrialFrame(tk.Frame):
         self.history_scroll.grid(row=0, column=1, sticky=tk.N + tk.S)
         self.history_scroll.config(command=self.param_history.yview)
         self.param_history.config(yscrollcommand=self.history_scroll.set)
+
+        self.histogram_frame = tk.Frame(self.analysis_notebook)
+        self.histogram_tab = self.analysis_notebook.add(
+                self.histogram_frame, text="Histogram")
+        self.histogram = mpl.figure.Figure()
+        self.hist_ax = self.histogram.add_axes([0.1, 0.1, 0.8, 0.8])
+        self.histogram_canvas = FigureCanvasTkAgg(self.histogram,
+                                                  master=self.histogram_frame)
+
+        self.histogram_canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+        self.histogram_canvas.draw()
+
+        self.min_pixel_disp_label = ttk.Label(
+                self.histogram_frame, text='Minimum')
+        self.min_pixel_disp_label.pack(side=tk.LEFT)
+        self.min_pixel_disp = tk.Spinbox(self.histogram_frame,
+                                         values=list(range(0, 299)))
+        self.min_pixel_disp.pack(side=tk.LEFT)
+        self.max_pixel_disp = tk.Spinbox(self.histogram_frame,
+                                         values=list(range(1, 300)))
+        self.max_pixel_disp.insert(tk.END, 300)
+        self.max_pixel_disp.pack(side=tk.LEFT)
+        self.max_pixel_disp_label = ttk.Label(
+                self.histogram_frame, text='Maximum')
+        self.max_pixel_disp_label.pack(side=tk.LEFT)
+
+        self.gaussian_blur_width = tk.Spinbox(self.param_frame,
+                                              values=list(range(0, 10)),
+                                              width=5)
+        self.gaussian_blur_width.grid(row=param_frame_row, column=2)
+        param_frame_row += 1
 
 
 class AnalysisQueueFrame(tk.Frame):
