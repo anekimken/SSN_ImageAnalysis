@@ -20,6 +20,7 @@ from nd2reader import ND2Reader
 from scipy import spatial
 import yaml
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
@@ -398,11 +399,17 @@ class StrainPropagationTrial(object):
         # Save image with trajectories
         image_to_display = np.amax(image_array[0], 0)  # collapse z axis
         image_to_display = image_to_display.squeeze()
-        trajectory_fig, trajectory_ax = plt.subplots(
-                figsize=(8.5, 8.5*2), num=traj_fig_num)
+
+        trajectory_fig = plt.figure(figsize=(8.5, 8.5*2),
+                                    frameon=False, num=traj_fig_num)
+        trajectory_ax = plt.Axes(trajectory_fig, [0., 0., 1., 1.])
         trajectory_fig.set_label('trajectories')
-#        trajectory_fig.axis('off')
+        trajectory_fig.tight_layout(pad=0)
+        trajectory_ax.margins(0, 0)
+        trajectory_ax.set_axis_off()
+        trajectory_fig.add_axes(trajectory_ax)
         trajectory_ax.imshow(image_to_display)
+
         try:
             theCount = 0  # ah ah ah ah
             for i in range(max(linked_mitos['particle'])):
@@ -426,9 +433,8 @@ class StrainPropagationTrial(object):
 
             trajectory_fig.savefig(save_location.joinpath(
                      'diag_images/trajectory_fig.png'),
-                        dpi=72, bbox_inches='tight')
+                    dpi=72, pad_inches=0)
             plt.close(trajectory_fig)
-
         except ValueError:
             if len(linked_mitos) == 0:
                 warnings.warn('No particles were found at all '
@@ -451,10 +457,17 @@ class StrainPropagationTrial(object):
             for stack in range(max(mitos_from_batch['frame'])):
                 image_to_display = np.amax(image_array[stack], 0)  # collapse z
                 image_to_display = image_to_display.squeeze()
-                one_stack_fig, one_stack_ax = plt.subplots(
-                        figsize=(8.5, 8.5*2), num=one_stack_fig_num)
-    #            one_stack_ax.axis('off')
+
+                one_stack_fig = plt.figure(figsize=(8.5, 8.5*2),
+                                           frameon=False, num=traj_fig_num)
+                one_stack_ax = plt.Axes(one_stack_fig, [0., 0., 1., 1.])
+                one_stack_fig.set_label('trajectories')
+                one_stack_fig.tight_layout(pad=0)
+                one_stack_ax.margins(0, 0)
+                one_stack_ax.set_axis_off()
+                one_stack_fig.add_axes(one_stack_ax)
                 one_stack_ax.imshow(image_to_display)
+
                 df_for_plot = mitos_from_batch.loc[
                             mitos_from_batch[
                                     'frame'] == stack]
@@ -475,7 +488,7 @@ class StrainPropagationTrial(object):
                     one_stack_ax.legend_.remove()
                 one_stack_fig.savefig(save_location.joinpath(
                  ('diag_images/stack_' + str(stack) + '_fig.png')),
-                    dpi=72, bbox_inches='tight')
+                    dpi=72, pad_inches=0)
                 plt.close(one_stack_fig)
         except ValueError:
             if len(mitos_from_batch) == 0:
