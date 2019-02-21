@@ -187,13 +187,6 @@ class AnalyzeTrialFrame(tk.Frame):
                 yscrollcommand=self.scrollbar.set,
                 yscrollincrement=5)
 
-        # TODO: move this to load_trial when load_images is False
-#        im_file = ('/Users/adam/Documents/SenseOfTouchResearch/'
-#                   'SSN_ImageAnalysis/AnalyzedData/SSN_162_001/'
-#                   'diag_images/trajectory_fig.png')
-#        self.saved_photo = plt.imread(im_file)
-#        self.ax.imshow(self.saved_photo)
-
         # Creat a notebook to put all the controls and parameters in
         self.analysis_notebook = ttk.Notebook(self)
         self.param_frame = tk.Frame(self.analysis_notebook)
@@ -485,12 +478,6 @@ class AnalyzeTrialFrame(tk.Frame):
                 self.histogram_frame, text='Maximum')
         self.max_pixel_disp_label.pack(side=tk.LEFT)
 
-        self.gaussian_blur_width = tk.Spinbox(self.param_frame,
-                                              values=list(range(0, 10)),
-                                              width=5)
-        self.gaussian_blur_width.grid(row=param_frame_row, column=2)
-        param_frame_row += 1
-
 
 class AnalysisQueueFrame(tk.Frame):
     def __init__(self, parent):
@@ -512,50 +499,51 @@ class AnalysisQueueFrame(tk.Frame):
         self.run_queue_button.pack(side=tk.RIGHT)
         self.button_frame.pack(side=tk.BOTTOM)
 
-        # TODO: update queue when changing tabs on gui
-        with open(self.queue_location, 'r') as queue_file:
-            entire_queue = yaml.load_all(queue_file)
-            for queue_member in entire_queue:
-                self.run_queue_button.config(state=tk.NORMAL)
-                experiment_id = queue_member['experiment_id']
+        def update_queue(event=None):
+            with open(self.queue_location, 'r') as queue_file:
+                entire_queue = yaml.load_all(queue_file)
+                for queue_member in entire_queue:
+                    self.run_queue_button.config(state=tk.NORMAL)
+                    experiment_id = queue_member['experiment_id']
 
-                # add to tree, add all but experiment ID to lower level
-                queue_item = self.queue_tree.insert(
-                        '', 'end',
-                        text=experiment_id)
-                metadata_file_path = ('/Users/adam/Documents/'
-                                      'SenseOfTouchResearch/'
-                                      'SSN_ImageAnalysis/AnalyzedData/' +
-                                      experiment_id + '/metadata.yaml')
-                try:
-                    with open(metadata_file_path, 'r') as yamlfile:
-                        metadata = yaml.load(yamlfile)
-                    if 'trial_rating' in metadata:
-                        rating = metadata['trial_rating']
-                    else:
-                        rating = None
-                except FileNotFoundError:
-                        pass
-                self.queue_tree.item(queue_item, values=('', rating))
+                    # add to tree, add all but experiment ID to lower level
+                    queue_item = self.queue_tree.insert(
+                            '', 'end',
+                            text=experiment_id)
+                    metadata_file_path = ('/Users/adam/Documents/'
+                                          'SenseOfTouchResearch/'
+                                          'SSN_ImageAnalysis/AnalyzedData/' +
+                                          experiment_id + '/metadata.yaml')
+                    try:
+                        with open(metadata_file_path, 'r') as yamlfile:
+                            metadata = yaml.load(yamlfile)
+                        if 'trial_rating' in metadata:
+                            rating = metadata['trial_rating']
+                        else:
+                            rating = None
+                    except FileNotFoundError:
+                            pass
+                    self.queue_tree.item(queue_item, values=('', rating))
 
-                for param, value in queue_member.items():
-                    if param == 'experiment_id':
-                        # we already have this in the tree
-                        pass
-                    elif param == 'roi':
-                        roi_str = (str(value[0]) + ', ' +
-                                   str(value[1]) + ', ' +
-                                   str(value[2]) + ', ' +
-                                   str(value[3]))
-                        self.queue_tree.insert(queue_item, 'end',
-                                               text=param,
-                                               values=(roi_str, ''))
-                    else:
-                        self.queue_tree.insert(queue_item, 'end',
-                                               text=param,
-                                               values=(value, ''))
+                    for param, value in queue_member.items():
+                        if param == 'experiment_id':
+                            # we already have this in the tree
+                            pass
+                        elif param == 'roi':
+                            roi_str = (str(value[0]) + ', ' +
+                                       str(value[1]) + ', ' +
+                                       str(value[2]) + ', ' +
+                                       str(value[3]))
+                            self.queue_tree.insert(queue_item, 'end',
+                                                   text=param,
+                                                   values=(roi_str, ''))
+                        else:
+                            self.queue_tree.insert(queue_item, 'end',
+                                                   text=param,
+                                                   values=(value, ''))
 
-        self.queue_tree.pack(fill=tk.BOTH, anchor=tk.N)
+            self.queue_tree.pack(fill=tk.BOTH, anchor=tk.N)
+        self.bind("<Visibility>", update_queue)
 
 
 class PlotResultsFrame(tk.Frame):

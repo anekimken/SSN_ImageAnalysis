@@ -12,6 +12,7 @@ import tkinter as tk
 import pandas as pd
 import glob
 import yaml
+import matplotlib.pyplot as plt
 import fast_histogram
 from pandastable import TableModel
 
@@ -117,6 +118,7 @@ class StrainGUIController:
         """
         # MAYBE: add popup window saying file is loading
         start_time = time.time()
+        self.trial = ssn_trial.StrainPropagationTrial()
         print('Loading file', self.file_list[0][0])
         fr = self.gui.file_load_frame
         load_images = fr.load_images_box.instate(['selected'])
@@ -142,7 +144,7 @@ class StrainGUIController:
             max_spinbox.delete(0, 'end')
             max_spinbox.insert(0, str(max_pixel))
 
-            self.update_inspection_image()
+        self.update_inspection_image()
 
         image_stack_size = self.trial.metadata['stack_height']
         num_timepoints = self.trial.metadata['num_timepoints']
@@ -345,7 +347,6 @@ class StrainGUIController:
             self.trial = ssn_trial.StrainPropagationTrial()  # clear trial var
 
     def run_queue(self, event=None):
-        # TODO: move to other process/thread so I can inspect other trials
         queue_location = self.gui.queue_frame.queue_location
 
         with open(queue_location, 'r') as queue_file:
@@ -375,7 +376,7 @@ class StrainGUIController:
         # Load file
         full_filename = glob.glob(data_location + '*/' +
                                   params['experiment_id'] + '.nd2')
-        print('Running file ', full_filename[0])
+        print('Running file', full_filename[0])
         self.trial = ssn_trial.StrainPropagationTrial()  # clear trial var
         self.trial.load_trial(full_filename[0],
                               load_images=True, overwrite_metadata=False)
@@ -509,6 +510,10 @@ class StrainGUIController:
         self.gui.analyze_trial_frame.after(1, self.update_inspection_image)
 
     def update_inspection_image(self, event=None):
+        fr = self.gui.file_load_frame
+        load_images = fr.load_images_box.instate(['selected'])
+        overwrite_metadata = fr.overwrite_metadata_box.instate(['selected'])
+
         analysis_frame = self.gui.analyze_trial_frame
         plot_mitos_status = analysis_frame.plot_labels_drop.get()
         max_proj_checkbox = analysis_frame.max_proj_checkbox.instate(
@@ -522,16 +527,6 @@ class StrainGUIController:
         analysis_frame.ax.clear()
         analysis_frame.hist_ax.clear()
         df_for_plot = None
-
-        # get image that we're going to show
-        # TODO: change look up table based on particle brightness
-        if max_proj_checkbox is True:  # max projection
-            stack = self.trial.image_array[selected_timepoint]
-            image_to_display = np.amax(stack, 0)  # collapse z axis
-            image_to_display = image_to_display.squeeze()
-        else:  # single slice
-            image_to_display = self.trial.image_array[
-                    selected_timepoint, selected_slice]
 
         # Get dataframe with data we're going to plot on top of image
         if plot_mitos_status == 'Linked mitos for this stack':
@@ -605,26 +600,49 @@ class StrainGUIController:
                     TableModel(self.gui.analyze_trial_frame.dataframe))
             self.gui.analyze_trial_frame.dataframe_widget.redraw()
 
-        analysis_frame.fig.set_size_inches(
-                forward=True,
-                h=image_to_display.shape[0] / self.gui.dpi,
-                w=image_to_display.shape[1] / self.gui.dpi)
-        analysis_frame.ax.imshow(image_to_display, interpolation='none',
-                                 vmin=min_pixel, vmax=max_pixel)
-        analysis_frame.ax.axis('off')
-        analysis_frame.plot_canvas.draw()
+        if load_images is True or overwrite_metadata is True:
+            # get image that we're going to show
+            if max_proj_checkbox is True:  # max projection
+                stack = self.trial.image_array[selected_timepoint]
+                image_to_display = np.amax(stack, 0)  # collapse z axis
+                image_to_display = image_to_display.squeeze()
+            else:  # single slice
+                image_to_display = self.trial.image_array[
+                        selected_timepoint, selected_slice]
 
-        min_pixel = int(np.amin(image_to_display))
-        max_pixel = int(np.amax(image_to_display))
-        bins = max_pixel - min_pixel + 1
-        bin_list = list(range(min_pixel, max_pixel+1))
-        hist_array = fast_histogram.histogram1d(image_to_display,
-                                                bins=bins,
-                                                range=(min_pixel, max_pixel))
+            analysis_frame.fig.set_size_inches(
+                    forward=True,
+                    h=image_to_display.shape[0] / self.gui.dpi,
+                    w=image_to_display.shape[1] / self.gui.dpi)
+            analysis_frame.ax.imshow(image_to_display, interpolation='none',
+                                     vmin=min_pixel, vmax=max_pixel)
+            analysis_frame.ax.axis('off')
+            analysis_frame.plot_canvas.draw()
 
-        analysis_frame.hist_ax.bar(bin_list, hist_array, width=1)
-        analysis_frame.hist_ax.set_yscale('log')
-        analysis_frame.histogram_canvas.draw()
+            min_pixel = int(np.amin(image_to_display))
+            max_pixel = int(np.amax(image_to_display))
+            bins = max_pixel - min_pixel + 1
+            bin_list = list(range(min_pixel, max_pixel+1))
+            hist_array = fast_histogram.histogram1d(image_to_display,
+                                                    bins=bins,
+                                                    range=(min_pixel,
+                                                           max_pixel))
+
+            analysis_frame.hist_ax.bar(bin_list, hist_array, width=1)
+            analysis_frame.hist_ax.set_yscale('log')
+            analysis_frame.histogram_canvas.draw()
+        else:
+            if plot_mitos_status == 'Unlinked mitos for this stack':
+                one_stack_fig = self.trial.analyzed_data_location.joinpath(
+                        'diag_images/stack_' +
+                        str(selected_timepoint) + '_fig.png')
+                self.saved_photo = plt.imread(str(one_stack_fig))
+            else:
+                traj_fig_file = self.trial.analyzed_data_location.joinpath(
+                        'diag_images/trajectory_fig.png')
+                self.saved_photo = plt.imread(str(traj_fig_file))
+            analysis_frame.ax.imshow(self.saved_photo)
+            analysis_frame.plot_canvas.draw()
 
     def on_button_press(self, event=None):
         analysis_frame = self.gui.analyze_trial_frame
