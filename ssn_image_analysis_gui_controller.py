@@ -447,8 +447,8 @@ class StrainGUIController:
     def calculate_strain(self, event=None):
         """Calculate strain between mitochondria as a function of time"""
         self.trial.calculate_strain()
-        self.gui.plot_results_frame.plot_strain_one_trial(self.trial.strain,
-                                                          ycoords)
+        self.gui.plot_results_frame.plot_strain_one_trial(
+                self.trial.strain, self.trial.ycoords_for_strain)
         self.gui.notebook.select(3)
 
     def add_trial_to_queue(self, event=None):

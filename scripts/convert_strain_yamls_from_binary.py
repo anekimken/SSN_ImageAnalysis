@@ -6,29 +6,47 @@ Created on Thu Feb 21 17:02:05 2019
 @author: adam
 """
 
-
+import glob
 import yaml
-strain_files = glob.iglob(wdir + '**/strain.yaml')
+import pandas as pd
 
-for file in metadata_files:
+wdir = ('/Users/adam/Documents/SenseOfTouchResearch/'
+        'SSN_ImageAnalysis/AnalyzedData/')
+strain_files = glob.iglob(wdir + '**/old_strain.yaml')
+
+for file in strain_files:
     print(file)
+    result_folder = file[:-15]
     with open(file, 'r') as yamlfile:
-        metadata = yaml.load(yamlfile)
-    if 'trial_rating' not in metadata:
+        strain = yaml.load(yamlfile)
 
-        experiment_id = file[-25:-14]
+    mito_data_file = result_folder + 'trackpyBatchResults.yaml'
+    with open(mito_data_file, 'r') as yamlfile:
+        linked_mitos_dict = yaml.load(yamlfile)
+        mitos_df = pd.DataFrame.from_dict(
+                    linked_mitos_dict, orient='index')
+#    print(len(linked_mitos_dict))
+    num_frames = mitos_df['frame'].nunique()
+    ycoords = []
+    for stack in range(num_frames):
+        # sort mitochondria in this stack by y values
+        current_stack = mitos_df.loc[mitos_df['frame'] == stack]
+        sorted_stack = current_stack.sort_values(['y'])
+        sorted_stack.reset_index(inplace=True, drop=True)
+        ycoords.append(list(sorted_stack['y']))
+    strain_list = strain.tolist()
 
-        current_id_cell = metadata_worksheet.find(experiment_id)
-        row_of_metadata = metadata_worksheet.row_values(current_id_cell.row)
-        row_of_keys = metadata_worksheet.row_values(1)
-        gdrive_metadata_dict = dict(zip(row_of_keys, row_of_metadata))
-#        print(gdrive_metadata_dict)
+    if len(ycoords) == len(strain_list):
+        results_dict = {'strain': strain_list, 'ycoords': ycoords}
+        backup_file = result_folder + 'old_strain.yaml'
+        with open(backup_file, 'w') as yaml_file:
+            yaml.dump(strain, yaml_file,
+                      explicit_start=True, default_flow_style=False)
 
-        try:
-            metadata['trial_rating'] = gdrive_metadata_dict['Trial rating']
-            print(metadata['trial_rating'])
-            with open(file, 'w') as output_file:
-                yaml.dump(metadata, output_file,  # create file
-                          explicit_start=True, default_flow_style=False)
-        except KeyError:
-            print("didn't find a rating value for ", experiment_id)
+        fresh_file = result_folder + 'strain.yaml'
+        with open(fresh_file, 'w') as yaml_file:
+            yaml.dump(results_dict, yaml_file,
+                      explicit_start=True, default_flow_style=False)
+    else:
+        print('ycoords and strain have different number of frames.'
+              ' try recalculating strain.')

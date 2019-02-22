@@ -684,6 +684,7 @@ class PlotResultsFrame(tk.Frame):
 
     def plot_strain_one_trial(self, strain, ycoords):
         """Plots the strain results from a np.ndarray"""
+        # TODO: plot strain with proper y coordinates
         self.ax.clear()
         self.ax.plot(strain.T)
 

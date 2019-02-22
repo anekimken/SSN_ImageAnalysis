@@ -361,11 +361,13 @@ class StrainPropagationTrial(object):
         num_trajectories = mitos_df['particle'].nunique()
         num_frames = mitos_df['frame'].nunique()
         distances = np.empty([num_frames, num_trajectories - 1])
+        self.ycoords_for_strain = []
         for stack in range(num_frames):
             # sort mitochondria in this stack by y values
             current_stack = mitos_df.loc[mitos_df['frame'] == stack]
             sorted_stack = current_stack.sort_values(['y'])
             sorted_stack.reset_index(inplace=True, drop=True)
+            self.ycoords_for_strain.append(list(sorted_stack['y']))
             for particle in range(num_trajectories - 1):
                 # calculate pairwise distances
                 mito1 = sorted_stack.loc[particle, ['x', 'y', 'z']].values
@@ -375,11 +377,13 @@ class StrainPropagationTrial(object):
 
         # calculate change in distance over time
         self.strain = (distances - distances[0])/distances[0]
-
+        strain_list = self.strain.tolist()
+        results_dict = {'strain': strain_list,
+                        'ycoords': self.ycoords_for_strain}
         # save results
         with open(self.analyzed_data_location.joinpath('strain.yaml'),
                   'w') as yamlfile:
-            yaml.dump(self.strain, yamlfile,
+            yaml.dump(results_dict, yamlfile,
                       explicit_start=True, default_flow_style=False)
 
     def save_diag_figs(self,
