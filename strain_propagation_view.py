@@ -53,7 +53,8 @@ class SSN_analysis_GUI(tk.Frame):
         self.queue_tab = self.notebook.add(self.queue_frame,
                                            text='Analysis Queue')
 
-        self.plot_results_frame = PlotResultsFrame(self.notebook, self.dpi)
+        self.plot_results_frame = PlotResultsFrame(self.notebook, self.dpi,
+                                                   self.root)
         self.notebook.add(self.plot_results_frame, text="Plot Results")
 
         self.notebook.pack(expand=1, fill=tk.BOTH)
@@ -81,7 +82,7 @@ class FileLoadFrame(tk.Frame):
         self.load_images_checkbox_status = tk.IntVar(value=0)
         self.load_images_box = ttk.Checkbutton(
                 self.button_frame,
-                text='Load images?',
+                text='Load raw images?',
                 variable=self.load_images_checkbox_status)
         self.load_images_box.pack(side=tk.LEFT)
         self.load_images_box.state(['selected', '!alternate'])
@@ -102,13 +103,31 @@ class FileLoadFrame(tk.Frame):
     def update_file_tree(self):
         # now, we load all the file names into a Treeview for user selection
         data_location = '/Users/adam/Documents/SenseOfTouchResearch/SSN_data/*'
+        queue_location = ('/Users/adam/Documents/SenseOfTouchResearch/'
+                          'SSN_ImageAnalysis/')
+        the_queue = queue_location + 'analysis_queue.yaml'
+        queue_result_location = queue_location + 'review_queue.yaml'
         experiment_days = glob.iglob(data_location)
 
         self.file_tree = tk.ttk.Treeview(self, height=37,
-                                         columns=("status", "rating"))
+                                         columns=("status", "rating", "queue"))
         self.file_tree.heading("status", text="Analysis Status")
         self.file_tree.heading("rating",
                                text="Rating to prioritize analysis")
+        self.file_tree.heading("queue", text="Queue status")
+
+        with open(the_queue, 'r') as queue_file:
+            entire_queue = yaml.load_all(queue_file)
+            self.trials_in_queue = []
+            for queue_member in entire_queue:
+                self.trials_in_queue.append(queue_member['experiment_id'])
+
+        with open(queue_result_location, 'r') as queue_result:
+            all_queue_results = yaml.load_all(queue_result)
+            self.trials_for_review = []
+            for trial in all_queue_results:
+                self.trials_for_review.append(trial['experiment_id'])
+
         for day in experiment_days:
             try:
                 int(day[-8:])  # check to make sure this dir is an experiment
@@ -136,9 +155,18 @@ class FileLoadFrame(tk.Frame):
                             rating = metadata['trial_rating']
                         else:
                             rating = None
+                        if metadata['Experiment_id'] in self.trials_in_queue:
+                            queue_status = 'In queue'
+                        elif metadata[
+                                'Experiment_id'] in self.trials_for_review:
+                            queue_status = 'Ready for review'
+                        else:
+                            queue_status = ''
                     except FileNotFoundError:
                         analysis_status = 'no metadata.yaml file'
-                    self.file_tree.item(iid, values=(analysis_status, rating))
+                    self.file_tree.item(
+                            iid,
+                            values=(analysis_status, rating, queue_status))
 
             except ValueError:  # we get here if dir name is not a number
                 pass  # and we ignore these dirs
@@ -221,7 +249,7 @@ class AnalyzeTrialFrame(tk.Frame):
                 variable=self.part_label_checkbox_status)
         self.part_label_checkbox.grid(
                 row=param_frame_row, column=2)
-        self.part_label_checkbox.state(['selected', '!alternate'])
+        self.part_label_checkbox.state(['!selected', '!alternate'])
 
         param_frame_row += 1
 
@@ -376,11 +404,16 @@ class AnalyzeTrialFrame(tk.Frame):
         self.add_to_queue_btn.grid(row=param_frame_row, column=2)
         param_frame_row += 1
 
+        # Button to remove trial from queue results
+        self.remove_q_result = ttk.Button(
+                self.param_frame, text='Done reviewing', state=tk.DISABLED)
+        self.remove_q_result.grid(row=param_frame_row, column=2)
+
         # Button to calculate strain
         self.calc_strain_button = ttk.Button(
                 self.param_frame, text='Calculate strain')
         self.calc_strain_button.grid(row=param_frame_row, column=1,
-                                     columnspan=2)
+                                     columnspan=1)
         param_frame_row += 1
 
         # Controls for saving data etc.
@@ -484,7 +517,7 @@ class AnalysisQueueFrame(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.parent = parent
         self.queue_location = ('/Users/adam/Documents/SenseOfTouchResearch/'
-                               'SSN_ImageAnalysis/analysis_queue.yaml')
+                               'SSN_ImageAnalysis/')
         self.queue_tree = tk.ttk.Treeview(self, height=37,
                                           columns=("param_val", "rating"))
         self.queue_tree.heading("param_val", text="Value")
@@ -500,7 +533,8 @@ class AnalysisQueueFrame(tk.Frame):
         self.button_frame.pack(side=tk.BOTTOM)
 
         def update_queue(event=None):
-            with open(self.queue_location, 'r') as queue_file:
+            the_queue = self.queue_location + 'analysis_queue.yaml'
+            with open(the_queue, 'r') as queue_file:
                 entire_queue = yaml.load_all(queue_file)
                 for queue_member in entire_queue:
                     self.run_queue_button.config(state=tk.NORMAL)
@@ -547,9 +581,10 @@ class AnalysisQueueFrame(tk.Frame):
 
 
 class PlotResultsFrame(tk.Frame):
-    def __init__(self, parent, screen_dpi):
+    def __init__(self, parent, screen_dpi, root):
         tk.Frame.__init__(self, parent)
         self.parent = parent
+        self.root = root
 
         notebook_height = self.parent.winfo_height()
         self.notebook_height_in = notebook_height / screen_dpi
@@ -566,25 +601,70 @@ class PlotResultsFrame(tk.Frame):
                                               rowspan=3)
         self.plot_canvas.get_tk_widget().grid_rowconfigure(0, weight=1)
 
-        # Creat a frame to put all the controls and parameters in
-        self.plot_config_frame = tk.Frame(self)
-        config_frame_row = 0
+        # Creat a notebook to put all the controls and parameters in
+        self.plot_notebook = ttk.Notebook(self)
 
-        # Button for analysis progress plots
-        self.progress_plot_button = ttk.Button(self.plot_config_frame,
+        # Tab for analysis progress plots
+        self.progress_frame = tk.Frame(self.plot_notebook)
+        self.progress_tab = self.plot_notebook.add(
+                self.progress_frame, text='Plot analysis progress')
+        self.plot_notebook.grid(row=0, column=2, sticky=tk.N + tk.S)
+        self.root.update()
+        self.progress_plot_button = ttk.Button(self.progress_frame,
                                                text='Plot analysis progress')
-        self.progress_plot_button.grid(row=config_frame_row, column=1)
-        config_frame_row += 1
+        self.progress_plot_button.grid(row=0,  column=1)
 
-        # Button for strain plot for one trial
+        # Tab for strain plot for one trial
+        self.strain_plot_frame = tk.Frame(master=self.plot_notebook)
+        self.strain_one_trial_tab = self.plot_notebook.add(
+                self.strain_plot_frame, text='Plot strain')
         self.plot_strain_one_trial_button = ttk.Button(
-                self.plot_config_frame, text='Plot strain- one trial')
-        self.plot_strain_one_trial_button.grid(row=config_frame_row, column=1)
-        config_frame_row += 1
+                self.strain_plot_frame, text='Plot strain- one trial')
+        self.plot_strain_one_trial_button.grid(row=1, column=0)
 
-        self.plot_config_frame.grid(row=0, column=1)
+        self.update_plot_strain_tree()
 
         # TODO: add buttons for interesting plots
+
+    def update_plot_strain_tree(self):
+        # Load trials with strain calculated into file tree
+        data_location = ('/Users/adam/Documents/'
+                         'SenseOfTouchResearch/SSN_data/*')
+        experiment_days = glob.iglob(data_location)
+
+        self.plot_strain_tree = tk.ttk.Treeview(self.strain_plot_frame,
+                                                height=20, columns=("status"))
+        self.plot_strain_tree.heading("status", text="Analysis Status")
+
+        for day in experiment_days:
+            try:
+                int(day[-8:])  # check to make sure this dir has trials
+                trials = glob.iglob(day + '/*.nd2')
+                for trial in trials:
+                    trial_parts = trial.split('/')
+                    iid = self.plot_strain_tree.insert(
+                                    '', 'end',
+                                    text=trial_parts[-1],
+                                    tags=trial)
+                    metadata_path = ('/Users/adam/Documents/'
+                                     'SenseOfTouchResearch/'
+                                     'SSN_ImageAnalysis/AnalyzedData/' +
+                                     trial[-15:-4] + '/metadata.yaml')
+                    try:
+                        metadata = self.load_metadata_from_yaml(
+                                metadata_path)
+                        if metadata['analysis_status'] != 'Strain calculated':
+                            self.plot_strain_tree.delete(iid)
+                        else:
+                            self.plot_strain_tree.item(
+                                    iid,
+                                    values=(metadata['analysis_status'],))
+                    except FileNotFoundError:
+                        self.plot_strain_tree.delete(iid)
+
+            except ValueError:  # we get here if dir name is not a number
+                pass  # and we ignore these dirs
+        self.plot_strain_tree.grid(row=0, column=0)
 
     def plot_progress(self, all_statuses_dict: dict, status_values: list):
         status_count = dict.fromkeys(status_values, 0)
@@ -602,12 +682,19 @@ class PlotResultsFrame(tk.Frame):
 
         self.plot_canvas.draw()
 
-    def plot_strain_one_trial(self, strain):
+    def plot_strain_one_trial(self, strain, ycoords):
         """Plots the strain results from a np.ndarray"""
+        self.ax.clear()
         self.ax.plot(strain.T)
 
         self.plot_canvas.draw()
 
+    def load_metadata_from_yaml(self, metadata_file_path: str) -> dict:
+        """Loads metadata from an existing yaml file."""
+        with open(metadata_file_path, 'r') as yamlfile:
+            metadata = yaml.load(yamlfile)
+
+        return metadata
     # TODO: controls for selecting what data are plotted
 
 

@@ -31,7 +31,6 @@ class StrainGUIController:
 
         # Instantiate Model
         self.trial = ssn_trial.StrainPropagationTrial()
-        # TODO: don't instantiate model until loading trial so new trials load
 
         if headless is not True:
             # Instantiate View
@@ -94,6 +93,8 @@ class StrainGUIController:
                     "<ButtonRelease-1>", func=self.link_existing_particles)
             self.gui.analyze_trial_frame.add_to_queue_btn.bind(
                     "<ButtonRelease-1>", func=self.add_trial_to_queue)
+            self.gui.analyze_trial_frame.remove_q_result.bind(
+                    "<ButtonRelease-1>", func=self.remove_from_review_queue)
             self.gui.analyze_trial_frame.calc_strain_button.bind(
                     "<ButtonRelease-1>", func=self.calculate_strain)
 
@@ -120,9 +121,10 @@ class StrainGUIController:
         start_time = time.time()
         self.trial = ssn_trial.StrainPropagationTrial()
         print('Loading file', self.file_list[0][0])
-        fr = self.gui.file_load_frame
-        load_images = fr.load_images_box.instate(['selected'])
-        overwrite_metadata = fr.overwrite_metadata_box.instate(['selected'])
+
+        fl_fr = self.gui.file_load_frame
+        load_images = fl_fr.load_images_box.instate(['selected'])
+        overwrite_metadata = fl_fr.overwrite_metadata_box.instate(['selected'])
 
         self.trial.load_trial(self.file_list[0][0],
                               load_images=load_images,
@@ -132,8 +134,6 @@ class StrainGUIController:
             self.trial.write_metadata_to_yaml(self.trial.metadata)
         current_status = self.trial.metadata['analysis_status']
         self.gui.analyze_trial_frame.status_dropdown.set(current_status)
-
-        # load inspection image on inspection tab and related parameters
         if load_images is True or overwrite_metadata is True:
             min_pixel = int(np.amin(self.trial.image_array))
             min_spinbox = self.gui.analyze_trial_frame.min_pixel_disp
@@ -144,6 +144,7 @@ class StrainGUIController:
             max_spinbox.delete(0, 'end')
             max_spinbox.insert(0, str(max_pixel))
 
+        # load inspection image on inspection tab and related parameters
         self.update_inspection_image()
 
         image_stack_size = self.trial.metadata['stack_height']
@@ -183,6 +184,10 @@ class StrainGUIController:
             hist_text.insert(tk.END, param_history)
             hist_text.config(state=tk.DISABLED)
             hist_text.yview_moveto(1)
+
+        if self.trial.metadata['Experiment_id'] in fl_fr.trials_for_review:
+            self.gui.analyze_trial_frame.remove_q_result.config(
+                    state=tk.ACTIVE)
 
         self.gui.notebook.select(1)
 
@@ -298,7 +303,7 @@ class StrainGUIController:
               str(round(done_time - start_time)) + ' seconds. ')
 
     def run_multiple_files(self, event=None):
-        # TODO: merge into queue
+        # TODO: merge into queue?
         fr = self.gui.file_load_frame
         overwrite_metadata = fr.overwrite_metadata_box.instate(['selected'])
         print('Running lots of files...')
@@ -348,8 +353,9 @@ class StrainGUIController:
 
     def run_queue(self, event=None):
         queue_location = self.gui.queue_frame.queue_location
+        the_queue = queue_location + 'analysis_queue.yaml'
 
-        with open(queue_location, 'r') as queue_file:
+        with open(the_queue, 'r') as queue_file:
             entire_queue = yaml.load_all(queue_file)
             queue_length = len(list(entire_queue))
         print('Running queue with', queue_length, 'items.')
@@ -357,7 +363,7 @@ class StrainGUIController:
             self.run_queue_item(queue_location)
 
             # update queue length variable
-            with open(queue_location, 'r') as queue_file:
+            with open(the_queue, 'r') as queue_file:
                 entire_queue = yaml.load_all(queue_file)
                 queue_length = len(list(entire_queue))
 
@@ -367,9 +373,11 @@ class StrainGUIController:
         """Runs the analysis on the first trial in the queue"""
         start_time = time.time()
         data_location = '/Users/adam/Documents/SenseOfTouchResearch/SSN_data/'
+        the_queue = queue_location + 'analysis_queue.yaml'
+        queue_result_location = queue_location + 'review_queue.yaml'
 
         # Get first file from queue yaml
-        with open(queue_location, 'r') as queue_file:
+        with open(the_queue, 'r') as queue_file:
             entire_queue = yaml.load_all(queue_file)
             params = next(entire_queue)  # get first in line
 
@@ -403,13 +411,17 @@ class StrainGUIController:
             self.trial.metadata['analysis_status'] = 'Testing parameters'
             self.trial.write_metadata_to_yaml(self.trial.metadata)
 
+        # Add item to list of completed queue items
+        with open(queue_result_location, 'a') as review_queue:
+            yaml.safe_dump(params, review_queue, explicit_start=True)
+
         # Remove first trial in queue, since we're done with it
-        with open(queue_location, 'r') as queue_file:
+        with open(the_queue, 'r') as queue_file:
             old_queue = yaml.load_all(queue_file)
             new_queue = [item for item in old_queue
                          if item['experiment_id'] != self.trial.experiment_id]
 
-        with open(queue_location, 'w') as queue_file:
+        with open(the_queue, 'w') as queue_file:
             yaml.dump_all(new_queue, queue_file, explicit_start=True)
 
         done_time = time.time()
@@ -435,14 +447,16 @@ class StrainGUIController:
     def calculate_strain(self, event=None):
         """Calculate strain between mitochondria as a function of time"""
         self.trial.calculate_strain()
-        self.gui.plot_results_frame.plot_strain_one_trial(self.trial.strain)
-        self.gui.notebook.select(2)
+        self.gui.plot_results_frame.plot_strain_one_trial(self.trial.strain,
+                                                          ycoords)
+        self.gui.notebook.select(3)
 
     def add_trial_to_queue(self, event=None):
         """Add trial and analysis parameters to queue for running later"""
 
-        self.queue_location = ('/Users/adam/Documents/SenseOfTouchResearch/'
-                               'SSN_ImageAnalysis/analysis_queue.yaml')
+        queue_location = self.gui.queue_frame.queue_location
+        the_queue = queue_location + 'analysis_queue.yaml'
+
         analysis_frame = self.gui.analyze_trial_frame
         gaussian_width = int(analysis_frame.gaussian_blur_width.get())
         particle_z_diameter = int(analysis_frame.z_diameter_selector.get())
@@ -473,7 +487,7 @@ class StrainGUIController:
 
         new_queue = []
         overwrite_flag = False
-        with open(self.queue_location, 'r') as queue_file:
+        with open(the_queue, 'r') as queue_file:
             entire_queue = yaml.load_all(queue_file)
             for queue_member in entire_queue:
                 if (queue_member['experiment_id'] == self.trial.experiment_id):
@@ -484,8 +498,23 @@ class StrainGUIController:
             if overwrite_flag is False:
                 new_queue.append(param_dict)
 
-        with open(self.queue_location, 'w') as output_file:
+        with open(the_queue, 'w') as output_file:
                 yaml.dump_all(new_queue, output_file, explicit_start=True)
+
+    def remove_from_review_queue(self, event=None):
+        """Remove trial from review list that has results from queue"""
+
+        review_q = self.gui.queue_frame.queue_location + 'review_queue.yaml'
+        trials_for_review = self.gui.file_load_frame.trials_for_review
+        if self.trial.metadata['Experiment_id'] in trials_for_review:
+            # Remove first trial in queue, since we're done with it
+            with open(review_q, 'r') as queue_file:
+                old_queue = yaml.load_all(queue_file)
+                new_q = [item for item in old_queue
+                         if item['experiment_id'] != self.trial.experiment_id]
+
+            with open(review_q, 'w') as queue_file:
+                yaml.dump_all(new_q, queue_file, explicit_start=True)
 
     def on_file_selection_changed(self, event):
         """This function keeps track of which files are selected for
@@ -536,18 +565,27 @@ class StrainGUIController:
                 df_for_plot = self.trial.linked_mitos.loc[
                         self.trial.linked_mitos[
                                 'frame'] == selected_timepoint]
+                mito_labels = df_for_plot
                 particle_marker = 'o'
                 traj_line = 'None'
         elif plot_mitos_status == 'Plot trajectories':
             if self.trial.linked_mitos is not None:
                 df_for_plot = self.trial.linked_mitos
+                mito_labels = df_for_plot
                 particle_marker = 'None'
                 traj_line = '-'
+        else:
+            mito_labels = self.trial.linked_mitos.loc[
+                            self.trial.linked_mitos[
+                                    'frame'] == selected_timepoint]
+            particle_marker = 'None'
+            traj_line = 'None'
+
         # Plot data with text
         try:
             theCount = 0  # ah ah ah ah
-            for i in range(max(df_for_plot['particle'])):
-                this_particle = df_for_plot.loc[df_for_plot['particle'] == i+1]
+            for i in range(max(mito_labels['particle'])):
+                this_particle = mito_labels.loc[mito_labels['particle'] == i+1]
                 if not this_particle.empty:
                     theCount += 1
                     this_particle.plot(
@@ -597,7 +635,7 @@ class StrainGUIController:
         if df_for_plot is not None:
             self.gui.analyze_trial_frame.dataframe = df_for_plot
             self.gui.analyze_trial_frame.dataframe_widget.updateModel(
-                    TableModel(self.gui.analyze_trial_frame.dataframe))
+                    TableModel(df_for_plot))
             self.gui.analyze_trial_frame.dataframe_widget.redraw()
 
         if load_images is True or overwrite_metadata is True:

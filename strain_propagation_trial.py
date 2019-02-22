@@ -321,7 +321,6 @@ class StrainPropagationTrial(object):
         save_location = self.analyzed_data_location
 
         # link the particles we found between time points
-        # TODO: limit mitos_from_batch to selected timepoints
         linked = tp.link_df(self.mitos_from_batch,
                             tracking_seach_radius,
                             pos_columns=['x', 'y', 'z'])
@@ -531,16 +530,16 @@ class StrainPropagationTrial(object):
 
     def _load_analysis_params(self) -> dict:
         """Loads analysis parameters from an existing yaml file."""
-        try:
-            with open(self.param_test_history_file, 'r') as yamlfile:
-                entire_history = yaml.load_all(yamlfile)
-                trackpy_locate_params = None
-                for trackpy_locate_params in entire_history:  # get most recent
-                    pass
-        except FileNotFoundError:
-            print('Previous parameter file not found. Using defaults.')
-            trackpy_locate_params = self.default_test_params
-            trackpy_locate_params['top_slice'] = self.metadata['stack_height']
+#        try:
+#            with open(self.param_test_history_file, 'r') as yamlfile:
+#                entire_history = yaml.load_all(yamlfile)
+#                trackpy_locate_params = None
+#                for trackpy_locate_params in entire_history:  # get most recent
+#                    pass
+#        except FileNotFoundError:
+#            print('Previous parameter file not found. Using defaults.')
+#            trackpy_locate_params = self.default_test_params
+#            trackpy_locate_params['top_slice'] = self.metadata['stack_height']
 
         try:
             with open(self.batch_history_file, 'r') as yamlfile:
@@ -553,7 +552,8 @@ class StrainPropagationTrial(object):
             trackpy_batch_params = self.default_test_params
             trackpy_batch_params['top_slice'] = self.metadata['stack_height']
 
-        all_params = {**trackpy_locate_params, **trackpy_batch_params}
+#        all_params = {**trackpy_locate_params, **trackpy_batch_params}
+        all_params = trackpy_batch_params
         if 'roi' not in all_params:
             try:
                 all_params['roi'] = [0,

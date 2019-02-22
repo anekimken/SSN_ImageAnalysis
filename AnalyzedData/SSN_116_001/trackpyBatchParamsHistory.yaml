@@ -227,3 +227,18 @@ top_slice: 52
 topn: null
 tracking_seach_radius: 25
 trackpy_version: 0.4.1
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 7
+minmass: 150
+noise_size: 3
+notes: Reduced brightness from 80 to  20
+percentile: 80
+roi: [147, 43, 288, 965]
+source: null
+timestamp: 2019-02-21-232726
+top_slice: 52
+tracking_seach_radius: 25
+trackpy_version: 0.4.1+35.g10f756b
