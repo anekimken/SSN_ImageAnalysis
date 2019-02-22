@@ -75,3 +75,18 @@ top_slice: 66
 topn: null
 tracking_seach_radius: 30
 trackpy_version: 0.4.1
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 8
+minmass: 300
+noise_size: 3
+notes: Changed ROI and minmass to look for mito around y=400ish
+percentile: 50
+roi: [122, 315, 258, 1062]
+source: null
+timestamp: 2019-02-21-232444
+top_slice: 66
+tracking_seach_radius: 30
+trackpy_version: 0.4.1+35.g10f756b

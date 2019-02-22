@@ -1,26 +1,21 @@
-bottom_slice: 0
+characterize: true
 diameter: !!python/tuple
 - 21
 - 15
 - 15
-invert: false
-last_timepoint: 9
-max_iterations: 10
-maxsize: null
 minmass: 200
 noise_size: 3
 percentile: 50
-preprocess: true
+source: null
+timestamp: 2019-02-21-232218
+trackpy_version: 0.4.1+35.g10f756b
+bottom_slice: 15
+last_timepoint: 9
+notes: Cutting out bottom of stack, might need to use fewer timepoints
 roi:
 - 123
 - 47
 - 292
 - 1152
-separation: null
-smoothing_size: null
-source: null
-timestamp: 2019-02-13-070053
 top_slice: 64
-topn: null
 tracking_seach_radius: 40
-trackpy_version: 0.4.1

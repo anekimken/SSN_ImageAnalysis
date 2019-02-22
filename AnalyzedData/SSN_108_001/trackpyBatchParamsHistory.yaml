@@ -118,3 +118,38 @@ top_slice: 44
 topn: null
 tracking_seach_radius: 40
 trackpy_version: 0.4.1
+---
+bottom_slice: 0
+diameter: !!python/tuple [21, 15, 15]
+invert: false
+last_timepoint: 3
+max_iterations: 10
+maxsize: null
+minmass: 200
+noise_size: 3
+percentile: 25
+preprocess: true
+roi: [174, 54, 351, 1161]
+separation: null
+smoothing_size: null
+source: null
+timestamp: 2019-02-18-051048
+top_slice: 44
+topn: null
+tracking_seach_radius: 40
+trackpy_version: 0.4.1
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 3
+minmass: 200
+noise_size: 3
+notes: Limited to first three stacks, needs trimming
+percentile: 25
+roi: [166, 47, 328, 1136]
+source: null
+timestamp: 2019-02-21-231642
+top_slice: 44
+tracking_seach_radius: 40
+trackpy_version: 0.4.1+35.g10f756b

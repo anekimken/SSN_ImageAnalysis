@@ -1,26 +1,21 @@
+characterize: true
 diameter: !!python/tuple
 - 21
 - 15
 - 15
-invert: false
-max_iterations: 10
-maxsize: null
-minmass: 200
+minmass: 300
 noise_size: 3
 percentile: 50
-preprocess: true
-separation: null
-smoothing_size: null
 source: null
-timestamp: 2019-02-18-051904
-topn: null
-trackpy_version: 0.4.1
+timestamp: 2019-02-21-232444
+trackpy_version: 0.4.1+35.g10f756b
 bottom_slice: 0
 last_timepoint: 8
+notes: Changed ROI and minmass to look for mito around y=400ish
 roi:
 - 122
-- 316
-- 268
+- 315
+- 258
 - 1062
 top_slice: 66
 tracking_seach_radius: 30
