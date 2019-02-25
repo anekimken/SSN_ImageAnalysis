@@ -147,9 +147,9 @@ class StrainPropagationTrial(object):
             self.metadata = self.load_metadata_from_yaml()
             self.image_array = np.empty((11, 50, 1200, 600))
             self.image_array[:] = np.nan
-#            self.image_array = np.array([2, 2, 2, 2])
 
         else:
+            # TODO: load images in separate thread, use stored result for now
             self.image_array, images = self._load_images_from_disk()
             # If we don't have a yaml metadata file yet, we need to get
             # some information from Google Drive and build a yaml file

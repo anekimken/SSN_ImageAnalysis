@@ -1,26 +1,21 @@
+characterize: true
 diameter: !!python/tuple
 - 21
 - 15
 - 15
-invert: false
-max_iterations: 10
-maxsize: null
 minmass: 200
 noise_size: 3
 percentile: 50
-preprocess: true
-separation: null
-smoothing_size: null
 source: null
-timestamp: 2019-02-19-044228
-topn: null
-trackpy_version: 0.4.1
+timestamp: 2019-02-24-052118
+trackpy_version: 0.4.1+35.g10f756b
 bottom_slice: 0
 last_timepoint: 7
+notes: Might have too much movement. Reduced ROI
 roi:
-- 0
-- 0
-- 600
-- 1200
+- 146
+- 16
+- 241
+- 1177
 top_slice: 69
 tracking_seach_radius: 50

@@ -132,3 +132,18 @@ top_slice: 69
 topn: null
 tracking_seach_radius: 50
 trackpy_version: 0.4.1
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 7
+minmass: 200
+noise_size: 3
+notes: Might have too much movement. Reduced ROI
+percentile: 50
+roi: [146, 16, 241, 1177]
+source: null
+timestamp: 2019-02-24-052118
+top_slice: 69
+tracking_seach_radius: 50
+trackpy_version: 0.4.1+35.g10f756b

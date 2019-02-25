@@ -14,9 +14,14 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import yaml
 import PIL
+import warnings
 # import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from pandastable import Table
+
+warnings.filterwarnings("ignore",
+                        message=("A value is trying to be set on a copy "
+                                 "of a slice from a DataFrame"))
 
 
 class SSN_analysis_GUI(tk.Frame):
@@ -110,7 +115,7 @@ class FileLoadFrame(tk.Frame):
         experiment_days = glob.iglob(data_location)
 
         self.file_tree = tk.ttk.Treeview(self, height=37,
-                                         columns=("status", "rating", "queue"))
+                                         columns=("status", "queue", "rating"))
         self.file_tree.heading("status", text="Analysis Status")
         self.file_tree.heading("rating",
                                text="Rating to prioritize analysis")
@@ -137,9 +142,7 @@ class FileLoadFrame(tk.Frame):
                 for trial in trials:
                     trial_parts = trial.split('/')
                     iid = self.file_tree.insert(day_item, 'end',
-                                                text=trial_parts[-1],
-                                                values=trial,
-                                                tags=trial)
+                                                text=trial_parts[-1])
                     metadata_file_path = ('/Users/adam/Documents/'
                                           'SenseOfTouchResearch/'
                                           'SSN_ImageAnalysis/AnalyzedData/' +
@@ -164,12 +167,22 @@ class FileLoadFrame(tk.Frame):
                             queue_status = ''
                     except FileNotFoundError:
                         analysis_status = 'no metadata.yaml file'
+                    if analysis_status[:6] == 'Failed':
+                        color_tag = 'failed'
+                    elif analysis_status == 'Strain calculated':
+                        color_tag = 'done'
+                    else:
+                        color_tag = 'working'
                     self.file_tree.item(
                             iid,
-                            values=(analysis_status, rating, queue_status))
+                            values=(analysis_status, rating, queue_status),
+                            tags=(trial, color_tag))
 
             except ValueError:  # we get here if dir name is not a number
                 pass  # and we ignore these dirs
+        self.file_tree.tag_configure('failed', background='indian red')
+        self.file_tree.tag_configure('working', background='pale goldenrod')
+        self.file_tree.tag_configure('done', background='pale green')
         self.file_tree.pack(fill=tk.BOTH, anchor=tk.N)
 
     def load_metadata_from_yaml(self, metadata_file_path: str) -> dict:

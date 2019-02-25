@@ -37,3 +37,33 @@ top_slice: 45
 topn: null
 tracking_seach_radius: 20
 trackpy_version: 0.4.1
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 250
+noise_size: 3
+notes: Increased minmass to remove noise that interefered with linking
+percentile: 50
+roi: [293, 37, 444, 1142]
+source: null
+timestamp: 2019-02-23-034804
+top_slice: 45
+tracking_seach_radius: 20
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 230
+noise_size: 3
+notes: Reduced minmass again
+percentile: 50
+roi: [293, 37, 444, 1142]
+source: null
+timestamp: 2019-02-24-050410
+top_slice: 45
+tracking_seach_radius: 20
+trackpy_version: 0.4.1+35.g10f756b

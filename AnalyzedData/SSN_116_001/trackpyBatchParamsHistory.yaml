@@ -242,3 +242,48 @@ timestamp: 2019-02-21-232726
 top_slice: 52
 tracking_seach_radius: 25
 trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 7
+minmass: 200
+noise_size: 3
+notes: Actually reduced percentile this time...
+percentile: 20
+roi: [147, 43, 288, 965]
+source: null
+timestamp: 2019-02-23-035759
+top_slice: 52
+tracking_seach_radius: 25
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 7
+minmass: 200
+noise_size: 3
+notes: Actually reduced percentile this time...
+percentile: 20
+roi: [147, 43, 288, 965]
+source: null
+timestamp: 2019-02-23-035759
+top_slice: 52
+tracking_seach_radius: 35
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 7
+minmass: 200
+noise_size: 3
+notes: Increased link radius
+percentile: 50
+roi: [147, 43, 288, 965]
+source: null
+timestamp: 2019-02-24-050147
+top_slice: 52
+tracking_seach_radius: 35
+trackpy_version: 0.4.1+35.g10f756b
