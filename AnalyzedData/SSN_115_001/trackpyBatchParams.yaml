@@ -3,15 +3,15 @@ diameter: !!python/tuple
 - 21
 - 15
 - 15
-minmass: 300
+minmass: 200
 noise_size: 3
-percentile: 50
+percentile: 30
 source: null
-timestamp: 2019-02-21-232444
+timestamp: 2019-02-24-045911
 trackpy_version: 0.4.1+35.g10f756b
 bottom_slice: 0
 last_timepoint: 8
-notes: Changed ROI and minmass to look for mito around y=400ish
+notes: Decreased brightness percentile to try to find particle in frame two near actuator
 roi:
 - 122
 - 315

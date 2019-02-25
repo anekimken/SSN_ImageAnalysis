@@ -1,21 +1,21 @@
 characterize: true
 diameter: !!python/tuple
 - 21
-- 15
-- 15
-minmass: 200
+- 17
+- 17
+minmass: 125
 noise_size: 3
-percentile: 25
+percentile: 50
 source: null
-timestamp: 2019-02-21-231825
+timestamp: 2019-02-24-045240
 trackpy_version: 0.4.1+35.g10f756b
 bottom_slice: 0
 last_timepoint: 5
-notes: none
+notes: Increased xy diameter and minmass
 roi:
 - 159
 - 36
 - 287
 - 1131
 top_slice: 63
-tracking_seach_radius: 50
+tracking_seach_radius: 40

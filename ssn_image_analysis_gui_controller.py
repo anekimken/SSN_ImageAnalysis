@@ -169,6 +169,10 @@ class StrainGUIController:
         self.gui.analyze_trial_frame.vulva_side_label.config(
                 text=('Vulva side: ' +
                       self.trial.metadata['vulva_orientation']))
+        self.gui.analyze_trial_frame.notes_entry.delete(0, tk.END)
+        if 'notes' in self.trial.latest_test_params:
+            self.gui.analyze_trial_frame.notes_entry.insert(
+                    tk.END, self.trial.latest_test_params['notes'])
 
         self.roi = self.trial.latest_test_params['roi']
 
@@ -389,6 +393,7 @@ class StrainGUIController:
         self.trial.load_trial(full_filename[0],
                               load_images=True, overwrite_metadata=False)
 
+        # TODO: add try/except block for trackpy computational errors
         self.trial.run_batch(
                 images_ndarray=self.trial.image_array,
                 roi=params['roi'],
@@ -574,12 +579,14 @@ class StrainGUIController:
                 mito_labels = df_for_plot
                 particle_marker = 'None'
                 traj_line = '-'
-        else:
+        elif self.trial.linked_mitos is not None:
             mito_labels = self.trial.linked_mitos.loc[
                             self.trial.linked_mitos[
                                     'frame'] == selected_timepoint]
             particle_marker = 'None'
             traj_line = 'None'
+        else:
+            mito_labels = None
 
         # Plot data with text
         try:

@@ -56,3 +56,33 @@ top_slice: 69
 topn: null
 tracking_seach_radius: 30
 trackpy_version: 0.4.1
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 17, 17]
+last_timepoint: 11
+minmass: 400
+noise_size: 3
+notes: Increased minmass, decreased xy diameter
+percentile: 50
+roi: [212, 59, 346, 1065]
+source: null
+timestamp: 2019-02-24-050808
+top_slice: 69
+tracking_seach_radius: 30
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 17, 17]
+last_timepoint: 11
+minmass: 400
+noise_size: 3
+notes: Increased minmass, decreased xy diameter
+percentile: 50
+roi: [212, 59, 346, 1065]
+source: null
+timestamp: 2019-02-24-050808
+top_slice: 69
+tracking_seach_radius: 25
+trackpy_version: 0.4.1+35.g10f756b
