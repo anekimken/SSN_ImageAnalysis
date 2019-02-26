@@ -106,7 +106,7 @@ class StrainGUIController:
             self.gui.plot_results_frame.progress_plot_button.bind(
                     "<ButtonRelease-1>", func=self.get_analysis_progress)
             self.gui.plot_results_frame.plot_strain_one_trial_button.bind(
-                    "<ButtonRelease-1>", func=self.get_analysis_progress)
+                    "<ButtonRelease-1>", func=self.plot_existing_strain)
             # TODO: write callback for plot strain one trial button
 
     def run(self):
@@ -455,6 +455,26 @@ class StrainGUIController:
         self.gui.plot_results_frame.plot_strain_one_trial(
                 self.trial.strain, self.trial.ycoords_for_strain)
         self.gui.notebook.select(3)
+
+    def plot_existing_strain(self, event=None):
+        """"Plots strain of an existing trial"""
+        tree = self.gui.plot_results_frame.plot_strain_tree
+        selection = tree.selection()
+        for this_item in selection:
+            info = tree.item(this_item)
+            exp_id = info['text'][0:-4]
+            print(exp_id)
+
+        filename = ('/Users/adam/Documents/SenseOfTouchResearch/'
+                    'SSN_ImageAnalysis/AnalyzedData/' + exp_id +
+                    '/strain.yaml')
+        with open(filename, 'r') as yamlfile:
+            strain_results = yaml.safe_load(yamlfile)
+
+        strain = strain_results['strain']
+        ycoords = strain_results['ycoords']
+
+        self.gui.plot_results_frame.plot_strain_one_trial(strain, ycoords)
 
     def add_trial_to_queue(self, event=None):
         """Add trial and analysis parameters to queue for running later"""

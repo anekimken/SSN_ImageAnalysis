@@ -697,9 +697,12 @@ class PlotResultsFrame(tk.Frame):
 
     def plot_strain_one_trial(self, strain, ycoords):
         """Plots the strain results from a np.ndarray"""
-        # TODO: plot strain with proper y coordinates
+        # TODO: Include actuation information in plot
+
         self.ax.clear()
-        self.ax.plot(strain.T)
+#        self.ax.plot(ycoords, strain)
+        for i in range(len(strain)):
+            self.ax.step(ycoords[i][:-1], strain[i])
 
         self.plot_canvas.draw()
 
