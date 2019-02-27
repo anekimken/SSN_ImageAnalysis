@@ -5,13 +5,13 @@ diameter: !!python/tuple
 - 15
 minmass: 500
 noise_size: 3
-percentile: 50
+percentile: 75
 source: null
-timestamp: 2019-02-24-051355
+timestamp: 2019-02-26-052815
 trackpy_version: 0.4.1+35.g10f756b
 bottom_slice: 0
 last_timepoint: 5
-notes: Increased minmass
+notes: Increased brightness percentile. might need to increase minmass too
 roi:
 - 154
 - 0

@@ -1,26 +1,21 @@
-bottom_slice: 0
+characterize: true
 diameter: !!python/tuple
 - 21
 - 15
 - 15
-invert: false
-last_timepoint: 7
-max_iterations: 10
-maxsize: null
-minmass: 200
+minmass: 250
 noise_size: 3
 percentile: 50
-preprocess: true
+source: null
+timestamp: 2019-02-26-060616
+trackpy_version: 0.4.1+35.g10f756b
+bottom_slice: 0
+last_timepoint: 7
+notes: Increased minmass, probably need to cut out later frames for linking
 roi:
 - 356
 - 0
 - 480
 - 1052
-separation: null
-smoothing_size: null
-source: null
-timestamp: 2019-02-19-055815
 top_slice: 54
-topn: null
 tracking_seach_radius: 20
-trackpy_version: 0.4.1

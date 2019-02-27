@@ -538,7 +538,7 @@ class StrainPropagationTrial(object):
 #            with open(self.param_test_history_file, 'r') as yamlfile:
 #                entire_history = yaml.load_all(yamlfile)
 #                trackpy_locate_params = None
-#                for trackpy_locate_params in entire_history:  # get most recent
+#                for trackpy_locate_params in entire_history:  # get newest
 #                    pass
 #        except FileNotFoundError:
 #            print('Previous parameter file not found. Using defaults.')
@@ -600,6 +600,16 @@ class StrainPropagationTrial(object):
         row_of_keys = metadata_worksheet.row_values(1)
         gdrive_metadata_dict = dict(zip(row_of_keys, row_of_metadata))
 
+        pressure_kPa = []
+        for key in gdrive_metadata_dict.keys():
+            if key[0:23] == 'Actuator pressure (kPa)':
+                split1 = key.split(' ')
+                split2 = split1[-1].split(']')
+                stack_num = int(split2[0]) - 1
+                pressure_kPa.insert(int(stack_num),
+                                    int(gdrive_metadata_dict[key]))
+        gdrive_metadata_dict['pressure_kPa'] = pressure_kPa
+
         # Access the metadata from the file
         meta = images.metadata
         keys_to_keep = ['height', 'width',
@@ -610,6 +620,7 @@ class StrainPropagationTrial(object):
         # Combine metadata from both sources into one dictionary
         combined_metadata = {**gdrive_metadata_dict, **metadata_from_scope}
 
+        # Do a bit of processing to make things clearer
         time_str = combined_metadata['Timestamp']
         bleach_date = combined_metadata['Bleach Date']
         bleach_time = combined_metadata['Bleach Time']
@@ -652,7 +663,8 @@ class StrainPropagationTrial(object):
                         'Worm head orientation'],
                 'vulva_orientation': combined_metadata[
                         'Worm vulva orientation'],
-                'trial_rating': combined_metadata['Trial rating']}
+                'trial_rating': combined_metadata['Trial rating'],
+                'pressure_kPa': combined_metadata['pressure_kPa']}
 
         return metadata_dict
 

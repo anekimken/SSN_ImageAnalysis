@@ -197,3 +197,18 @@ top_slice: 69
 topn: null
 tracking_seach_radius: 40
 trackpy_version: 0.4.1
+---
+bottom_slice: 1
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 200
+noise_size: 3
+notes: First recorded run
+percentile: 50
+roi: [162, 0, 284, 1161]
+source: null
+timestamp: 2019-02-26-053439
+top_slice: 69
+tracking_seach_radius: 20
+trackpy_version: 0.4.1+35.g10f756b

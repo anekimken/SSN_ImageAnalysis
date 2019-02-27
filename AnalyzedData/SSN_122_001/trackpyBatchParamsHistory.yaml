@@ -289,3 +289,18 @@ timestamp: 2019-02-24-051355
 top_slice: 69
 tracking_seach_radius: 20
 trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 5
+minmass: 500
+noise_size: 3
+notes: Increased brightness percentile. might need to increase minmass too
+percentile: 75
+roi: [154, 0, 263, 1140]
+source: null
+timestamp: 2019-02-26-052815
+top_slice: 69
+tracking_seach_radius: 20
+trackpy_version: 0.4.1+35.g10f756b
