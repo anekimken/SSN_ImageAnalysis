@@ -14,6 +14,12 @@ notes: 300 kPa actuation on 2nd and 4th stack. Actuation is a bit late on the 2n
 num_eggs: 0
 num_timepoints: 5
 pixel_microns: 0.275
+pressure_kPa:
+- 0
+- 300
+- 0
+- 300
+- 0
 purpose: Baseline measurement
 slice_height_pix: 1200
 slice_width_pix: 600

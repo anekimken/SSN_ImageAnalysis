@@ -55,13 +55,16 @@ for file in reversed(metadata_files):
                                     int(gdrive_metadata_dict[key]))
         if len(pressure_kPa) > 0:
             gdrive_metadata_dict['pressure_kPa'] = pressure_kPa
-#        print(gdrive_metadata_dict)
 
         try:
+            assert (metadata['num_timepoints'] == len(pressure_kPa) or
+                    metadata['num_timepoints'] == len(pressure_kPa) + 1)
             metadata['pressure_kPa'] = gdrive_metadata_dict['pressure_kPa']
             print(metadata['pressure_kPa'])
-#            with open(file, 'w') as output_file:
-#                yaml.dump(metadata, output_file,  # create file
-#                          explicit_start=True, default_flow_style=False)
+            with open(file, 'w') as output_file:
+                yaml.dump(metadata, output_file,  # create file
+                          explicit_start=True, default_flow_style=False)
         except KeyError:
             print("didn't find pressure values for ", experiment_id)
+    else:
+        print('Already have pressure values')
