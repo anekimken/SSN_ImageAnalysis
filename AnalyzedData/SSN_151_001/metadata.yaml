@@ -13,6 +13,18 @@ notes: looks great!
 num_eggs: 2
 num_timepoints: 11
 pixel_microns: 0.275
+pressure_kPa:
+- 0
+- 300
+- 0
+- 300
+- 0
+- 300
+- 0
+- 300
+- 0
+- 300
+- 0
 purpose: Baseline measurement
 slice_height_pix: 1050
 slice_width_pix: 600

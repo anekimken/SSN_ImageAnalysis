@@ -13,6 +13,18 @@ notes: Some bleaching apparent around 5th stack.
 num_eggs: 0
 num_timepoints: 11
 pixel_microns: 0.275
+pressure_kPa:
+- 0
+- 300
+- 0
+- 300
+- 0
+- 300
+- 0
+- 300
+- 0
+- 300
+- 0
 purpose: Baseline measurement
 slice_height_pix: 1070
 slice_width_pix: 600

@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 import yaml
 import PIL
 import warnings
+import pandas as pd
 # import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from pandastable import Table
@@ -703,6 +704,32 @@ class PlotResultsFrame(tk.Frame):
 #        self.ax.plot(ycoords, strain)
         for i in range(len(strain)):
             self.ax.step(ycoords[i][:-1], strain[i])
+
+        self.plot_canvas.draw()
+
+    def plot_strain_by_actuation(self, strain, ycoords, pressure):
+        """Averages strain by actuation pressure and plots result"""
+
+        index = 0
+        temp_dict = []
+        for i in range(len(strain)):
+            for j in range(len(strain[0])):
+                temp_dict.append({'strain': strain[i][j],
+                                  'ycoords': ycoords[i][j],
+                                  'pressure': pressure[i],
+                                  'stack_num': i})
+                index += 1
+        df = pd.DataFrame(temp_dict)
+
+        df.loc[df['pressure'] == 0].groupby(['stack_num']).plot(
+                x='ycoords', y='strain',
+                ax=self.ax, color='red', drawstyle="steps")
+        df.loc[df['pressure'] == 300].groupby(['stack_num']).plot(
+                x='ycoords', y='strain',
+                ax=self.ax, color='green', drawstyle="steps")
+#        df.loc[df['pressure'] == 300].plot(x='ycoords', y='strain',
+#                                           ax=self.ax, color='green',
+#                                           drawstyle="steps")
 
         self.plot_canvas.draw()
 

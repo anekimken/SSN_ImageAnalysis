@@ -463,18 +463,25 @@ class StrainGUIController:
         for this_item in selection:
             info = tree.item(this_item)
             exp_id = info['text'][0:-4]
-            print(exp_id)
 
-        filename = ('/Users/adam/Documents/SenseOfTouchResearch/'
-                    'SSN_ImageAnalysis/AnalyzedData/' + exp_id +
-                    '/strain.yaml')
-        with open(filename, 'r') as yamlfile:
+        data_location = ('/Users/adam/Documents/SenseOfTouchResearch/'
+                         'SSN_ImageAnalysis/AnalyzedData/' + exp_id)
+        strain_file = data_location + '/strain.yaml'
+        self.trial.metadata_file_path = data_location + '/metadata.yaml'
+        with open(strain_file, 'r') as yamlfile:
             strain_results = yaml.safe_load(yamlfile)
 
         strain = strain_results['strain']
         ycoords = strain_results['ycoords']
 
-        self.gui.plot_results_frame.plot_strain_one_trial(strain, ycoords)
+        if self.trial.metadata is None:
+            metadata = self.trial.load_metadata_from_yaml()
+        else:
+            metadata = self.trial.metadata
+
+#        self.gui.plot_results_frame.plot_strain_one_trial(strain, ycoords)
+        self.gui.plot_results_frame.plot_strain_by_actuation(
+                strain, ycoords, metadata['pressure_kPa'])
 
     def add_trial_to_queue(self, event=None):
         """Add trial and analysis parameters to queue for running later"""

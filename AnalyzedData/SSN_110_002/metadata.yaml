@@ -15,6 +15,18 @@ notes: PVM and AVM in FOV, using middle actuator. 50 ms exposure time. 11 stacks
 num_eggs: 3
 num_timepoints: 11
 pixel_microns: 0.275
+pressure_kPa:
+- 0
+- 300
+- 0
+- 300
+- 0
+- 300
+- 0
+- 300
+- 0
+- 300
+- 0
 purpose: Baseline measurement
 slice_height_pix: 1200
 slice_width_pix: 600

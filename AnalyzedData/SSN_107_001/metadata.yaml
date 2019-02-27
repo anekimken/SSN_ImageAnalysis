@@ -13,6 +13,18 @@ notes: Pretty large worm. 11 stacks. 300 kPa actuation on even-numbered stacks.
 num_eggs: 7
 num_timepoints: 11
 pixel_microns: 0.275
+pressure_kPa:
+- 0
+- 300
+- 0
+- 300
+- 0
+- 300
+- 0
+- 300
+- 0
+- 300
+- 0
 purpose: Baseline measurement
 slice_height_pix: 1200
 slice_width_pix: 600

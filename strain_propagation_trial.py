@@ -69,6 +69,7 @@ class StrainPropagationTrial(object):
                 'Failed - neuron overlap']
 
     def __init__(self):
+        self.metadata = None
         self.mito_candidates = None
         self.linked_mitos = None
         self.latest_test_params = None
@@ -361,6 +362,11 @@ class StrainPropagationTrial(object):
         num_trajectories = mitos_df['particle'].nunique()
         num_frames = mitos_df['frame'].nunique()
         distances = np.empty([num_frames, num_trajectories - 1])
+        x_distances = np.empty([num_frames, num_trajectories - 1])
+        y_distances = np.empty([num_frames, num_trajectories - 1])
+        z_distances = np.empty([num_frames, num_trajectories - 1])
+        dist_no_stim = np.empty([self.metadata['pressure_kPa'].count(0),
+                                 num_trajectories - 1])
         self.ycoords_for_strain = []
         for stack in range(num_frames):
             # sort mitochondria in this stack by y values
@@ -374,9 +380,19 @@ class StrainPropagationTrial(object):
                 mito2 = sorted_stack.loc[particle + 1, ['x', 'y', 'z']].values
                 distances[stack, particle] = spatial.distance.euclidean(
                         mito1, mito2)
+                x_distances[stack, particle] = spatial.distance.euclidean(
+                        mito1[0], mito2[0])
+                y_distances[stack, particle] = spatial.distance.euclidean(
+                        mito1[1], mito2[1])
+                z_distances[stack, particle] = spatial.distance.euclidean(
+                        mito1[2], mito2[2])
+                if self.metadata['pressure_kPa'][stack] == 0:
+                    dist_no_stim[int(stack / 2), particle] = distances[
+                            stack, particle]
 
         # calculate change in distance over time
-        self.strain = (distances - distances[0])/distances[0]
+        avg_dist_no_pressure = dist_no_stim.mean(axis=0)
+        self.strain = (distances - avg_dist_no_pressure)/avg_dist_no_pressure
         strain_list = self.strain.tolist()
         results_dict = {'strain': strain_list,
                         'ycoords': self.ycoords_for_strain}

@@ -13,6 +13,18 @@ notes: no actuation
 num_eggs: 4
 num_timepoints: 12
 pixel_microns: 0.275
+pressure_kPa:
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
 purpose: Baseline measurement
 slice_height_pix: 1200
 slice_width_pix: 600
