@@ -227,6 +227,11 @@ class StrainGUIController:
             canvas.tag_raise('rect')
             canvas.tag_raise('corner')
 
+        # Check for brightfield image to process
+        if self.trial.brightfield_file.is_file():
+            self.gui.create_bf_frame()
+            self.gui.notebook.pack(expand=1, fill=tk.BOTH)
+
         finish_time = time.time()
         print('Loaded file in ' + str(round(finish_time - start_time)) +
               ' seconds.')

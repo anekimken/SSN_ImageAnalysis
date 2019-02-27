@@ -124,6 +124,7 @@ class StrainPropagationTrial(object):
                 'trackpyBatchParamsHistory.yaml')
         self.unlinked_particles_file = self.analyzed_data_location.joinpath(
                 'unlinkedTrackpyBatchResults.yaml')
+        self.brightfield_file = pathlib.Path(self.filename[:-4] + '_bf.nd2')
 
         # Create directory if necessary
         if not self.analyzed_data_location.is_dir():
@@ -392,6 +393,7 @@ class StrainPropagationTrial(object):
 
         # calculate change in distance over time
         avg_dist_no_pressure = dist_no_stim.mean(axis=0)
+        print(avg_dist_no_pressure)
         self.strain = (distances - avg_dist_no_pressure)/avg_dist_no_pressure
         strain_list = self.strain.tolist()
         results_dict = {'strain': strain_list,
@@ -529,9 +531,17 @@ class StrainPropagationTrial(object):
     def _load_images_from_disk(self) -> Tuple[np.array, ND2Reader]:
         """Accesses the image data from the file."""
         images = pims.open(self.filename)
-        images.bundle_axes = ['z', 'y', 'x']
-        image_array = np.asarray(images)
-        image_array = image_array.squeeze()
+        try:
+            images.bundle_axes = ['z', 'y', 'x']
+            image_array = np.asarray(images)
+            image_array = image_array.squeeze()
+        except ValueError:
+            if self.filename[-6:-4] == 'bf':
+                # This is a brightfield image to locate actuator
+                image_array = np.asarray(images)
+                image_array = image_array.squeeze()
+            else:
+                raise
 
         return image_array, images
 
