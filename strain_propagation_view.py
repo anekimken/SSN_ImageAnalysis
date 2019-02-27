@@ -199,7 +199,7 @@ class FileLoadFrame(tk.Frame):
         return metadata
 
 
-class AnalyzeTrialFrame(tk.Frame):
+class AnalyzeImageFrame(tk.Frame):
     def __init__(self, parent, screen_dpi, root):
         tk.Frame.__init__(self, parent)
         self.parent = parent
@@ -221,7 +221,7 @@ class AnalyzeTrialFrame(tk.Frame):
         self.ax = self.fig.add_axes([0, 0, 1, 1])
         self.plot_canvas = FigureCanvasTkAgg(self.fig, self)
         self.plot_canvas.draw()
-        self.plot_canvas.get_tk_widget().grid(sticky=tk.W + tk.N + tk.S,
+        self.plot_canvas.get_tk_widget().grid(sticky=tk.W + tk.N,
                                               row=0,
                                               column=0,
                                               rowspan=3)
@@ -241,6 +241,50 @@ class AnalyzeTrialFrame(tk.Frame):
                 self.param_frame, text="Adjust Parameters")
         self.analysis_notebook.grid(row=0, column=2, sticky=tk.N)
         self.root.update()
+
+
+class AnalyzeTrialFrame(AnalyzeImageFrame):
+    def __init__(self, parent, screen_dpi, root):
+        AnalyzeImageFrame.__init__(self, parent, screen_dpi, root)
+#        self.parent = parent
+#        self.root = root
+#
+#        # Variables for drawing ROI
+#        self.rect = None
+#        self.drag_btn_size = 5  # radius of circle for dragging ROI corner
+#        self.roi_corners = [None, None, None, None]
+#        self.roi = [None, None, None, None]
+#
+#        # get size for making figure
+#        notebook_height = self.parent.winfo_height() - 100
+#        self.notebook_height_in = notebook_height / screen_dpi
+#
+#        # Create a figure and a canvas for showing images
+#        self.fig = mpl.figure.Figure(figsize=(600 / screen_dpi,
+#                                              1200 / screen_dpi))
+#        self.ax = self.fig.add_axes([0, 0, 1, 1])
+#        self.plot_canvas = FigureCanvasTkAgg(self.fig, self)
+#        self.plot_canvas.draw()
+#        self.plot_canvas.get_tk_widget().grid(sticky=tk.W + tk.N + tk.S,
+#                                              row=0,
+#                                              column=0,
+#                                              rowspan=3)
+#
+#        self.scrollbar = tk.Scrollbar(
+#                self, command=self.plot_canvas.get_tk_widget().yview)
+#        self.scrollbar.grid(row=0, column=1, sticky=tk.NE + tk.SE)
+#
+#        self.plot_canvas.get_tk_widget().config(
+#                yscrollcommand=self.scrollbar.set,
+#                yscrollincrement=5)
+#
+#        # Creat a notebook to put all the controls and parameters in
+#        self.analysis_notebook = ttk.Notebook(self)
+#        self.param_frame = tk.Frame(self.analysis_notebook)
+#        self.param_frame_tab = self.analysis_notebook.add(
+#                self.param_frame, text="Adjust Parameters")
+#        self.analysis_notebook.grid(row=0, column=2, sticky=tk.N)
+#        self.root.update()
         param_frame_row = 0
 
         # Clear ROI button
@@ -566,6 +610,7 @@ class BrightfieldImageFrame(tk.Frame):
                 yscrollcommand=self.scrollbar.set,
                 yscrollincrement=5)
 
+
 class AnalysisQueueFrame(tk.Frame):
     def __init__(self, parent):
         tk.Frame.__init__(self, parent)
@@ -634,43 +679,50 @@ class AnalysisQueueFrame(tk.Frame):
         self.bind("<Visibility>", update_queue)
 
 
-class PlotResultsFrame(tk.Frame):
+class PlotResultsFrame(AnalyzeImageFrame):
     def __init__(self, parent, screen_dpi, root):
-        tk.Frame.__init__(self, parent)
-        self.parent = parent
-        self.root = root
-
-        notebook_height = self.parent.winfo_height()
-        self.notebook_height_in = notebook_height / screen_dpi
-
-        # Create a figure and a canvas for showing images
-        self.fig = mpl.figure.Figure(figsize=(self.notebook_height_in - 1,
-                                              self.notebook_height_in - 1))
-        self.ax = self.fig.add_axes([0.1, 0.2, 0.8, 0.7])
-        self.plot_canvas = FigureCanvasTkAgg(self.fig, self)
-        self.plot_canvas.draw()
-        self.plot_canvas.get_tk_widget().grid(sticky=tk.W + tk.N + tk.S,
-                                              row=0,
-                                              column=0,
-                                              rowspan=3)
-        self.plot_canvas.get_tk_widget().grid_rowconfigure(0, weight=1)
+        AnalyzeImageFrame.__init__(self, parent, screen_dpi, root)
+        # (tk.Frame):
+#    def __init__(self, parent, screen_dpi, root):
+#        tk.Frame.__init__(self, parent)
+#        self.parent = parent
+#        self.root = root
+#
+#        notebook_height = self.parent.winfo_height()
+#        self.notebook_height_in = notebook_height / screen_dpi
+#
+#        # Create a figure and a canvas for showing images
+#        self.fig = mpl.figure.Figure(figsize=(self.notebook_height_in - 1,
+#                                              self.notebook_height_in - 1))
+#        self.ax = self.fig.add_axes([0.1, 0.2, 0.8, 0.7])
+#        self.plot_canvas = FigureCanvasTkAgg(self.fig, self)
+#        self.plot_canvas.draw()
+#        self.plot_canvas.get_tk_widget().grid(sticky=tk.W + tk.N + tk.S,
+#                                              row=0,
+#                                              column=0,
+#                                              rowspan=3)
+#        self.plot_canvas.get_tk_widget().grid_rowconfigure(0, weight=1)
 
         # Creat a notebook to put all the controls and parameters in
-        self.plot_notebook = ttk.Notebook(self)
+#        self.analysis_notebook = ttk.Notebook(self)
 
         # Tab for analysis progress plots
-        self.progress_frame = tk.Frame(self.plot_notebook)
-        self.progress_tab = self.plot_notebook.add(
-                self.progress_frame, text='Plot analysis progress')
-        self.plot_notebook.grid(row=0, column=2, sticky=tk.N + tk.S)
-        self.root.update()
-        self.progress_plot_button = ttk.Button(self.progress_frame,
+#        self.param_frame = tk.Frame(self.analysis_notebook)
+#        self.progress_tab = self.analysis_notebook.add(
+#                self.param_frame, text='Plot analysis progress')
+#        self.analysis_notebook.grid(row=0, column=2, sticky=tk.N + tk.S)
+
+        # Reset fig size since we don't need a big figure here
+        self.plot_canvas.get_tk_widget().config(height=600)
+        self.ax.set_position([0.1, 0.2, 0.8, 0.7])
+
+        self.progress_plot_button = ttk.Button(self.param_frame,
                                                text='Plot analysis progress')
         self.progress_plot_button.grid(row=0,  column=1)
 
         # Tab for strain plot for one trial
-        self.strain_plot_frame = tk.Frame(master=self.plot_notebook)
-        self.strain_one_trial_tab = self.plot_notebook.add(
+        self.strain_plot_frame = tk.Frame(master=self.analysis_notebook)
+        self.strain_one_trial_tab = self.analysis_notebook.add(
                 self.strain_plot_frame, text='Plot strain')
         self.plot_strain_one_trial_button = ttk.Button(
                 self.strain_plot_frame, text='Plot strain- one trial')
@@ -750,6 +802,7 @@ class PlotResultsFrame(tk.Frame):
     def plot_strain_by_actuation(self, strain, ycoords, pressure):
         """Averages strain by actuation pressure and plots result"""
 
+        self.ax.clear()
         index = 0
         temp_dict = []
         for i in range(len(strain)):
