@@ -1,26 +1,21 @@
-bottom_slice: 0
+characterize: true
 diameter: !!python/tuple
 - 21
-- 17
-- 17
-invert: false
-last_timepoint: 11
-max_iterations: 10
-maxsize: null
+- 15
+- 15
 minmass: 100
 noise_size: 3
 percentile: 50
-preprocess: true
+source: null
+timestamp: 2019-02-26-061302
+trackpy_version: 0.4.1+35.g10f756b
+bottom_slice: 0
+last_timepoint: 9
+notes: Reduced final timepoint. Changing brightness percentile might help too
 roi:
 - 292
 - 0
 - 468
 - 1052
-separation: null
-smoothing_size: null
-source: null
-timestamp: 2019-02-19-060549
 top_slice: 61
-topn: null
-tracking_seach_radius: 30
-trackpy_version: 0.4.1
+tracking_seach_radius: 25

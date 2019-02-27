@@ -120,3 +120,18 @@ timestamp: 2019-02-24-045911
 top_slice: 66
 tracking_seach_radius: 30
 trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 8
+minmass: 250
+noise_size: 3
+notes: Increased minmass to recover mitos towards top
+percentile: 50
+roi: [122, 315, 258, 1062]
+source: null
+timestamp: 2019-02-26-051448
+top_slice: 66
+tracking_seach_radius: 30
+trackpy_version: 0.4.1+35.g10f756b

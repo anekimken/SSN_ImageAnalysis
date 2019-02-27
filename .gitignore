@@ -3,3 +3,5 @@
 
 AnalyzedData/*/*/*.png
 AnalyzedData/*/diag_images
+Notebooks/
+__pycache__/

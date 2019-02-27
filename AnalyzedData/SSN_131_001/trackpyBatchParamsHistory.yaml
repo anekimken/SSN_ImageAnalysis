@@ -175,3 +175,18 @@ top_slice: 60
 topn: null
 tracking_seach_radius: 30
 trackpy_version: 0.4.1
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 6
+minmass: 400
+noise_size: 3
+notes: Increased minmass
+percentile: 50
+roi: [332, 74, 481, 1117]
+source: null
+timestamp: 2019-02-26-055343
+top_slice: 60
+tracking_seach_radius: 30
+trackpy_version: 0.4.1+35.g10f756b
