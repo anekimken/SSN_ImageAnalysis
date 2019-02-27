@@ -65,6 +65,11 @@ class SSN_analysis_GUI(tk.Frame):
 
         self.notebook.pack(expand=1, fill=tk.BOTH)
 
+    def create_bf_frame(self):
+        self.bf_image_frame = BrightfieldImageFrame(
+                self.notebook, self.dpi, self.root)
+        self.notebook.insert(2, self.bf_image_frame, text="Brightfield Image")
+
 
 class FileLoadFrame(tk.Frame):
     """This class implements the first tab of the GUI, which prompts the
@@ -526,6 +531,41 @@ class AnalyzeTrialFrame(tk.Frame):
         self.max_pixel_disp_label.pack(side=tk.LEFT)
 
 
+class BrightfieldImageFrame(tk.Frame):
+    def __init__(self, parent, screen_dpi, root):
+        tk.Frame.__init__(self, parent)
+        self.parent = parent
+        self.root = root
+
+        # Variables for drawing ROI
+        self.rect = None
+        self.drag_btn_size = 5  # radius of circle for dragging ROI corner
+        self.roi_corners = [None, None, None, None]
+        self.roi = [None, None, None, None]
+
+        # get size for making figure
+        notebook_height = self.parent.winfo_height() - 100
+        self.notebook_height_in = notebook_height / screen_dpi
+
+        # Create a figure and a canvas for showing images
+        self.fig = mpl.figure.Figure(figsize=(600 / screen_dpi,
+                                              1200 / screen_dpi))
+        self.ax = self.fig.add_axes([0, 0, 1, 1])
+        self.plot_canvas = FigureCanvasTkAgg(self.fig, self)
+        self.plot_canvas.draw()
+        self.plot_canvas.get_tk_widget().grid(sticky=tk.W + tk.N + tk.S,
+                                              row=0,
+                                              column=0,
+                                              rowspan=3)
+
+        self.scrollbar = tk.Scrollbar(
+                self, command=self.plot_canvas.get_tk_widget().yview)
+        self.scrollbar.grid(row=0, column=1, sticky=tk.NE + tk.SE)
+
+        self.plot_canvas.get_tk_widget().config(
+                yscrollcommand=self.scrollbar.set,
+                yscrollincrement=5)
+
 class AnalysisQueueFrame(tk.Frame):
     def __init__(self, parent):
         tk.Frame.__init__(self, parent)
@@ -727,9 +767,6 @@ class PlotResultsFrame(tk.Frame):
         df.loc[df['pressure'] == 300].groupby(['stack_num']).plot(
                 x='ycoords', y='strain',
                 ax=self.ax, color='green', drawstyle="steps")
-#        df.loc[df['pressure'] == 300].plot(x='ycoords', y='strain',
-#                                           ax=self.ax, color='green',
-#                                           drawstyle="steps")
 
         self.plot_canvas.draw()
 
