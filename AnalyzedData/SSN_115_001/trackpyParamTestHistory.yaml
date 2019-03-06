@@ -1,0 +1,36 @@
+---
+bottom_slice: 0
+brightness_percentile: 50
+gaussian_width: 3
+min_particle_mass: 500
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [122, 315, 258, 1062]
+top_slice: 66
+---
+bottom_slice: 0
+brightness_percentile: 50
+gaussian_width: 3
+min_particle_mass: 400
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [122, 315, 258, 1062]
+top_slice: 66
+---
+bottom_slice: 0
+brightness_percentile: 50
+gaussian_width: 3
+min_particle_mass: 200
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [122, 315, 258, 1062]
+top_slice: 66
+---
+bottom_slice: 0
+brightness_percentile: 50
+gaussian_width: 3
+min_particle_mass: 340
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [122, 315, 258, 1062]
+top_slice: 66

@@ -7,14 +7,14 @@ minmass: 600
 noise_size: 3
 percentile: 50
 source: null
-timestamp: 2019-02-26-055608
+timestamp: 2019-03-04-031828
 trackpy_version: 0.4.1+35.g10f756b
 bottom_slice: 0
-last_timepoint: 11
-notes: Increased minmass. A couple particles jumping around
+last_timepoint: 5
+notes: Reduced last timepoint
 roi:
-- 292
-- 22
+- 322
+- 23
 - 409
 - 1106
 top_slice: 50

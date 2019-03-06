@@ -102,3 +102,232 @@ timestamp: 2019-02-26-052324
 top_slice: 69
 tracking_seach_radius: 25
 trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 1025
+noise_size: 3
+notes: Trying even higher minmass, might be too high. maybe try increasing brightness
+  percentile
+percentile: 50
+roi: [212, 59, 346, 1065]
+source: null
+timestamp: 2019-02-27-232929
+top_slice: 69
+tracking_seach_radius: 25
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 1025
+noise_size: 3
+notes: Trying even higher minmass, might be too high. maybe try increasing brightness
+  percentile
+percentile: 50
+roi: [212, 59, 346, 1065]
+source: null
+timestamp: 2019-02-27-232929
+top_slice: 69
+tracking_seach_radius: 15
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 1025
+noise_size: 3
+notes: Trying even higher minmass, might be too high. maybe try increasing brightness
+  percentile
+percentile: 50
+roi: [212, 59, 346, 1065]
+source: null
+timestamp: 2019-02-27-232929
+top_slice: 69
+tracking_seach_radius: 18
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 1025
+noise_size: 3
+notes: Trying even higher minmass, might be too high. maybe try increasing brightness
+  percentile
+percentile: 50
+roi: [212, 59, 346, 1065]
+source: null
+timestamp: 2019-02-27-232929
+top_slice: 69
+tracking_seach_radius: 25
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 950
+noise_size: 3
+notes: 'Reduced minmass a bit. '
+percentile: 50
+roi: [212, 59, 346, 1065]
+source: null
+timestamp: 2019-03-01-195207
+top_slice: 69
+tracking_seach_radius: 25
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 8
+minmass: 950
+noise_size: 3
+notes: 'Reduced minmass a bit. '
+percentile: 50
+roi: [212, 59, 346, 1065]
+source: null
+timestamp: 2019-03-01-195207
+top_slice: 69
+tracking_seach_radius: 25
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 8
+minmass: 950
+noise_size: 3
+notes: 'Reduced minmass a bit. '
+percentile: 50
+roi: [212, 59, 346, 1065]
+source: null
+timestamp: 2019-03-01-195207
+top_slice: 69
+tracking_seach_radius: 25
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 8
+minmass: 950
+noise_size: 3
+notes: 'Reduced minmass a bit. '
+percentile: 50
+roi: [212, 59, 346, 1065]
+source: null
+timestamp: 2019-03-01-195207
+top_slice: 69
+tracking_seach_radius: 15
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 8
+minmass: 950
+noise_size: 3
+notes: 'Reduced minmass a bit. '
+percentile: 50
+roi: [212, 59, 346, 1065]
+source: null
+timestamp: 2019-03-01-195207
+top_slice: 69
+tracking_seach_radius: 20
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 8
+minmass: 950
+noise_size: 3
+notes: 'Reduced minmass a bit. '
+percentile: 50
+roi: [212, 59, 346, 1065]
+source: null
+timestamp: 2019-03-01-195207
+top_slice: 69
+tracking_seach_radius: 20
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 8
+minmass: 950
+noise_size: 3
+notes: Reduced final timepoint and linking radius. Need to check 54 and 6
+percentile: 50
+roi: [212, 59, 346, 1065]
+source: null
+timestamp: 2019-03-02-062651
+top_slice: 69
+tracking_seach_radius: 20
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 8
+minmass: 950
+noise_size: 3
+notes: Reduced final timepoint and linking radius. Need to check 54 and 6
+percentile: 50
+roi: [212, 59, 346, 1065]
+source: null
+timestamp: 2019-03-02-062651
+top_slice: 69
+tracking_seach_radius: 15
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 8
+minmass: 950
+noise_size: 3
+notes: Reduced final timepoint and linking radius. Need to check 54 and 6
+percentile: 50
+roi: [212, 59, 346, 1065]
+source: null
+timestamp: 2019-03-02-062651
+top_slice: 69
+tracking_seach_radius: 12
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 8
+minmass: 950
+noise_size: 3
+notes: Reduced final timepoint and linking radius. Need to check 54 and 6
+percentile: 50
+roi: [212, 59, 346, 1065]
+source: null
+timestamp: 2019-03-02-062651
+top_slice: 69
+tracking_seach_radius: 10
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 8
+minmass: 950
+noise_size: 3
+notes: Reduced final timepoint and linking radius. Need to check 54 and 6
+percentile: 50
+roi: [212, 59, 346, 1065]
+source: null
+timestamp: 2019-03-02-062651
+top_slice: 69
+tracking_seach_radius: 20
+trackpy_version: 0.4.1+35.g10f756b

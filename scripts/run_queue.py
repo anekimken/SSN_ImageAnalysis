@@ -21,16 +21,34 @@ with open(the_queue, 'r') as queue_file:
             queue_length = len(list(entire_queue))
 
 print('Running queue with', queue_length, 'items.')
+error_list = []
+queue_start_time = time.time()
 while True:  # queue_length > 0:
     queue_file_size = os.stat(the_queue).st_size
     if queue_file_size > 0:
-        controller.run_queue_item(queue_location)
-        # TODO: keep track of which trials were analyzed
+        try:
+            controller.run_queue_item(queue_location)
+        except AttributeError as error:
+            if error.args[0] == "'DataFrame' object has no attribute 'dtype'":
+                print('dataframe error')
+                error_list.append((controller.trial.experiment_id, error))
+                # Remove first trial in queue, since we're done with it
+                with open(the_queue, 'r') as queue_file:
+                    old_queue = yaml.load_all(queue_file)
+                    new_queue = [
+                            item for item in old_queue
+                            if item['experiment_id'] !=
+                            controller.trial.experiment_id]
 
+                with open(the_queue, 'w') as queue_file:
+                    yaml.dump_all(new_queue, queue_file, explicit_start=True)
+                pass
         # update queue length variable
         with open(the_queue, 'r') as queue_file:
             entire_queue = yaml.load_all(queue_file)
             queue_length = len(list(entire_queue))
     else:
-        print('Queue is empty.')
-    time.sleep(10)
+        print('Finished queue in',
+              str(round(time.time() - queue_start_time)), 'seconds.')
+        print("Errors occurred on", error_list)
+        break

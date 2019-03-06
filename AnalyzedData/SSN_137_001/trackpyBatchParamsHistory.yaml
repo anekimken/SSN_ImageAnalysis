@@ -70,3 +70,93 @@ timestamp: 2019-02-26-060406
 top_slice: 71
 tracking_seach_radius: 30
 trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 6
+minmass: 250
+noise_size: 3
+notes: Increased minmass, added ROI
+percentile: 50
+roi: [134, 0, 262, 1052]
+source: null
+timestamp: 2019-02-26-060406
+top_slice: 71
+tracking_seach_radius: 35
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 5
+minmass: 250
+noise_size: 3
+notes: Increased minmass, added ROI
+percentile: 50
+roi: [134, 0, 262, 1052]
+source: null
+timestamp: 2019-02-26-060406
+top_slice: 71
+tracking_seach_radius: 35
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 5
+minmass: 250
+noise_size: 3
+notes: Increased minmass, added ROI
+percentile: 50
+roi: [134, 0, 262, 1052]
+source: null
+timestamp: 2019-02-26-060406
+top_slice: 71
+tracking_seach_radius: 30
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 4
+minmass: 250
+noise_size: 3
+notes: Increased minmass, added ROI
+percentile: 50
+roi: [134, 0, 262, 1052]
+source: null
+timestamp: 2019-02-26-060406
+top_slice: 71
+tracking_seach_radius: 30
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 4
+minmass: 280
+noise_size: 3
+notes: Increased minmass, moved ROI, reduced to only 4 timepoints
+percentile: 50
+roi: [134, 0, 251, 865]
+source: null
+timestamp: 2019-03-02-155727
+top_slice: 71
+tracking_seach_radius: 30
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 4
+minmass: 280
+noise_size: 3
+notes: Reduced ROI on bottom
+percentile: 50
+roi: [134, 0, 238, 779]
+source: null
+timestamp: 2019-03-04-032228
+top_slice: 71
+tracking_seach_radius: 30
+trackpy_version: 0.4.1+35.g10f756b

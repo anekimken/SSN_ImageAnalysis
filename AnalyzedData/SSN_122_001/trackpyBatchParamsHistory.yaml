@@ -304,3 +304,74 @@ timestamp: 2019-02-26-052815
 top_slice: 69
 tracking_seach_radius: 20
 trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 5
+minmass: 500
+noise_size: 5
+notes: Trying increase in gaussian kernel to eliminate tiny mitos
+percentile: 75
+roi: [154, 0, 263, 1140]
+source: null
+timestamp: 2019-02-27-233428
+top_slice: 69
+tracking_seach_radius: 20
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 5
+minmass: 500
+noise_size: 5
+notes: Trying increase in gaussian kernel to eliminate tiny mitos
+percentile: 75
+roi: [154, 0, 263, 1140]
+source: null
+timestamp: 2019-02-27-233428
+top_slice: 69
+tracking_seach_radius: 30
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 5
+minmass: 400
+noise_size: 5
+notes: Reduced minmass a bit for particle around y=450
+percentile: 75
+roi: [154, 0, 263, 1140]
+source: null
+timestamp: 2019-03-01-195650
+top_slice: 69
+tracking_seach_radius: 30
+trackpy_version: 0.4.1+35.g10f756b
+---
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 5
+minmass: 400
+noise_size: 4
+percentile: 75
+source: null
+timestamp: 2019-03-02-154835
+tracking_seach_radius: 30
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 5
+minmass: 290
+noise_size: 5
+notes: Reduced minmass more for particle around y=450
+percentile: 75
+roi: [154, 0, 263, 1140]
+source: null
+timestamp: 2019-03-04-031630
+top_slice: 69
+tracking_seach_radius: 30
+trackpy_version: 0.4.1+35.g10f756b

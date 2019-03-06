@@ -1,6 +1,6 @@
 ---
 Experiment_id: SSN_117_001
-analysis_status: Testing parameters
+analysis_status: Failed - too close to edge
 bleach_time: 2018-12-04 12:30:00
 cultivation_temp: 20
 device_ID: Y4P7-4

@@ -1,6 +1,6 @@
 ---
 Experiment_id: SSN_127_001
-analysis_status: Testing parameters
+analysis_status: Failed - neuron overlap
 bleach_time: 2018-12-17 09:30:00
 cultivation_temp: 20
 device_ID: Y4P7-7

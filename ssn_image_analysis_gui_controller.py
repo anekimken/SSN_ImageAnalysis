@@ -10,6 +10,7 @@ import time
 import numpy as np
 import tkinter as tk
 import pandas as pd
+from scipy import spatial
 import glob
 import yaml
 import matplotlib.pyplot as plt
@@ -107,6 +108,11 @@ class StrainGUIController:
                     "<ButtonRelease-1>", func=self.get_analysis_progress)
             self.gui.plot_results_frame.plot_strain_one_trial_button.bind(
                     "<ButtonRelease-1>", func=self.plot_existing_strain)
+            self.gui.plot_results_frame.plot_strain_by_actuation_btn.bind(
+                    "<ButtonRelease-1>", func=self.plot_existing_strain)
+            self.gui.plot_results_frame.plot_xz_disp_btn.bind(
+                    "<ButtonRelease-1>", func=self.plot_xz_displacements)
+
             # TODO: write callback for plot strain one trial button
 
     def run(self):
@@ -360,6 +366,79 @@ class StrainGUIController:
 
             self.trial = ssn_trial.StrainPropagationTrial()  # clear trial var
 
+    def link_existing_particles(self, event=None):
+        """Link previously found particles into trajectories"""
+        start_time = time.time()
+        analysis_frame = self.gui.analyze_trial_frame
+        tracking_seach_radius = int(
+                analysis_frame.linking_radius_selector.get())
+        last_timepoint = int(
+                analysis_frame.last_time_selector.get())
+
+        self.trial.link_mitos(tracking_seach_radius=tracking_seach_radius,
+                              last_timepoint=last_timepoint)
+
+        link_done_time = time.time()
+        print('Done linking trial file. Linking and filtering took ' +
+              str(round(link_done_time - start_time)) + ' seconds.')
+
+    def calculate_strain(self, event=None):
+        """Calculate strain between mitochondria as a function of time"""
+        self.trial.calculate_strain()
+        self.gui.plot_results_frame.plot_strain_one_trial(
+                self.trial.strain, self.trial.ycoords_for_strain)
+        self.gui.notebook.select(3)
+
+    def add_trial_to_queue(self, event=None):
+        """Add trial and analysis parameters to queue for running later"""
+
+        queue_location = self.gui.queue_frame.queue_location
+        the_queue = queue_location + 'analysis_queue.yaml'
+
+        analysis_frame = self.gui.analyze_trial_frame
+        gaussian_width = int(analysis_frame.gaussian_blur_width.get())
+        particle_z_diameter = int(analysis_frame.z_diameter_selector.get())
+        particle_xy_diameter = int(analysis_frame.xy_diameter_selector.get())
+        brightness_percentile = int(
+                analysis_frame.brightness_percentile_selector.get())
+        min_particle_mass = int(analysis_frame.min_mass_selector.get())
+        bottom_slice = int(analysis_frame.btm_slice_selector.get())
+        top_slice = int(analysis_frame.top_slice_selector.get())
+        tracking_seach_radius = int(
+                analysis_frame.linking_radius_selector.get())
+        last_timepoint = int(
+                analysis_frame.last_time_selector.get())
+        notes = analysis_frame.notes_entry.get()
+
+        param_dict = {'experiment_id': self.trial.experiment_id,
+                      'roi': self.roi,
+                      'gaussian_width': gaussian_width,
+                      'particle_z_diameter': particle_z_diameter,
+                      'particle_xy_diameter': particle_xy_diameter,
+                      'brightness_percentile': brightness_percentile,
+                      'min_particle_mass': min_particle_mass,
+                      'bottom_slice': bottom_slice,
+                      'top_slice': top_slice,
+                      'tracking_seach_radius': tracking_seach_radius,
+                      'last_timepoint': last_timepoint,
+                      'notes': notes}
+
+        new_queue = []
+        overwrite_flag = False
+        with open(the_queue, 'r') as queue_file:
+            entire_queue = yaml.load_all(queue_file)
+            for queue_member in entire_queue:
+                if (queue_member['experiment_id'] == self.trial.experiment_id):
+                    new_queue.append(param_dict)
+                    overwrite_flag = True
+                else:
+                    new_queue.append(queue_member)
+            if overwrite_flag is False:
+                new_queue.append(param_dict)
+
+        with open(the_queue, 'w') as output_file:
+                yaml.dump_all(new_queue, output_file, explicit_start=True)
+
     def run_queue(self, event=None):
         queue_location = self.gui.queue_frame.queue_location
         the_queue = queue_location + 'analysis_queue.yaml'
@@ -438,106 +517,6 @@ class StrainGUIController:
         print('Finished file ' + full_filename[0] + ' in ' +
               str(round(done_time - start_time)) + ' seconds. ')
 
-    def link_existing_particles(self, event=None):
-        """Link previously found particles into trajectories"""
-        start_time = time.time()
-        analysis_frame = self.gui.analyze_trial_frame
-        tracking_seach_radius = int(
-                analysis_frame.linking_radius_selector.get())
-        last_timepoint = int(
-                analysis_frame.last_time_selector.get())
-
-        self.trial.link_mitos(tracking_seach_radius=tracking_seach_radius,
-                              last_timepoint=last_timepoint)
-
-        link_done_time = time.time()
-        print('Done linking trial file. Linking and filtering took ' +
-              str(round(link_done_time - start_time)) + ' seconds.')
-
-    def calculate_strain(self, event=None):
-        """Calculate strain between mitochondria as a function of time"""
-        self.trial.calculate_strain()
-        self.gui.plot_results_frame.plot_strain_one_trial(
-                self.trial.strain, self.trial.ycoords_for_strain)
-        self.gui.notebook.select(3)
-
-    def plot_existing_strain(self, event=None):
-        """"Plots strain of an existing trial"""
-        tree = self.gui.plot_results_frame.plot_strain_tree
-        selection = tree.selection()
-        for this_item in selection:
-            info = tree.item(this_item)
-            exp_id = info['text'][0:-4]
-
-        data_location = ('/Users/adam/Documents/SenseOfTouchResearch/'
-                         'SSN_ImageAnalysis/AnalyzedData/' + exp_id)
-        strain_file = data_location + '/strain.yaml'
-        self.trial.metadata_file_path = data_location + '/metadata.yaml'
-        with open(strain_file, 'r') as yamlfile:
-            strain_results = yaml.safe_load(yamlfile)
-
-        strain = strain_results['strain']
-        ycoords = strain_results['ycoords']
-
-        if self.trial.metadata is None:
-            metadata = self.trial.load_metadata_from_yaml()
-        else:
-            metadata = self.trial.metadata
-
-#        self.gui.plot_results_frame.plot_strain_one_trial(strain, ycoords)
-        self.gui.plot_results_frame.plot_strain_by_actuation(
-                strain, ycoords, metadata['pressure_kPa'])
-
-    def add_trial_to_queue(self, event=None):
-        """Add trial and analysis parameters to queue for running later"""
-
-        queue_location = self.gui.queue_frame.queue_location
-        the_queue = queue_location + 'analysis_queue.yaml'
-
-        analysis_frame = self.gui.analyze_trial_frame
-        gaussian_width = int(analysis_frame.gaussian_blur_width.get())
-        particle_z_diameter = int(analysis_frame.z_diameter_selector.get())
-        particle_xy_diameter = int(analysis_frame.xy_diameter_selector.get())
-        brightness_percentile = int(
-                analysis_frame.brightness_percentile_selector.get())
-        min_particle_mass = int(analysis_frame.min_mass_selector.get())
-        bottom_slice = int(analysis_frame.btm_slice_selector.get())
-        top_slice = int(analysis_frame.top_slice_selector.get())
-        tracking_seach_radius = int(
-                analysis_frame.linking_radius_selector.get())
-        last_timepoint = int(
-                analysis_frame.last_time_selector.get())
-        notes = analysis_frame.notes_entry.get()
-
-        param_dict = {'experiment_id': self.trial.experiment_id,
-                      'roi': self.roi,
-                      'gaussian_width': gaussian_width,
-                      'particle_z_diameter': particle_z_diameter,
-                      'particle_xy_diameter': particle_xy_diameter,
-                      'brightness_percentile': brightness_percentile,
-                      'min_particle_mass': min_particle_mass,
-                      'bottom_slice': bottom_slice,
-                      'top_slice': top_slice,
-                      'tracking_seach_radius': tracking_seach_radius,
-                      'last_timepoint': last_timepoint,
-                      'notes': notes}
-
-        new_queue = []
-        overwrite_flag = False
-        with open(the_queue, 'r') as queue_file:
-            entire_queue = yaml.load_all(queue_file)
-            for queue_member in entire_queue:
-                if (queue_member['experiment_id'] == self.trial.experiment_id):
-                    new_queue.append(param_dict)
-                    overwrite_flag = True
-                else:
-                    new_queue.append(queue_member)
-            if overwrite_flag is False:
-                new_queue.append(param_dict)
-
-        with open(the_queue, 'w') as output_file:
-                yaml.dump_all(new_queue, output_file, explicit_start=True)
-
     def remove_from_review_queue(self, event=None):
         """Remove trial from review list that has results from queue"""
 
@@ -552,6 +531,96 @@ class StrainGUIController:
 
             with open(review_q, 'w') as queue_file:
                 yaml.dump_all(new_q, queue_file, explicit_start=True)
+
+    def update_status(self, event=None):
+        new_status = self.gui.analyze_trial_frame.status_dropdown.get()
+        self.trial.metadata['analysis_status'] = new_status
+        self.trial.write_metadata_to_yaml(self.trial.metadata)
+        self.gui.file_load_frame.file_tree.pack_forget()
+        self.gui.file_load_frame.update_file_tree()
+        self.gui.root.update()
+
+    def plot_existing_strain(self, event=None):
+        """"Plots strain of an existing trial"""
+        plot_tab = self.gui.plot_results_frame
+        tree = plot_tab.plot_strain_tree
+        selection = tree.selection()
+        for this_item in selection:
+            info = tree.item(this_item)
+            exp_id = info['text'][0:-4]
+
+        data_location = ('/Users/adam/Documents/SenseOfTouchResearch/'
+                         'SSN_ImageAnalysis/AnalyzedData/' + exp_id)
+        self.trial.metadata_file_path = data_location + '/metadata.yaml'
+
+        strain_file = data_location + '/strain.yaml'
+        with open(strain_file, 'r') as yamlfile:
+            strain_results = yaml.safe_load(yamlfile)
+
+        strain = strain_results['strain']
+        ycoords = strain_results['ycoords']
+
+        if self.trial.metadata is None:
+            metadata = self.trial.load_metadata_from_yaml()
+        else:
+            metadata = self.trial.metadata
+
+        if event.widget == plot_tab.plot_strain_one_trial_button:
+            self.gui.plot_results_frame.plot_strain_one_trial(strain, ycoords)
+        elif event.widget == plot_tab.plot_strain_by_actuation_btn:
+            self.gui.plot_results_frame.plot_strain_by_actuation(
+                strain, ycoords, metadata['pressure_kPa'])
+
+    def plot_xz_displacements(self, event=None):
+        """Plots displacement of mitos projected on xz plane"""
+        plot_tab = self.gui.plot_results_frame
+        tree = plot_tab.plot_strain_tree
+        selection = tree.selection()
+        for this_item in selection:
+            info = tree.item(this_item)
+            exp_id = info['text'][0:-4]
+
+        data_location = ('/Users/adam/Documents/SenseOfTouchResearch/'
+                         'SSN_ImageAnalysis/AnalyzedData/' + exp_id)
+        self.trial.metadata_file_path = data_location + '/metadata.yaml'
+        if self.trial.metadata is None:
+            metadata = self.trial.load_metadata_from_yaml()
+        else:
+            metadata = self.trial.metadata
+
+        self.trial.batch_data_file = data_location + '/trackpyBatchResults.yaml'
+        with open(self.trial.batch_data_file, 'r') as yamlfile:
+                linked_mitos_dict = yaml.load(yamlfile)
+                self.trial.linked_mitos = pd.DataFrame.from_dict(
+                        linked_mitos_dict, orient='index')
+        mitos_df = self.trial.linked_mitos.copy(deep=True)
+        num_trajectories = mitos_df['particle'].nunique()
+        num_frames = mitos_df['frame'].nunique()
+        xz_distances = np.empty([num_frames, num_trajectories])
+        ycoords = np.empty([num_frames, num_trajectories])
+        for stack in range(num_frames - 1):
+            # sort mitochondria in this stack by y values
+            current_stack = mitos_df.loc[mitos_df['frame'] == stack]
+            current_stack.sort_values(['y'], inplace=True)
+            current_stack.reset_index(inplace=True, drop=True)
+
+            next_stack = mitos_df.loc[mitos_df['frame'] == stack + 1]
+            next_stack.sort_values(['y'], inplace=True)
+            next_stack.reset_index(inplace=True, drop=True)
+
+            for particle in range(num_trajectories):
+                # calculate pairwise distances
+                mito1 = current_stack.loc[particle, ['x', 'z']].values
+                mito2 = next_stack.loc[particle, ['x', 'z']].values
+                xz_distances[stack, particle] = spatial.distance.euclidean(
+                        mito1, mito2)
+                ycoords[stack, particle] = current_stack.loc[
+                        particle, ['y']].values
+                ycoords[stack + 1, particle] = next_stack.loc[
+                        particle, ['y']].values
+
+        plot_tab.plot_xz_displacements(xz_distances, ycoords,
+                                       metadata['pressure_kPa'])
 
     def on_file_selection_changed(self, event):
         """This function keeps track of which files are selected for
@@ -611,12 +680,12 @@ class StrainGUIController:
                 mito_labels = df_for_plot
                 particle_marker = 'None'
                 traj_line = '-'
-        elif self.trial.linked_mitos is not None:
-            mito_labels = self.trial.linked_mitos.loc[
-                            self.trial.linked_mitos[
-                                    'frame'] == selected_timepoint]
-            particle_marker = 'None'
-            traj_line = 'None'
+#        elif self.trial.linked_mitos is not None:
+#            mito_labels = self.trial.linked_mitos.loc[
+#                            self.trial.linked_mitos[
+#                                    'frame'] == selected_timepoint]
+#            particle_marker = 'None'
+#            traj_line = 'None'
         else:
             mito_labels = None
 
@@ -641,16 +710,18 @@ class StrainGUIController:
                             str(int(this_particle.iloc[0][
                                      'particle'])), color='white')
                     analysis_frame.ax.legend_.remove()
-        except ValueError as err:
-            if len(self.trial.linked_mitos) == 0:
-                raise Exception('No particles were found at all '
-                                'time points. Try expanding search '
-                                'radius or changing particle finding '
-                                'parameters.') from err
+        except ValueError:
+            if len(mito_labels) == 0:
+                pass
             else:
                 raise
         except TypeError:
             if df_for_plot is None:
+                pass
+            else:
+                raise
+        except UnboundLocalError:
+            if mito_labels is None:
                 pass
             else:
                 raise
@@ -672,10 +743,10 @@ class StrainGUIController:
                              color='#FB8072', marker='o', linestyle='None')
 
         if df_for_plot is not None:
-            self.gui.analyze_trial_frame.dataframe = df_for_plot
-            self.gui.analyze_trial_frame.dataframe_widget.updateModel(
+            analysis_frame.dataframe = df_for_plot.sort_values('y')
+            analysis_frame.dataframe_widget.updateModel(
                     TableModel(df_for_plot))
-            self.gui.analyze_trial_frame.dataframe_widget.redraw()
+            analysis_frame.dataframe_widget.redraw()
 
         if load_images is True or overwrite_metadata is True:
             # get image that we're going to show
@@ -855,14 +926,6 @@ class StrainGUIController:
         self.gui.analyze_trial_frame.plot_canvas.get_tk_widget().yview_scroll(
                 -1*(event.delta), 'units')
 
-    def update_status(self, event=None):
-        new_status = self.gui.analyze_trial_frame.status_dropdown.get()
-        self.trial.metadata['analysis_status'] = new_status
-        self.trial.write_metadata_to_yaml(self.trial.metadata)
-        self.gui.file_load_frame.file_tree.pack_forget()
-        self.gui.file_load_frame.update_file_tree()
-        self.gui.root.update()
-
     def get_analysis_progress(self, event=None):
         """Gets the analysis status of all trials and plots their status"""
 
@@ -907,27 +970,23 @@ class StrainGUIController:
         analysis_frame.top_slice_selector.insert(0, params['top_slice'])
 
         analysis_frame.gaussian_blur_width.delete(0, 'end')
-        analysis_frame.gaussian_blur_width.insert(0, params['gaussian_width'])
+        analysis_frame.gaussian_blur_width.insert(0, params['noise_size'])
 
         analysis_frame.z_diameter_selector.delete(0, 'end')
         analysis_frame.z_diameter_selector.insert(
-                0, params['particle_z_diameter'])
+                0, params['diameter'][0])
 
         analysis_frame.xy_diameter_selector.delete(0, 'end')
         analysis_frame.xy_diameter_selector.insert(
-                0, params['particle_z_diameter'])
-
-        analysis_frame.xy_diameter_selector.delete(0, 'end')
-        analysis_frame.xy_diameter_selector.insert(
-                0, params['particle_xy_diameter'])
+                0, params['diameter'][1])
 
         analysis_frame.brightness_percentile_selector.delete(0, 'end')
         analysis_frame.brightness_percentile_selector.insert(
-                0, params['brightness_percentile'])
+                0, params['percentile'])
 
         analysis_frame.min_mass_selector.delete(0, 'end')
         analysis_frame.min_mass_selector.insert(
-                0, params['min_particle_mass'])
+                0, params['minmass'])
 
         analysis_frame.last_time_selector.delete(0, 'end')
         analysis_frame.last_time_selector.insert(

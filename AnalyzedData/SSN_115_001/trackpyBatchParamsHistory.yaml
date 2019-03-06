@@ -135,3 +135,64 @@ timestamp: 2019-02-26-051448
 top_slice: 66
 tracking_seach_radius: 30
 trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 8
+minmass: 350
+noise_size: 3
+notes: Increased minmass even more
+percentile: 50
+roi: [122, 315, 258, 1062]
+source: null
+timestamp: 2019-02-27-232146
+top_slice: 66
+tracking_seach_radius: 30
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 8
+minmass: 1100
+noise_size: 3
+notes: Went very high with minmass
+percentile: 50
+roi: [122, 315, 258, 1062]
+source: null
+timestamp: 2019-03-01-194641
+top_slice: 66
+tracking_seach_radius: 30
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 8
+minmass: 900
+noise_size: 3
+notes: Backed off minmass a bit
+percentile: 50
+roi: [122, 315, 258, 1062]
+source: null
+timestamp: 2019-03-02-062257
+top_slice: 66
+tracking_seach_radius: 30
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 8
+minmass: 340
+noise_size: 3
+notes: Backed off to get mito at y=558 in frame 2. Maybe change brightness percentile
+  to balance
+percentile: 50
+roi: [122, 315, 258, 1062]
+source: null
+timestamp: 2019-03-04-031353
+top_slice: 66
+tracking_seach_radius: 30
+trackpy_version: 0.4.1+35.g10f756b

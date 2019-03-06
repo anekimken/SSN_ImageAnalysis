@@ -3,15 +3,15 @@ diameter: !!python/tuple
 - 21
 - 15
 - 15
-minmass: 200
+minmass: 300
 noise_size: 3
 percentile: 50
 source: null
-timestamp: 2019-02-26-051727
+timestamp: 2019-02-27-232431
 trackpy_version: 0.4.1+35.g10f756b
 bottom_slice: 0
 last_timepoint: 7
-notes: Adjusted ROI to cut out cell body
+notes: Increased minmass to remove spurious particles
 roi:
 - 147
 - 89

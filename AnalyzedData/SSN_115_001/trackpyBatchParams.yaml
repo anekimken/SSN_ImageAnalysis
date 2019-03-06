@@ -3,15 +3,16 @@ diameter: !!python/tuple
 - 21
 - 15
 - 15
-minmass: 250
+minmass: 340
 noise_size: 3
 percentile: 50
 source: null
-timestamp: 2019-02-26-051448
+timestamp: 2019-03-04-031353
 trackpy_version: 0.4.1+35.g10f756b
 bottom_slice: 0
 last_timepoint: 8
-notes: Increased minmass to recover mitos towards top
+notes: Backed off to get mito at y=558 in frame 2. Maybe change brightness percentile
+  to balance
 roi:
 - 122
 - 315

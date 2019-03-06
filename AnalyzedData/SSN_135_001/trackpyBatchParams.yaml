@@ -1,17 +1,17 @@
 characterize: true
 diameter: !!python/tuple
-- 21
+- 15
 - 15
 - 15
 minmass: 400
 noise_size: 3
 percentile: 50
 source: null
-timestamp: 2019-02-26-060154
+timestamp: 2019-03-04-032049
 trackpy_version: 0.4.1+35.g10f756b
 bottom_slice: 0
-last_timepoint: 11
-notes: Increased minmass, might need to decrease final timepoint
+last_timepoint: 10
+notes: Decreased z diameter. dropped minmass back down
 roi:
 - 355
 - 0

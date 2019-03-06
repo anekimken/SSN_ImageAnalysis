@@ -212,3 +212,93 @@ timestamp: 2019-02-26-053439
 top_slice: 69
 tracking_seach_radius: 20
 trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 300
+noise_size: 3
+notes: Rerunning, something weird happened
+percentile: 50
+roi: [162, 0, 284, 1161]
+source: null
+timestamp: 2019-02-27-233845
+top_slice: 69
+tracking_seach_radius: 20
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 300
+noise_size: 3
+notes: Rerunning, something weird happened
+percentile: 50
+roi: [162, 0, 284, 1161]
+source: null
+timestamp: 2019-02-27-233845
+top_slice: 69
+tracking_seach_radius: 20
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 300
+noise_size: 3
+notes: Rerunning, something weird happened
+percentile: 50
+roi: [162, 0, 284, 1161]
+source: null
+timestamp: 2019-02-27-233845
+top_slice: 69
+tracking_seach_radius: 10
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 5
+minmass: 300
+noise_size: 3
+notes: Rerunning, something weird happened
+percentile: 50
+roi: [162, 0, 284, 1161]
+source: null
+timestamp: 2019-02-27-233845
+top_slice: 69
+tracking_seach_radius: 30
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 5
+minmass: 500
+noise_size: 3
+notes: Increased minmass
+percentile: 50
+roi: [162, 0, 284, 1161]
+source: null
+timestamp: 2019-03-01-195834
+top_slice: 69
+tracking_seach_radius: 30
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 5
+minmass: 400
+noise_size: 3
+notes: Split the difference for minmass
+percentile: 50
+roi: [162, 0, 284, 1161]
+source: null
+timestamp: 2019-03-02-062040
+top_slice: 69
+tracking_seach_radius: 30
+trackpy_version: 0.4.1+35.g10f756b
