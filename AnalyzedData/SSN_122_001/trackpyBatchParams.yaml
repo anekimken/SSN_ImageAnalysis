@@ -3,19 +3,19 @@ diameter: !!python/tuple
 - 21
 - 15
 - 15
-minmass: 500
-noise_size: 3
+minmass: 290
+noise_size: 5
 percentile: 75
 source: null
-timestamp: 2019-02-26-052815
+timestamp: 2019-03-04-031630
 trackpy_version: 0.4.1+35.g10f756b
 bottom_slice: 0
 last_timepoint: 5
-notes: Increased brightness percentile. might need to increase minmass too
+notes: Reduced minmass more for particle around y=450
 roi:
 - 154
 - 0
 - 263
 - 1140
 top_slice: 69
-tracking_seach_radius: 20
+tracking_seach_radius: 30

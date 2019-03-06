@@ -302,3 +302,18 @@ timestamp: 2019-02-26-051727
 top_slice: 52
 tracking_seach_radius: 35
 trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 7
+minmass: 300
+noise_size: 3
+notes: Increased minmass to remove spurious particles
+percentile: 50
+roi: [147, 89, 286, 965]
+source: null
+timestamp: 2019-02-27-232431
+top_slice: 52
+tracking_seach_radius: 35
+trackpy_version: 0.4.1+35.g10f756b

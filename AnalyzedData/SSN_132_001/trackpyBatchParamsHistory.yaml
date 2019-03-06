@@ -152,3 +152,243 @@ timestamp: 2019-02-26-055608
 top_slice: 50
 tracking_seach_radius: 20
 trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 9
+minmass: 600
+noise_size: 3
+notes: Increased minmass. A couple particles jumping around
+percentile: 50
+roi: [292, 22, 409, 1106]
+source: null
+timestamp: 2019-02-26-055608
+top_slice: 50
+tracking_seach_radius: 20
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 9
+minmass: 600
+noise_size: 3
+notes: Moved ROI on left side to the right. Reduced final timepoint
+percentile: 50
+roi: [322, 23, 409, 1106]
+source: null
+timestamp: 2019-03-02-155124
+top_slice: 50
+tracking_seach_radius: 20
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 9
+minmass: 600
+noise_size: 3
+notes: Moved ROI on left side to the right. Reduced final timepoint
+percentile: 50
+roi: [322, 23, 409, 1106]
+source: null
+timestamp: 2019-03-02-155124
+top_slice: 50
+tracking_seach_radius: 30
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 9
+minmass: 600
+noise_size: 3
+notes: Moved ROI on left side to the right. Reduced final timepoint
+percentile: 50
+roi: [322, 23, 409, 1106]
+source: null
+timestamp: 2019-03-02-155124
+top_slice: 50
+tracking_seach_radius: 40
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 6
+minmass: 600
+noise_size: 3
+notes: Moved ROI on left side to the right. Reduced final timepoint
+percentile: 50
+roi: [322, 23, 409, 1106]
+source: null
+timestamp: 2019-03-02-155124
+top_slice: 50
+tracking_seach_radius: 40
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 6
+minmass: 600
+noise_size: 3
+notes: Moved ROI on left side to the right. Reduced final timepoint
+percentile: 50
+roi: [322, 23, 409, 1106]
+source: null
+timestamp: 2019-03-02-155124
+top_slice: 50
+tracking_seach_radius: 20
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 6
+minmass: 600
+noise_size: 3
+notes: Moved ROI on left side to the right. Reduced final timepoint
+percentile: 50
+roi: [322, 23, 409, 1106]
+source: null
+timestamp: 2019-03-02-155124
+top_slice: 50
+tracking_seach_radius: 3
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 6
+minmass: 600
+noise_size: 3
+notes: Moved ROI on left side to the right. Reduced final timepoint
+percentile: 50
+roi: [322, 23, 409, 1106]
+source: null
+timestamp: 2019-03-02-155124
+top_slice: 50
+tracking_seach_radius: 15
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 6
+minmass: 600
+noise_size: 3
+notes: Moved ROI on left side to the right. Reduced final timepoint
+percentile: 50
+roi: [322, 23, 409, 1106]
+source: null
+timestamp: 2019-03-02-155124
+top_slice: 50
+tracking_seach_radius: 20
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 3
+minmass: 600
+noise_size: 3
+notes: Moved ROI on left side to the right. Reduced final timepoint
+percentile: 50
+roi: [322, 23, 409, 1106]
+source: null
+timestamp: 2019-03-02-155124
+top_slice: 50
+tracking_seach_radius: 20
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 4
+minmass: 600
+noise_size: 3
+notes: Moved ROI on left side to the right. Reduced final timepoint
+percentile: 50
+roi: [322, 23, 409, 1106]
+source: null
+timestamp: 2019-03-02-155124
+top_slice: 50
+tracking_seach_radius: 20
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 5
+minmass: 600
+noise_size: 3
+notes: Moved ROI on left side to the right. Reduced final timepoint
+percentile: 50
+roi: [322, 23, 409, 1106]
+source: null
+timestamp: 2019-03-02-155124
+top_slice: 50
+tracking_seach_radius: 20
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 6
+minmass: 600
+noise_size: 3
+notes: Moved ROI on left side to the right. Reduced final timepoint
+percentile: 50
+roi: [322, 23, 409, 1106]
+source: null
+timestamp: 2019-03-02-155124
+top_slice: 50
+tracking_seach_radius: 20
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 6
+minmass: 600
+noise_size: 3
+notes: Moved ROI on left side to the right. Reduced final timepoint
+percentile: 50
+roi: [322, 23, 409, 1106]
+source: null
+timestamp: 2019-03-02-155124
+top_slice: 50
+tracking_seach_radius: 20
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 5
+minmass: 600
+noise_size: 3
+notes: Moved ROI on left side to the right. Reduced final timepoint
+percentile: 50
+roi: [322, 23, 409, 1106]
+source: null
+timestamp: 2019-03-02-155124
+top_slice: 50
+tracking_seach_radius: 20
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 5
+minmass: 600
+noise_size: 3
+notes: Reduced last timepoint
+percentile: 50
+roi: [322, 23, 409, 1106]
+source: null
+timestamp: 2019-03-04-031828
+top_slice: 50
+tracking_seach_radius: 20
+trackpy_version: 0.4.1+35.g10f756b

@@ -145,6 +145,7 @@ class FileLoadFrame(tk.Frame):
                 day_item = self.file_tree.insert('', 'end', text=day[-8:],
                                                  tags='day')
                 trials = glob.iglob(day + '/*.nd2')
+                trials = [trial for trial in trials if '_bf' not in trial]
                 for trial in trials:
                     trial_parts = trial.split('/')
                     iid = self.file_tree.insert(day_item, 'end',
@@ -246,45 +247,7 @@ class AnalyzeImageFrame(tk.Frame):
 class AnalyzeTrialFrame(AnalyzeImageFrame):
     def __init__(self, parent, screen_dpi, root):
         AnalyzeImageFrame.__init__(self, parent, screen_dpi, root)
-#        self.parent = parent
-#        self.root = root
-#
-#        # Variables for drawing ROI
-#        self.rect = None
-#        self.drag_btn_size = 5  # radius of circle for dragging ROI corner
-#        self.roi_corners = [None, None, None, None]
-#        self.roi = [None, None, None, None]
-#
-#        # get size for making figure
-#        notebook_height = self.parent.winfo_height() - 100
-#        self.notebook_height_in = notebook_height / screen_dpi
-#
-#        # Create a figure and a canvas for showing images
-#        self.fig = mpl.figure.Figure(figsize=(600 / screen_dpi,
-#                                              1200 / screen_dpi))
-#        self.ax = self.fig.add_axes([0, 0, 1, 1])
-#        self.plot_canvas = FigureCanvasTkAgg(self.fig, self)
-#        self.plot_canvas.draw()
-#        self.plot_canvas.get_tk_widget().grid(sticky=tk.W + tk.N + tk.S,
-#                                              row=0,
-#                                              column=0,
-#                                              rowspan=3)
-#
-#        self.scrollbar = tk.Scrollbar(
-#                self, command=self.plot_canvas.get_tk_widget().yview)
-#        self.scrollbar.grid(row=0, column=1, sticky=tk.NE + tk.SE)
-#
-#        self.plot_canvas.get_tk_widget().config(
-#                yscrollcommand=self.scrollbar.set,
-#                yscrollincrement=5)
-#
-#        # Creat a notebook to put all the controls and parameters in
-#        self.analysis_notebook = ttk.Notebook(self)
-#        self.param_frame = tk.Frame(self.analysis_notebook)
-#        self.param_frame_tab = self.analysis_notebook.add(
-#                self.param_frame, text="Adjust Parameters")
-#        self.analysis_notebook.grid(row=0, column=2, sticky=tk.N)
-#        self.root.update()
+
         param_frame_row = 0
 
         # Clear ROI button
@@ -682,35 +645,6 @@ class AnalysisQueueFrame(tk.Frame):
 class PlotResultsFrame(AnalyzeImageFrame):
     def __init__(self, parent, screen_dpi, root):
         AnalyzeImageFrame.__init__(self, parent, screen_dpi, root)
-        # (tk.Frame):
-#    def __init__(self, parent, screen_dpi, root):
-#        tk.Frame.__init__(self, parent)
-#        self.parent = parent
-#        self.root = root
-#
-#        notebook_height = self.parent.winfo_height()
-#        self.notebook_height_in = notebook_height / screen_dpi
-#
-#        # Create a figure and a canvas for showing images
-#        self.fig = mpl.figure.Figure(figsize=(self.notebook_height_in - 1,
-#                                              self.notebook_height_in - 1))
-#        self.ax = self.fig.add_axes([0.1, 0.2, 0.8, 0.7])
-#        self.plot_canvas = FigureCanvasTkAgg(self.fig, self)
-#        self.plot_canvas.draw()
-#        self.plot_canvas.get_tk_widget().grid(sticky=tk.W + tk.N + tk.S,
-#                                              row=0,
-#                                              column=0,
-#                                              rowspan=3)
-#        self.plot_canvas.get_tk_widget().grid_rowconfigure(0, weight=1)
-
-        # Creat a notebook to put all the controls and parameters in
-#        self.analysis_notebook = ttk.Notebook(self)
-
-        # Tab for analysis progress plots
-#        self.param_frame = tk.Frame(self.analysis_notebook)
-#        self.progress_tab = self.analysis_notebook.add(
-#                self.param_frame, text='Plot analysis progress')
-#        self.analysis_notebook.grid(row=0, column=2, sticky=tk.N + tk.S)
 
         # Reset fig size since we don't need a big figure here
         self.plot_canvas.get_tk_widget().config(height=600)
@@ -725,8 +659,14 @@ class PlotResultsFrame(AnalyzeImageFrame):
         self.strain_one_trial_tab = self.analysis_notebook.add(
                 self.strain_plot_frame, text='Plot strain')
         self.plot_strain_one_trial_button = ttk.Button(
-                self.strain_plot_frame, text='Plot strain- one trial')
+                self.strain_plot_frame, text='Strain from one trial')
         self.plot_strain_one_trial_button.grid(row=1, column=0)
+        self.plot_strain_by_actuation_btn = ttk.Button(
+                self.strain_plot_frame, text='Plot strain by actuation')
+        self.plot_strain_by_actuation_btn.grid(row=1, column=1)
+        self.plot_xz_disp_btn = ttk.Button(
+                self.strain_plot_frame, text='Plot xz displacement')
+        self.plot_xz_disp_btn.grid(row=2, column=1)
 
         self.update_plot_strain_tree()
 
@@ -770,7 +710,7 @@ class PlotResultsFrame(AnalyzeImageFrame):
 
             except ValueError:  # we get here if dir name is not a number
                 pass  # and we ignore these dirs
-        self.plot_strain_tree.grid(row=0, column=0)
+        self.plot_strain_tree.grid(row=0, column=0, columnspan=2)
 
     def plot_progress(self, all_statuses_dict: dict, status_values: list):
         status_count = dict.fromkeys(status_values, 0)
@@ -779,6 +719,8 @@ class PlotResultsFrame(AnalyzeImageFrame):
 
         status_count.pop('No metadata.yaml file')
         status_count.pop('No analysis status yet')
+        status_count.pop('Not started')
+        status_count.pop('Testing parameters for batch')
 
         self.ax.bar(range(len(status_count)), status_count.values(),
                     align='center')
@@ -820,6 +762,28 @@ class PlotResultsFrame(AnalyzeImageFrame):
         df.loc[df['pressure'] == 300].groupby(['stack_num']).plot(
                 x='ycoords', y='strain',
                 ax=self.ax, color='green', drawstyle="steps")
+
+        self.plot_canvas.draw()
+
+    def plot_xz_displacements(self, xz_displacement, ycoords, pressure):
+        self.ax.clear()
+        index = 0
+        temp_dict = []
+        for i in range(len(xz_displacement)):
+            for j in range(len(xz_displacement[0])):
+                temp_dict.append({'xz_displacement': xz_displacement[i][j],
+                                  'ycoords': ycoords[i][j],
+                                  'pressure': pressure[i],
+                                  'stack_num': i})
+                index += 1
+        df = pd.DataFrame(temp_dict)
+
+        df.loc[df['pressure'] == 0].groupby(['stack_num']).plot(
+                x='ycoords', y='xz_displacement',
+                ax=self.ax, color='red')
+        df.loc[df['pressure'] == 300].groupby(['stack_num']).plot(
+                x='ycoords', y='xz_displacement',
+                ax=self.ax, color='green')
 
         self.plot_canvas.draw()
 

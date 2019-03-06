@@ -1,0 +1,18 @@
+---
+bottom_slice: 0
+brightness_percentile: 50
+gaussian_width: 3
+min_particle_mass: 400
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [355, 0, 458, 1052]
+top_slice: 58
+---
+bottom_slice: 0
+brightness_percentile: 50
+gaussian_width: 3
+min_particle_mass: 400
+particle_xy_diameter: 15
+particle_z_diameter: 15
+roi: [355, 0, 458, 1052]
+top_slice: 58

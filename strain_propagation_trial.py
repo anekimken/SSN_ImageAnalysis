@@ -366,6 +366,7 @@ class StrainPropagationTrial(object):
         x_distances = np.empty([num_frames, num_trajectories - 1])
         y_distances = np.empty([num_frames, num_trajectories - 1])
         z_distances = np.empty([num_frames, num_trajectories - 1])
+        xz_distances = np.empty([num_frames, num_trajectories - 1])
         dist_no_stim = np.empty([self.metadata['pressure_kPa'].count(0),
                                  num_trajectories - 1])
         self.ycoords_for_strain = []
@@ -387,13 +388,14 @@ class StrainPropagationTrial(object):
                         mito1[1], mito2[1])
                 z_distances[stack, particle] = spatial.distance.euclidean(
                         mito1[2], mito2[2])
+                xz_distances[stack, particle] = spatial.distance.euclidean(
+                        mito1[0:3:2], mito2[0:3:2])
                 if self.metadata['pressure_kPa'][stack] == 0:
                     dist_no_stim[int(stack / 2), particle] = distances[
                             stack, particle]
 
         # calculate change in distance over time
         avg_dist_no_pressure = dist_no_stim.mean(axis=0)
-        print(avg_dist_no_pressure)
         self.strain = (distances - avg_dist_no_pressure)/avg_dist_no_pressure
         strain_list = self.strain.tolist()
         results_dict = {'strain': strain_list,
@@ -429,7 +431,9 @@ class StrainPropagationTrial(object):
         trajectory_ax.margins(0, 0)
         trajectory_ax.set_axis_off()
         trajectory_fig.add_axes(trajectory_ax)
-        trajectory_ax.imshow(image_to_display)
+        trajectory_ax.imshow(image_to_display,
+                             vmin=int(np.amin(image_to_display)),
+                             vmax=200)  # set max pixel to 200 for visibility
 
         try:
             theCount = 0  # ah ah ah ah
@@ -487,7 +491,9 @@ class StrainPropagationTrial(object):
                 one_stack_ax.margins(0, 0)
                 one_stack_ax.set_axis_off()
                 one_stack_fig.add_axes(one_stack_ax)
-                one_stack_ax.imshow(image_to_display)
+                one_stack_ax.imshow(image_to_display,
+                                    vmin=int(np.amin(image_to_display)),
+                                    vmax=200)  # set max pixel to 200
 
                 df_for_plot = mitos_from_batch.loc[
                             mitos_from_batch[

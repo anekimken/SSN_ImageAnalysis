@@ -75,5 +75,33 @@ class TestLoadTrial(unittest.TestCase):
     # TODO: make a test trial that can run really fast through everything
 
 
+"""
+Things to test:
+    * Asterisk indicates highest priorities
+
+    Using actual data:
+        load_trial using actual nd2 data and actual metadata
+
+    Using artificial data:
+        find_mitos_one_stack
+        *find_mitos_current_trial
+        link_existing_particles
+        *calculate_strain
+
+    Using a two sets of artificial data:
+        run_multiple_files this might take too long
+        add_trial_to_queue
+        run_queue/run_queue_item
+        remove_from_review_queue
+
+    Results files from artificial data:
+        metadata.yaml
+        trackpyBatchParams.yaml
+        *trackpyBatchResults.yaml
+        unlinkedTrackpyBatchResults.yaml
+        *strain.yaml
+
+"""
+
 if __name__ == '__main__':
     unittest.main()
