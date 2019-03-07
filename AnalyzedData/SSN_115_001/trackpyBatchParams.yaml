@@ -7,16 +7,15 @@ minmass: 340
 noise_size: 3
 percentile: 50
 source: null
-timestamp: 2019-03-04-031353
+timestamp: 2019-03-07-215348
 trackpy_version: 0.4.1+35.g10f756b
 bottom_slice: 0
 last_timepoint: 8
-notes: Backed off to get mito at y=558 in frame 2. Maybe change brightness percentile
-  to balance
+notes: Moved ROI down on top to eliminate spurious particle in frame 3
 roi:
 - 122
-- 315
-- 258
+- 379
+- 256
 - 1062
 top_slice: 66
 tracking_seach_radius: 30

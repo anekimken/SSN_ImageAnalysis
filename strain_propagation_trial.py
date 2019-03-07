@@ -18,6 +18,7 @@ import pandas as pd
 from nd2reader import ND2Reader
 # from scipy import stats
 from scipy import spatial
+from scipy.spatial import distance
 import yaml
 import matplotlib.pyplot as plt
 import matplotlib as mpl
@@ -358,8 +359,163 @@ class StrainPropagationTrial(object):
 
     def calculate_strain(self):
         """Calculates strain in the TRN using mitochondria positions"""
-        print('Calculating strain!')
         mitos_df = self.linked_mitos.copy(deep=True)
+        mito_locations = mitos_df.loc[:, ['frame', 'particle', 'x', 'y', 'z']]
+
+        def get_pressure(row):
+            frame_num = int(row['frame'])
+            pressure = self.metadata['pressure_kPa'][frame_num]
+            return pressure
+
+        mito_locations['pressure'] = mito_locations.apply(
+                lambda row: get_pressure(row), axis=1)
+
+        def get_rest_location(particle, axis):
+
+            x_rest = mito_locations.loc[
+                    (mito_locations['particle'] == particle) &
+                    (mito_locations['pressure'] == 0)]['x'].mean()
+            y_rest = mito_locations.loc[
+                    (mito_locations['particle'] == particle) &
+                    (mito_locations['pressure'] == 0)]['y'].mean()
+            z_rest = mito_locations.loc[
+                    (mito_locations['particle'] == particle) &
+                    (mito_locations['pressure'] == 0)]['z'].mean()
+            if axis == 'x':
+                rest_location = x_rest
+            elif axis == 'y':
+                rest_location = y_rest
+            elif axis == 'z':
+                rest_location = z_rest
+            else:
+                raise ValueError("Invalid axes value")
+
+            return rest_location
+
+        mito_locations['x_rest'] = mito_locations.apply(
+                lambda row: get_rest_location(row['particle'], 'x'), axis=1)
+        mito_locations['y_rest'] = mito_locations.apply(
+                lambda row: get_rest_location(row['particle'], 'y'), axis=1)
+        mito_locations['z_rest'] = mito_locations.apply(
+                lambda row: get_rest_location(row['particle'], 'z'), axis=1)
+
+        mito_pairs = pd.DataFrame(columns=['x_dist', 'y_dist', 'z_dist',
+                                           'x_1', 'x_2', 'y_1', 'y_2',
+                                           'z_1', 'z_2', 'total_dist'
+                                           'particle_1', 'particle_2', 'frame',
+                                           'pair_id'])
+        mito_pairs_dicts = []
+        for frame in mito_locations.frame.unique():
+            this_frame = mito_locations.loc[(mito_locations['frame'] == frame)]
+            this_frame.sort_values(by=['y'], inplace=True)
+            this_frame.reset_index(inplace=True)
+            # make dataframe of adjacent mitos
+            for this_particle in range(mito_locations.particle.nunique() - 1):
+                x_1 = this_frame.iloc[this_particle]['x']
+                x_2 = this_frame.iloc[this_particle + 1]['x']
+                x_dist = abs(x_2 - x_1)
+
+                y_1 = this_frame.iloc[this_particle]['y']
+                y_2 = this_frame.iloc[this_particle + 1]['y']
+                y_dist = abs(y_2 - y_1)
+
+                z_1 = this_frame.iloc[this_particle]['z']
+                z_2 = this_frame.iloc[this_particle + 1]['z']
+                z_dist = abs(z_2 - z_1)
+
+                total_dist = distance.euclidean([x_1, y_1, z_1],
+                                                [x_2, y_2, z_2])
+
+                particle_1 = int(this_frame.iloc[this_particle]['particle'])
+                particle_2 = int(
+                        this_frame.iloc[this_particle + 1]['particle'])
+
+                mito_pairs_dicts.append({'x_dist': x_dist, 'x_1': x_1,
+                                         'x_2': x_2,
+                                         'y_dist': y_dist, 'y_1': y_1,
+                                         'y_2': y_2,
+                                         'z_dist': z_dist, 'z_1': z_1,
+                                         'z_2': z_2,
+                                         'particle_1': particle_1,
+                                         'particle_2': particle_2,
+                                         'total_dist': total_dist,
+                                         'frame': frame,
+                                         'pair_id': this_particle})
+        mito_pairs = pd.DataFrame(mito_pairs_dicts)
+        mito_pairs['pressure'] = mito_pairs.apply(
+                lambda row: get_pressure(row), axis=1)
+
+        def get_rest_distance(pair, axis):
+            euclidean_rest_dist = mito_pairs.loc[
+                    (mito_pairs['pair_id'] == pair) &
+                    (mito_pairs['pressure'] == 0)]['total_dist'].mean()
+            x_rest_dist = mito_pairs.loc[(mito_pairs['pair_id'] == pair) &
+                                         (mito_pairs['pressure'] == 0)][
+                                                 'x_dist'].mean()
+            y_rest_dist = mito_pairs.loc[(mito_pairs['pair_id'] == pair) &
+                                         (mito_pairs['pressure'] == 0)][
+                                                 'y_dist'].mean()
+            z_rest_dist = mito_pairs.loc[(mito_pairs['pair_id'] == pair) &
+                                         (mito_pairs['pressure'] == 0)][
+                                                 'z_dist'].mean()
+            if axis == 'euclid':
+                rest_distance = euclidean_rest_dist
+            elif axis == 'x':
+                rest_distance = x_rest_dist
+            elif axis == 'y':
+                rest_distance = y_rest_dist
+            elif axis == 'z':
+                rest_distance = z_rest_dist
+            else:
+                raise ValueError("Invalid axes value")
+
+            return rest_distance
+
+        mito_pairs['rest_dist'] = mito_pairs.apply(
+                lambda pair: get_rest_distance(pair['pair_id'], 'euclid'),
+                axis=1)
+        mito_pairs['x_rest_dist'] = mito_pairs.apply(
+                lambda pair: get_rest_distance(pair['pair_id'], 'x'), axis=1)
+        mito_pairs['y_rest_dist'] = mito_pairs.apply(
+                lambda pair: get_rest_distance(pair['pair_id'], 'y'), axis=1)
+        mito_pairs['z_rest_dist'] = mito_pairs.apply(
+                lambda pair: get_rest_distance(pair['pair_id'], 'z'), axis=1)
+
+        mito_pairs['strain'] = (
+                (mito_pairs['total_dist'] - mito_pairs['rest_dist'])
+                / mito_pairs['rest_dist'])
+        mito_pairs['x_strain'] = (
+                (mito_pairs['x_dist'] - mito_pairs['x_rest_dist'])
+                / mito_pairs['x_rest_dist'])
+        mito_pairs['y_strain'] = (
+                (mito_pairs['y_dist'] - mito_pairs['y_rest_dist'])
+                / mito_pairs['y_rest_dist'])
+        mito_pairs['z_strain'] = (
+                (mito_pairs['z_dist'] - mito_pairs['z_rest_dist'])
+                / mito_pairs['z_rest_dist'])
+        self.strain = np.empty((mito_pairs['frame'].nunique(),
+                               mito_pairs['pair_id'].nunique()))
+        for stack in range(mito_pairs['frame'].nunique()):
+            for interval in range(mito_pairs['pair_id'].nunique()):
+                self.strain[stack, interval] = mito_pairs.loc[
+                        (mito_pairs['frame'] == stack) &
+                        (mito_pairs['pair_id'] == interval)]['strain']
+
+        # save results
+        df_to_save = mito_pairs[['frame', 'pair_id', 'pressure',
+                                 'particle_1', 'particle_2', 'total_dist',
+                                 'x_dist', 'y_dist', 'z_dist',
+                                 'rest_dist', 'x_rest_dist', 'y_rest_dist',
+                                 'z_rest_dist', 'strain', 'x_strain',
+                                 'y_strain', 'z_strain']]
+        dict_to_save = df_to_save.to_dict('list')
+
+        with open(self.analyzed_data_location.joinpath('strain.yaml'),
+                  'w') as yamlfile:
+            yaml.dump(dict_to_save, yamlfile,
+                      explicit_start=True, default_flow_style=False)
+
+        """
         num_trajectories = mitos_df['particle'].nunique()
         num_frames = mitos_df['frame'].nunique()
         distances = np.empty([num_frames, num_trajectories - 1])
@@ -405,6 +561,7 @@ class StrainPropagationTrial(object):
                   'w') as yamlfile:
             yaml.dump(results_dict, yamlfile,
                       explicit_start=True, default_flow_style=False)
+        """
 
     def save_diag_figs(self,
                        image_array: np.ndarray,
