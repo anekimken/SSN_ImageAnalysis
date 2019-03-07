@@ -7,3 +7,6 @@ AnalyzedData/*/*/*.png
 AnalyzedData/*/diag_images
 Notebooks/
 __pycache__/
+__pycache__/*
+test/results_data/
+

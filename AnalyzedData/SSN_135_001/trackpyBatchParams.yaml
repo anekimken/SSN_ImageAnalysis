@@ -3,19 +3,20 @@ diameter: !!python/tuple
 - 15
 - 15
 - 15
-minmass: 400
+minmass: 290
 noise_size: 3
 percentile: 50
 source: null
-timestamp: 2019-03-04-032049
+timestamp: 2019-03-07-215740
 trackpy_version: 0.4.1+35.g10f756b
 bottom_slice: 0
-last_timepoint: 10
-notes: Decreased z diameter. dropped minmass back down
+last_timepoint: 7
+notes: Moved ROI down a bit, decreased minmass and reduced last timepoint for mito
+  around y=520
 roi:
 - 355
-- 0
-- 458
+- 84
+- 453
 - 1052
 top_slice: 58
 tracking_seach_radius: 30
