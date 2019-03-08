@@ -692,8 +692,8 @@ class StrainGUIController:
         # Plot data with text
         try:
             theCount = 0  # ah ah ah ah
-            for i in range(max(mito_labels['particle'])):
-                this_particle = mito_labels.loc[mito_labels['particle'] == i+1]
+            for i in mito_labels['particle'].unique():
+                this_particle = mito_labels.loc[mito_labels['particle'] == i]
                 if not this_particle.empty:
                     theCount += 1
                     this_particle.plot(

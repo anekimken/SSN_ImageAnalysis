@@ -52,3 +52,12 @@ particle_xy_diameter: 15
 particle_z_diameter: 21
 roi: [154, 0, 263, 1140]
 top_slice: 69
+---
+bottom_slice: 0
+brightness_percentile: 75
+gaussian_width: 5
+min_particle_mass: 250
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [155, 0, 243, 1134]
+top_slice: 69
