@@ -1,0 +1,78 @@
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_168_001
+gaussian_width: 3
+last_timepoint: 11
+min_particle_mass: 200
+notes: Added ROI
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [355, 0, 451, 1052]
+top_slice: 60
+tracking_seach_radius: 30
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_167_001
+gaussian_width: 3
+last_timepoint: 11
+min_particle_mass: 200
+notes: Added ROI
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [185, 0, 261, 1070]
+top_slice: 53
+tracking_seach_radius: 20
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_166_001
+gaussian_width: 3
+last_timepoint: 11
+min_particle_mass: 500
+notes: Added ROI and increased minmass
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [304, 0, 432, 1070]
+top_slice: 57
+tracking_seach_radius: 20
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_165_001
+gaussian_width: 3
+last_timepoint: 11
+min_particle_mass: 600
+notes: Added ROI and increased minmass
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [182, 0, 279, 1070]
+top_slice: 60
+tracking_seach_radius: 20
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_164_001
+gaussian_width: 3
+last_timepoint: 11
+min_particle_mass: 600
+notes: Added ROI and increased minmass
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [227, 0, 321, 1070]
+top_slice: 59
+tracking_seach_radius: 20
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_163_001
+gaussian_width: 3
+last_timepoint: 11
+min_particle_mass: 500
+notes: Added ROI and increased minmass
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [325, 0, 457, 1070]
+top_slice: 52
+tracking_seach_radius: 20

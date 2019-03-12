@@ -1,29 +1,29 @@
 ---
 bottom_slice: 0
 brightness_percentile: 50
-experiment_id: SSN_115_001
+experiment_id: SSN_106_002
 gaussian_width: 3
 last_timepoint: 8
-min_particle_mass: 340
-notes: Ready for strain calc after increased linking search radius.
+min_particle_mass: 500
+notes: Increased minmass
 particle_xy_diameter: 15
-particle_z_diameter: 21
-roi: [122, 379, 256, 1062]
-top_slice: 66
-tracking_seach_radius: 35
+particle_z_diameter: 25
+roi: [396, 66, 558, 1179]
+top_slice: 67
+tracking_seach_radius: 40
 ---
 bottom_slice: 0
-brightness_percentile: 75
-experiment_id: SSN_122_001
-gaussian_width: 5
-last_timepoint: 5
-min_particle_mass: 280
-notes: Reduced minmass for particle near y=450
+brightness_percentile: 25
+experiment_id: SSN_108_001
+gaussian_width: 3
+last_timepoint: 3
+min_particle_mass: 200
+notes: Shrunk ROI
 particle_xy_diameter: 15
 particle_z_diameter: 21
-roi: [155, 0, 243, 1134]
-top_slice: 69
-tracking_seach_radius: 30
+roi: [190, 36, 287, 1068]
+top_slice: 44
+tracking_seach_radius: 40
 ---
 bottom_slice: 0
 brightness_percentile: 50
@@ -31,22 +31,35 @@ experiment_id: SSN_135_001
 gaussian_width: 3
 last_timepoint: 7
 min_particle_mass: 235
-notes: Decreased minmass again for particle near y=520 in frame 4
+notes: Shrunk ROI on the left
 particle_xy_diameter: 15
 particle_z_diameter: 15
-roi: [355, 84, 453, 1052]
+roi: [384, 76, 453, 1052]
 top_slice: 58
 tracking_seach_radius: 30
 ---
 bottom_slice: 0
 brightness_percentile: 50
-experiment_id: SSN_140_001
+experiment_id: SSN_139_001
 gaussian_width: 3
-last_timepoint: 9
-min_particle_mass: 350
-notes: Increased minmass
+last_timepoint: 5
+min_particle_mass: 600
+notes: Reduced final timepoint to 5 for mitos towards bottom
 particle_xy_diameter: 15
 particle_z_diameter: 21
-roi: [340, 63, 450, 972]
-top_slice: 61
-tracking_seach_radius: 30
+roi: [376, 0, 478, 1052]
+top_slice: 70
+tracking_seach_radius: 20
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_162_001
+gaussian_width: 3
+last_timepoint: 11
+min_particle_mass: 700
+notes: Increased minmass and moved top of ROI down due to movement of head.
+particle_xy_diameter: 19
+particle_z_diameter: 21
+roi: [165, 164, 270, 1070]
+top_slice: 56
+tracking_seach_radius: 20

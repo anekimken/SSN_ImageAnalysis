@@ -78,7 +78,7 @@ class StrainPropagationTrial(object):
                                     'particle_z_diameter': 21,
                                     'particle_xy_diameter': 15,
                                     'brightness_percentile': 50,
-                                    'min_particle_mass': 200,
+                                    'min_particle_mass': 600,
                                     'bottom_slice': 0,
                                     'top_slice': 2,
                                     'time_point': 1,

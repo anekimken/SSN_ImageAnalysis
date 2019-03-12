@@ -7,7 +7,7 @@ minmass: 200
 noise_size: 3
 percentile: 25
 source: null
-timestamp: 2019-02-21-231642
+timestamp: 2019-03-11-044833
 trackpy_version: 0.4.1+35.g10f756b
 bottom_slice: 0
 last_timepoint: 3

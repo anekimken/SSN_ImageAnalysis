@@ -3,16 +3,15 @@ diameter: !!python/tuple
 - 15
 - 15
 - 15
-minmass: 290
+minmass: 235
 noise_size: 3
 percentile: 50
 source: null
-timestamp: 2019-03-07-215740
+timestamp: 2019-03-11-044006
 trackpy_version: 0.4.1+35.g10f756b
 bottom_slice: 0
 last_timepoint: 7
-notes: Moved ROI down a bit, decreased minmass and reduced last timepoint for mito
-  around y=520
+notes: Decreased minmass again for particle near y=520 in frame 4
 roi:
 - 355
 - 84
