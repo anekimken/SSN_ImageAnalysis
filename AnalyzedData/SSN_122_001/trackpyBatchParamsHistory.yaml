@@ -390,3 +390,18 @@ timestamp: 2019-03-07-215618
 top_slice: 69
 tracking_seach_radius: 30
 trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 5
+minmass: 280
+noise_size: 5
+notes: Reduced minmass for particle near y=450
+percentile: 75
+roi: [155, 0, 243, 1134]
+source: null
+timestamp: 2019-03-11-043845
+top_slice: 69
+tracking_seach_radius: 30
+trackpy_version: 0.4.1+35.g10f756b

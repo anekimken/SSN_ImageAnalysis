@@ -58,3 +58,18 @@ top_slice: 56
 topn: null
 tracking_seach_radius: 20
 trackpy_version: 0.4.1
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 19, 19]
+last_timepoint: 11
+minmass: 600
+noise_size: 3
+notes: Adjusted ROI and increased minmass
+percentile: 50
+roi: [165, 0, 274, 1070]
+source: null
+timestamp: 2019-03-11-050808
+top_slice: 56
+tracking_seach_radius: 20
+trackpy_version: 0.4.1+35.g10f756b

@@ -149,6 +149,10 @@ class StrainGUIController:
             max_spinbox = self.gui.analyze_trial_frame.max_pixel_disp
             max_spinbox.delete(0, 'end')
             max_spinbox.insert(0, str(max_pixel))
+            if self.trial.linked_mitos is not None:
+                if self.trial.linked_mitos.empty is False:
+                    self.gui.analyze_trial_frame.plot_labels_drop.set(
+                        'Plot trajectories')
 
         # load inspection image on inspection tab and related parameters
         self.update_inspection_image()
@@ -672,12 +676,18 @@ class StrainGUIController:
                         self.trial.linked_mitos[
                                 'frame'] == selected_timepoint]
                 mito_labels = df_for_plot
+                df_columns = ['x', 'y', 'z', 'frame', 'mass', 'particle',
+                              'signal', 'raw_mass', 'size_x', 'size_y',
+                              'size_z', 'ecc', 'ep_x', 'ep_y', 'ep_z']
                 particle_marker = 'o'
                 traj_line = 'None'
         elif plot_mitos_status == 'Plot trajectories':
             if self.trial.linked_mitos is not None:
                 df_for_plot = self.trial.linked_mitos
                 mito_labels = df_for_plot
+                df_columns = ['x', 'y', 'z', 'frame', 'mass', 'particle',
+                              'signal', 'raw_mass', 'size_x', 'size_y',
+                              'size_z', 'ecc', 'ep_x', 'ep_y', 'ep_z']
                 particle_marker = 'None'
                 traj_line = '-'
 #        elif self.trial.linked_mitos is not None:
@@ -733,9 +743,15 @@ class StrainGUIController:
                 df_for_plot = self.trial.mitos_from_batch.loc[
                         self.trial.mitos_from_batch[
                                 'frame'] == selected_timepoint]
+                df_columns = ['x', 'y', 'z', 'frame', 'mass',
+                              'signal', 'raw_mass', 'size_x', 'size_y',
+                              'size_z', 'ecc', 'ep_x', 'ep_y', 'ep_z']
         elif plot_mitos_status == 'Mitos from param test':
             if self.trial.mito_candidates is not None:
                 df_for_plot = self.trial.mito_candidates
+                df_columns = ['x', 'y', 'z', 'frame', 'mass',
+                              'signal', 'raw_mass', 'size_x', 'size_y',
+                              'size_z', 'ecc', 'ep_x', 'ep_y', 'ep_z']
         # plot data before linking, so no text here
         if (plot_mitos_status == 'Mitos from param test' or
                 plot_mitos_status == 'Unlinked mitos for this stack'):
@@ -743,7 +759,14 @@ class StrainGUIController:
                              color='#FB8072', marker='o', linestyle='None')
 
         if df_for_plot is not None:
-            analysis_frame.dataframe = df_for_plot.sort_values('y')
+            analysis_frame.dataframe = df_for_plot.sort_values('y',
+                                                               inplace=True)
+            columns = df_columns
+            try:
+                df_for_plot = df_for_plot[columns]
+            except Exception as e:
+                print(e)
+
             analysis_frame.dataframe_widget.updateModel(
                     TableModel(df_for_plot))
             analysis_frame.dataframe_widget.redraw()
@@ -948,11 +971,13 @@ class StrainGUIController:
                     metadata = yaml.load(yamlfile)
                     # if metadata exists, get analysis status and store it
                     all_statuses_dict[experiment_id] = metadata[
-                            'analysis_status']
+                            'analysis_status'], metadata['neuron']
             except FileNotFoundError:
-                all_statuses_dict[experiment_id] = 'No metadata.yaml file'
+                all_statuses_dict[experiment_id] = ('No metadata.yaml file',
+                                                    'N/A')
             except KeyError:
-                all_statuses_dict[experiment_id] = 'No analysis status yet'
+                all_statuses_dict[experiment_id] = ('No analysis status yet',
+                                                    'N/A')
 
         # send all analysis statuses to view module for plotting
         self.gui.plot_results_frame.plot_progress(all_statuses_dict,

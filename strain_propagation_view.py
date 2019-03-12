@@ -12,8 +12,8 @@ from tkinter import ttk
 import glob
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import numpy as np
 import yaml
-import PIL
 import warnings
 import pandas as pd
 # import matplotlib.pyplot as plt
@@ -123,9 +123,9 @@ class FileLoadFrame(tk.Frame):
         self.file_tree = tk.ttk.Treeview(self, height=37,
                                          columns=("status", "queue", "rating"))
         self.file_tree.heading("status", text="Analysis Status")
+        self.file_tree.heading("queue", text="Queue status")
         self.file_tree.heading("rating",
                                text="Rating to prioritize analysis")
-        self.file_tree.heading("queue", text="Queue status")
 
         with open(the_queue, 'r') as queue_file:
             entire_queue = yaml.load_all(queue_file)
@@ -713,26 +713,45 @@ class PlotResultsFrame(AnalyzeImageFrame):
         self.plot_strain_tree.grid(row=0, column=0, columnspan=2)
 
     def plot_progress(self, all_statuses_dict: dict, status_values: list):
-        status_count = dict.fromkeys(status_values, 0)
+        statuses_to_ignore = ['No metadata.yaml file',
+                              'No analysis status yet',
+                              'Not started', 'Testing parameters for batch']
+        for key in statuses_to_ignore:
+            status_values.remove(key)
+        alm_counts = dict.fromkeys(status_values, 0)
+        avm_counts = dict.fromkeys(status_values, 0)
+        pvm_counts = dict.fromkeys(status_values, 0)
+
         for experiment_id, status in all_statuses_dict.items():
-            status_count[status] += 1
+            if status[1] == 'ALM':
+                if status[0] not in statuses_to_ignore:
+                    alm_counts[status[0]] += 1
+            elif status[1] == 'AVM':
+                if status[0] not in statuses_to_ignore:
+                    avm_counts[status[0]] += 1
+            elif status[1] == 'PVM':
+                if status[0] not in statuses_to_ignore:
+                    pvm_counts[status[0]] += 1
 
-        status_count.pop('No metadata.yaml file')
-        status_count.pop('No analysis status yet')
-        status_count.pop('Not started')
-        status_count.pop('Testing parameters for batch')
+        alm_vals = np.fromiter(alm_counts.values(), dtype=int)
+        avm_vals = np.fromiter(avm_counts.values(), dtype=int)
+        pvm_vals = np.fromiter(pvm_counts.values(), dtype=int)
 
-        self.ax.bar(range(len(status_count)), status_count.values(),
+        self.ax.bar(range(len(alm_counts)), alm_vals,
                     align='center')
-        self.ax.set_xticks(range(len(status_count)))
-        self.ax.set_xticklabels(list(status_count.keys()),
+        self.ax.bar(range(len(avm_counts)), avm_vals,
+                    align='center', bottom=alm_vals)
+        self.ax.bar(range(len(pvm_counts)), pvm_vals,
+                    align='center', bottom=alm_vals + avm_vals)
+        self.ax.set_xticks(range(len(alm_counts)))
+        self.ax.set_xticklabels(list(alm_counts.keys()),
                                 rotation=30, horizontalalignment='right')
+        self.ax.legend(['ALM', 'AVM', 'PVM'])
 
         self.plot_canvas.draw()
 
     def plot_strain_one_trial(self, strain, ycoords):
         """Plots the strain results from a np.ndarray"""
-        # TODO: Include actuation information in plot
 
         self.ax.clear()
 #        self.ax.plot(ycoords, strain)
