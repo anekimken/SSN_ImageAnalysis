@@ -33,3 +33,423 @@ timestamp: 2019-03-11-050017
 top_slice: 60
 tracking_seach_radius: 20
 trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 600
+noise_size: 3
+notes: Added ROI and increased minmass
+percentile: 50
+roi: [182, 0, 279, 1070]
+source: null
+timestamp: 2019-03-11-050017
+top_slice: 60
+tracking_seach_radius: 40
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 9
+minmass: 600
+noise_size: 3
+notes: Added ROI and increased minmass
+percentile: 50
+roi: [182, 0, 279, 1070]
+source: null
+timestamp: 2019-03-11-050017
+top_slice: 60
+tracking_seach_radius: 40
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 600
+noise_size: 3
+notes: Reduced ROI
+percentile: 50
+roi: [182, 0, 261, 1070]
+source: null
+timestamp: 2019-03-13-193323
+top_slice: 60
+tracking_seach_radius: 40
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 600
+noise_size: 3
+notes: Reduced ROI
+percentile: 50
+roi: [182, 0, 261, 1070]
+source: null
+timestamp: 2019-03-13-193323
+top_slice: 60
+tracking_seach_radius: 60
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 600
+noise_size: 3
+notes: Reduced ROI on bottom. probably ready for strain calc.
+percentile: 50
+roi: [182, 0, 261, 998]
+source: null
+timestamp: 2019-03-14-215507
+top_slice: 60
+tracking_seach_radius: 60
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 600
+noise_size: 3
+notes: Reduced ROI on bottom. probably ready for strain calc.
+percentile: 50
+roi: [182, 0, 261, 998]
+source: null
+timestamp: 2019-03-14-215507
+top_slice: 60
+tracking_seach_radius: 60
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 600
+noise_size: 3
+notes: Reduced ROI on bottom. probably ready for strain calc.
+percentile: 50
+roi: [182, 0, 261, 998]
+source: null
+timestamp: 2019-03-14-215507
+top_slice: 60
+tracking_seach_radius: 40
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 600
+noise_size: 3
+notes: Reduced ROI on bottom. probably ready for strain calc.
+percentile: 50
+roi: [182, 0, 261, 998]
+source: null
+timestamp: 2019-03-14-215507
+top_slice: 60
+tracking_seach_radius: 45
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 600
+noise_size: 3
+notes: Reduced ROI on bottom. probably ready for strain calc.
+percentile: 50
+roi: [182, 0, 261, 998]
+source: null
+timestamp: 2019-03-14-215507
+top_slice: 60
+tracking_seach_radius: 50
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 600
+noise_size: 3
+notes: Reduced ROI on bottom. probably ready for strain calc.
+percentile: 50
+roi: [182, 0, 261, 998]
+source: null
+timestamp: 2019-03-14-215507
+top_slice: 60
+tracking_seach_radius: 55
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 600
+noise_size: 3
+notes: Reduced ROI on bottom. probably ready for strain calc.
+percentile: 50
+roi: [182, 0, 261, 998]
+source: null
+timestamp: 2019-03-14-215507
+top_slice: 60
+tracking_seach_radius: 57
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 600
+noise_size: 3
+notes: Reduced ROI on bottom. probably ready for strain calc.
+percentile: 50
+roi: [182, 0, 261, 998]
+source: null
+timestamp: 2019-03-14-215507
+top_slice: 60
+tracking_seach_radius: 60
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 600
+noise_size: 3
+notes: Reduced ROI on bottom a bit more
+percentile: 50
+roi: [182, 0, 260, 984]
+source: null
+timestamp: 2019-03-15-182701
+top_slice: 60
+tracking_seach_radius: 60
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 600
+noise_size: 3
+notes: Reduced ROI on bottom a bit more
+percentile: 50
+roi: [182, 0, 260, 984]
+source: null
+timestamp: 2019-03-15-182701
+top_slice: 60
+tracking_seach_radius: 60
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 600
+noise_size: 3
+notes: Reduced ROI on bottom a bit more
+percentile: 50
+roi: [182, 0, 260, 984]
+source: null
+timestamp: 2019-03-15-182701
+top_slice: 60
+tracking_seach_radius: 58
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 600
+noise_size: 3
+notes: Reduced ROI on bottom a bit more
+percentile: 50
+roi: [182, 0, 260, 984]
+source: null
+timestamp: 2019-03-15-182701
+top_slice: 60
+tracking_seach_radius: 55
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 600
+noise_size: 3
+notes: Reduced ROI on bottom a bit more
+percentile: 50
+roi: [182, 0, 260, 984]
+source: null
+timestamp: 2019-03-15-182701
+top_slice: 60
+tracking_seach_radius: 45
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 600
+noise_size: 3
+notes: Reduced ROI on bottom a bit more
+percentile: 50
+roi: [182, 0, 260, 984]
+source: null
+timestamp: 2019-03-15-182701
+top_slice: 60
+tracking_seach_radius: 50
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 600
+noise_size: 3
+notes: Reduced ROI on bottom a bit more
+percentile: 50
+roi: [182, 0, 260, 984]
+source: null
+timestamp: 2019-03-15-182701
+top_slice: 60
+tracking_seach_radius: 50
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 600
+noise_size: 3
+notes: Reduced bottom ROI yet again.
+percentile: 50
+roi: [182, 0, 261, 930]
+source: null
+timestamp: 2019-03-15-193710
+top_slice: 60
+tracking_seach_radius: 50
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 600
+noise_size: 3
+notes: Reduced bottom ROI yet again.
+percentile: 50
+roi: [182, 0, 261, 930]
+source: null
+timestamp: 2019-03-15-193710
+top_slice: 60
+tracking_seach_radius: 52
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 600
+noise_size: 3
+notes: Reduced bottom ROI yet again.
+percentile: 50
+roi: [182, 0, 261, 930]
+source: null
+timestamp: 2019-03-15-193710
+top_slice: 60
+tracking_seach_radius: 55
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 600
+noise_size: 3
+notes: Reduced bottom ROI yet again.
+percentile: 50
+roi: [182, 0, 261, 930]
+source: null
+timestamp: 2019-03-15-193710
+top_slice: 60
+tracking_seach_radius: 60
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 600
+noise_size: 3
+notes: Reduced bottom ROI yet again.
+percentile: 50
+roi: [182, 0, 261, 930]
+source: null
+timestamp: 2019-03-15-193710
+top_slice: 60
+tracking_seach_radius: 100
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 600
+noise_size: 3
+notes: Reduced bottom ROI yet again.
+percentile: 50
+roi: [182, 0, 261, 930]
+source: null
+timestamp: 2019-03-15-193710
+top_slice: 60
+tracking_seach_radius: 80
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 600
+noise_size: 3
+notes: Reduced bottom ROI yet again.
+percentile: 50
+roi: [182, 0, 261, 930]
+source: null
+timestamp: 2019-03-15-193710
+top_slice: 60
+tracking_seach_radius: 70
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 600
+noise_size: 3
+notes: Reduced bottom ROI yet again.
+percentile: 50
+roi: [182, 0, 261, 930]
+source: null
+timestamp: 2019-03-15-193710
+top_slice: 60
+tracking_seach_radius: 75
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 600
+noise_size: 3
+notes: Super high link radius
+percentile: 50
+roi: [182, 0, 261, 930]
+source: null
+timestamp: 2019-03-15-194255
+top_slice: 60
+tracking_seach_radius: 75
+trackpy_version: 0.4.1+35.g10f756b

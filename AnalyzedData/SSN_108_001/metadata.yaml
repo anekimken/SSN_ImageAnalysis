@@ -1,6 +1,6 @@
 ---
 Experiment_id: SSN_108_001
-analysis_status: Testing parameters
+analysis_status: Strain calculated
 bleach_time: 2018-11-27 02:45:00
 cultivation_temp: 20
 device_ID: Y4P7-4
@@ -31,7 +31,7 @@ slice_width_pix: 600
 stack_height: 45
 timestamp: 2018-11-30 14:00:08
 total_images: 495
-trial_rating: No rating given
+trial_rating: ''
 user: anekimke@stanford.edu
 vulva_orientation: West
 worm_life_stage: YA

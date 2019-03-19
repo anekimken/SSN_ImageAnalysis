@@ -228,3 +228,33 @@ timestamp: 2019-03-11-044357
 top_slice: 67
 tracking_seach_radius: 40
 trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [25, 15, 15]
+last_timepoint: 8
+minmass: 500
+noise_size: 3
+notes: Increased minmass
+percentile: 50
+roi: [396, 66, 558, 1179]
+source: null
+timestamp: 2019-03-12-191637
+top_slice: 67
+tracking_seach_radius: 40
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [25, 15, 15]
+last_timepoint: 5
+minmass: 500
+noise_size: 3
+notes: Decreased final timepoint, probably ready for strain calc.
+percentile: 50
+roi: [396, 66, 558, 1179]
+source: null
+timestamp: 2019-03-13-192020
+top_slice: 67
+tracking_seach_radius: 40
+trackpy_version: 0.4.1+35.g10f756b

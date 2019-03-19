@@ -3,15 +3,15 @@ diameter: !!python/tuple
 - 25
 - 15
 - 15
-minmass: 420
+minmass: 500
 noise_size: 3
 percentile: 50
 source: null
-timestamp: 2019-03-11-044357
+timestamp: 2019-03-13-192020
 trackpy_version: 0.4.1+35.g10f756b
 bottom_slice: 0
-last_timepoint: 8
-notes: Increased minmass
+last_timepoint: 5
+notes: Decreased final timepoint, probably ready for strain calc.
 roi:
 - 396
 - 66
