@@ -7,15 +7,15 @@ minmass: 600
 noise_size: 3
 percentile: 50
 source: null
-timestamp: 2019-03-11-050324
+timestamp: 2019-03-13-193113
 trackpy_version: 0.4.1+35.g10f756b
 bottom_slice: 0
-last_timepoint: 11
-notes: Added ROI and increased minmass
+last_timepoint: 10
+notes: Reduced ROI, left out last timepoint
 roi:
 - 227
 - 0
-- 321
+- 295
 - 1070
 top_slice: 59
 tracking_seach_radius: 20

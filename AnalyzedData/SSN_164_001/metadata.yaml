@@ -1,6 +1,6 @@
 ---
 Experiment_id: SSN_164_001
-analysis_status: Testing parameters
+analysis_status: Failed - too much movement
 bleach_time: 2019-02-10 10:00:00
 cultivation_temp: 20
 device_ID: Y4P7-3
@@ -31,7 +31,7 @@ slice_width_pix: 600
 stack_height: 59
 timestamp: 2019-02-13 14:35:24
 total_images: 649
-trial_rating: No rating given
+trial_rating: "\u2B50\uFE0F\u2B50\uFE0F\u2B50\uFE0F"
 user: anekimke@stanford.edu
 vulva_orientation: East
 worm_life_stage: YA

@@ -7,15 +7,15 @@ minmass: 200
 noise_size: 3
 percentile: 25
 source: null
-timestamp: 2019-03-11-044833
+timestamp: 2019-03-12-192115
 trackpy_version: 0.4.1+35.g10f756b
 bottom_slice: 0
 last_timepoint: 3
-notes: Limited to first three stacks, needs trimming
+notes: Shrunk ROI
 roi:
-- 166
-- 47
-- 328
-- 1136
+- 190
+- 36
+- 287
+- 1068
 top_slice: 44
 tracking_seach_radius: 40

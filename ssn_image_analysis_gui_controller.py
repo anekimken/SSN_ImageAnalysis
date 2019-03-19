@@ -13,6 +13,7 @@ import pandas as pd
 from scipy import spatial
 import glob
 import yaml
+import pims
 import matplotlib.pyplot as plt
 import fast_histogram
 from pandastable import TableModel
@@ -242,6 +243,42 @@ class StrainGUIController:
             self.gui.create_bf_frame()
             self.gui.notebook.pack(expand=1, fill=tk.BOTH)
 
+            self.bf_image = pims.open(str(self.trial.brightfield_file))
+            bf_image_array = np.asarray(self.bf_image)
+            self.bf_image_array = bf_image_array.squeeze()
+            self.gui.bf_image_frame.ax.imshow(self.bf_image_array)
+            self.gui.bf_image_frame.ax.axis('off')
+            self.gui.bf_image_frame.plot_canvas.draw()
+
+            vulva_dir = self.trial.metadata['vulva_orientation']
+            self.gui.bf_image_frame.vulva_orientation.config(
+                    text=('Worm vulva oriented ' + vulva_dir))
+            trn_name = self.trial.metadata['neuron']
+            self.gui.bf_image_frame.neuron_label.config(
+                    text=(trn_name + ' stimulated in this experiment'))
+
+            if trn_name == 'AVM' or trn_name == 'PVM':
+                self.actuation_side = vulva_dir
+            else:
+                if trn_name == 'ALM' and vulva_dir == 'East':
+                    self.actuation_side = 'West'
+                elif trn_name == 'ALM' and vulva_dir == 'West':
+                    self.actuation_side = 'East'
+            self.gui.bf_image_frame.actuator_location_label.config(
+                    text=('Used actuator to the ' + self.actuation_side))
+
+            # bindings for Brightfield image analysis frame
+            self.gui.bf_image_frame.plot_canvas._tkcanvas.bind(
+                    "<ButtonPress-1>", self.on_button_press)
+            self.gui.bf_image_frame.plot_canvas._tkcanvas.bind(
+                    "<B1-Motion>", self.on_move_press)
+            self.gui.bf_image_frame.plot_canvas._tkcanvas.bind(
+                    "<ButtonRelease-1>", self.on_button_release)
+            self.gui.bf_image_frame.plot_canvas._tkcanvas.bind(
+                    "<Enter>", self._bound_to_mousewheel)
+            self.gui.bf_image_frame.plot_canvas._tkcanvas.bind(
+                    "<Leave>", self._unbound_to_mousewheel)
+
         finish_time = time.time()
         print('Loaded file in ' + str(round(finish_time - start_time)) +
               ' seconds.')
@@ -378,6 +415,7 @@ class StrainGUIController:
                 analysis_frame.linking_radius_selector.get())
         last_timepoint = int(
                 analysis_frame.last_time_selector.get())
+        print(last_timepoint)
 
         self.trial.link_mitos(tracking_seach_radius=tracking_seach_radius,
                               last_timepoint=last_timepoint)
@@ -816,15 +854,25 @@ class StrainGUIController:
             analysis_frame.plot_canvas.draw()
 
     def on_button_press(self, event=None):
-        analysis_frame = self.gui.analyze_trial_frame
-        canvas = analysis_frame.plot_canvas.get_tk_widget()
+        canvas = event.widget  # analysis_frame.plot_canvas.get_tk_widget()
         init_size = 100
         cur_x = canvas.canvasx(event.x)
         cur_y = canvas.canvasy(event.y)
-        self.roi = [cur_x,
-                    cur_y,
-                    cur_x + init_size,
-                    cur_y + init_size]
+
+        nb = self.gui.notebook
+        tab_index = nb.index(nb.select())
+        if tab_index == 1:
+            analysis_frame = self.gui.analyze_trial_frame
+            self.roi = [cur_x,
+                        cur_y,
+                        cur_x + init_size,
+                        cur_y + init_size]
+        elif tab_index == 2:
+            analysis_frame = self.gui.bf_image_frame
+            self.actuator_bounds = [cur_x,
+                                    cur_y,
+                                    cur_x + init_size,
+                                    cur_y + init_size]
 
         # create rectangle if not yet existing
         if analysis_frame.rect is None:
@@ -858,8 +906,15 @@ class StrainGUIController:
         analysis_frame.last_coords = (cur_x, cur_y)
 
     def on_move_press(self, event=None):
-        analysis_frame = self.gui.analyze_trial_frame
-        canvas = analysis_frame.plot_canvas.get_tk_widget()
+#        analysis_frame = self.gui.analyze_trial_frame
+#        canvas = analysis_frame.plot_canvas.get_tk_widget()
+        nb = self.gui.notebook
+        tab_index = nb.index(nb.select())
+        if tab_index == 1:
+            analysis_frame = self.gui.analyze_trial_frame
+        elif tab_index == 2:
+            analysis_frame = self.gui.bf_image_frame
+        canvas = event.widget  # analysis_frame.plot_canvas.get_tk_widget()
         cur_x = canvas.canvasx(event.x)
         cur_y = canvas.canvasy(event.y)
 
@@ -888,10 +943,16 @@ class StrainGUIController:
                                sum(opposite_corner_coords[0::2]) / 2,
                                sum(opposite_corner_coords[1::2]) / 2]
             canvas.coords(analysis_frame.rect, new_rect_coords)
-            self.roi = new_rect_coords
+            if tab_index == 1:
+                self.roi = new_rect_coords
+            elif tab_index == 2:
+                self.actuator_bounds = new_rect_coords
+#            self.roi = new_rect_coords
 
     def on_button_release(self, event=None):
         # limit ROI to values that make sense
+        nb = self.gui.notebook
+        tab_index = nb.index(nb.select())
         for i in range(len(self.roi)):
             if i % 2 == 0:
                 # x value
@@ -899,55 +960,94 @@ class StrainGUIController:
             else:
                 # y value
                 max_val = self.trial.image_array.shape[2]
-            self.roi[i] = np.clip(self.roi[i], 0, max_val)
+            if tab_index == 1:
+                self.roi[i] = np.clip(self.roi[i], 0, max_val)
 
-        # make sure lower values are listed first
-        xmin = int(min([self.roi[0], self.roi[2]]))
-        xmax = int(max([self.roi[0], self.roi[2]]))
-        ymin = int(min([self.roi[1], self.roi[3]]))
-        ymax = int(max([self.roi[1], self.roi[3]]))
-        self.roi = [xmin, ymin, xmax, ymax]
+                # make sure lower values are listed first
+                xmin = int(min([self.roi[0], self.roi[2]]))
+                xmax = int(max([self.roi[0], self.roi[2]]))
+                ymin = int(min([self.roi[1], self.roi[3]]))
+                ymax = int(max([self.roi[1], self.roi[3]]))
+                self.roi = [xmin, ymin, xmax, ymax]
+            elif tab_index == 2:
+                self.actuator_bounds[i] = np.clip(
+                        self.actuator_bounds[i], 0, max_val)
 
-        print('Selected ROI: ', self.roi)
+                # make sure lower values are listed first
+                xmin = int(min([self.actuator_bounds[0],
+                                self.actuator_bounds[2]]))
+                xmax = int(max([self.actuator_bounds[0],
+                                self.actuator_bounds[2]]))
+                ymin = int(min([self.actuator_bounds[1],
+                                self.actuator_bounds[3]]))
+                ymax = int(max([self.actuator_bounds[1],
+                                self.actuator_bounds[3]]))
+                self.actuator_bounds = [xmin, ymin, xmax, ymax]
+
+        if tab_index == 1:
+            print('Selected ROI: ', self.roi)
+        elif tab_index == 2:
+            print('Selected actuator bounds: ', self.actuator_bounds)
 
     def mouseEnter(self, event):
-        analysis_frame = self.gui.analyze_trial_frame
-        canvas = analysis_frame.plot_canvas.get_tk_widget()
+        nb = self.gui.notebook
+        tab_index = nb.index(nb.select())
+        if tab_index == 1:
+            analysis_frame = self.gui.analyze_trial_frame
+        elif tab_index == 2:
+            analysis_frame = self.gui.bf_image_frame
+        canvas = event.widget  # analysis_frame.plot_canvas.get_tk_widget()
         canvas.itemconfig(tk.CURRENT, fill="green")
         analysis_frame.selected_item = tk.CURRENT
 
     def mouseLeave(self, event):
-        analysis_frame = self.gui.analyze_trial_frame
-        canvas = analysis_frame.plot_canvas.get_tk_widget()
+        nb = self.gui.notebook
+        tab_index = nb.index(nb.select())
+        if tab_index == 1:
+            analysis_frame = self.gui.analyze_trial_frame
+        elif tab_index == 2:
+            analysis_frame = self.gui.bf_image_frame
+        canvas = event.widget  # analysis_frame.plot_canvas.get_tk_widget()
         canvas.itemconfig(tk.CURRENT, fill="red")
         analysis_frame.selected_item = None
 
     def clear_roi(self, event=None):
-        analysis_frame = self.gui.analyze_trial_frame
-        canvas = analysis_frame.plot_canvas.get_tk_widget()
+        nb = self.gui.notebook
+        tab_index = nb.index(nb.select())
+        if tab_index == 1:
+            analysis_frame = self.gui.analyze_trial_frame
+        elif tab_index == 2:
+            analysis_frame = self.gui.bf_image_frame
+        canvas = event.widget  # analysis_frame.plot_canvas.get_tk_widget()
         canvas.delete('corner')
         canvas.delete(analysis_frame.rect)
         analysis_frame.rect = None
         analysis_frame.roi_corners = [None, None, None, None]
         analysis_frame.roi = [None, None, None, None]
-        self.roi = [0,
-                    0,
-                    self.trial.image_array.shape[3],
-                    self.trial.image_array.shape[2]]
+        if tab_index == 1:
+            self.roi = [0,
+                        0,
+                        self.trial.image_array.shape[3],
+                        self.trial.image_array.shape[2]]
 
-        print('Selected ROI: ', self.roi)
+            print('Selected ROI: ', self.roi)
+        elif tab_index == 2:
+            self.actuator_bounds = None
 
     def _bound_to_mousewheel(self, event):
-        self.gui.analyze_trial_frame.plot_canvas.get_tk_widget().bind_all(
-                "<MouseWheel>", self._on_mousewheel)
+        event.widget.bind_all("<MouseWheel>", self._on_mousewheel)
+#        self.gui.analyze_trial_frame.plot_canvas.get_tk_widget().bind_all(
+#                "<MouseWheel>", self._on_mousewheel)
 
     def _unbound_to_mousewheel(self, event):
-        self.gui.analyze_trial_frame.plot_canvas.get_tk_widget().unbind_all(
-                "<MouseWheel>")
+        event.widget.unbind_all("<MouseWheel>")
+#        self.gui.analyze_trial_frame.plot_canvas.get_tk_widget().unbind_all(
+#                "<MouseWheel>")
 
     def _on_mousewheel(self, event):
-        self.gui.analyze_trial_frame.plot_canvas.get_tk_widget().yview_scroll(
-                -1*(event.delta), 'units')
+        event.widget.yview_scroll(-1*(event.delta), 'units')
+#        self.gui.analyze_trial_frame.plot_canvas.get_tk_widget().yview_scroll(
+#                -1*(event.delta), 'units')
 
     def get_analysis_progress(self, event=None):
         """Gets the analysis status of all trials and plots their status"""

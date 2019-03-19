@@ -113,3 +113,34 @@ timestamp: 2019-03-11-044006
 top_slice: 58
 tracking_seach_radius: 30
 trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [15, 15, 15]
+last_timepoint: 7
+minmass: 235
+noise_size: 3
+notes: Shrunk ROI on the left
+percentile: 50
+roi: [384, 76, 453, 1052]
+source: null
+timestamp: 2019-03-12-192155
+top_slice: 58
+tracking_seach_radius: 30
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [15, 15, 15]
+last_timepoint: 7
+minmass: 230
+noise_size: 3
+notes: Moved ROI back left a bit and reduced minmass a bit. working for mito at y=576
+  in frame 4
+percentile: 50
+roi: [376, 72, 453, 1052]
+source: null
+timestamp: 2019-03-13-192429
+top_slice: 58
+tracking_seach_radius: 30
+trackpy_version: 0.4.1+35.g10f756b

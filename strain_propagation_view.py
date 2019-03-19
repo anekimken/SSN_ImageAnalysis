@@ -112,6 +112,7 @@ class FileLoadFrame(tk.Frame):
         self.update_file_tree()
 
     def update_file_tree(self):
+        # TODO: Add bf image analysis status to treeg
         # now, we load all the file names into a Treeview for user selection
         data_location = '/Users/adam/Documents/SenseOfTouchResearch/SSN_data/*'
         queue_location = ('/Users/adam/Documents/SenseOfTouchResearch/'
@@ -121,7 +122,7 @@ class FileLoadFrame(tk.Frame):
         experiment_days = glob.iglob(data_location)
 
         self.file_tree = tk.ttk.Treeview(self, height=37,
-                                         columns=("status", "queue", "rating"))
+                                         columns=("status", "rating", "queue"))
         self.file_tree.heading("status", text="Analysis Status")
         self.file_tree.heading("queue", text="Queue status")
         self.file_tree.heading("rating",
@@ -538,40 +539,33 @@ class AnalyzeTrialFrame(AnalyzeImageFrame):
         self.max_pixel_disp_label.pack(side=tk.LEFT)
 
 
-class BrightfieldImageFrame(tk.Frame):
+class BrightfieldImageFrame(AnalyzeImageFrame):
     def __init__(self, parent, screen_dpi, root):
-        tk.Frame.__init__(self, parent)
-        self.parent = parent
-        self.root = root
+        AnalyzeImageFrame.__init__(self,  parent, screen_dpi, root)
 
-        # Variables for drawing ROI
-        self.rect = None
-        self.drag_btn_size = 5  # radius of circle for dragging ROI corner
-        self.roi_corners = [None, None, None, None]
-        self.roi = [None, None, None, None]
+        info_frame_row = 0
 
-        # get size for making figure
-        notebook_height = self.parent.winfo_height() - 100
-        self.notebook_height_in = notebook_height / screen_dpi
+        # Show notes from metadata
+        self.vulva_orientation = ttk.Label(
+                self.param_frame,
+                text='Vulva oriented')
+        self.vulva_orientation.grid(row=info_frame_row, column=3)
+        info_frame_row += 1
 
-        # Create a figure and a canvas for showing images
-        self.fig = mpl.figure.Figure(figsize=(600 / screen_dpi,
-                                              1200 / screen_dpi))
-        self.ax = self.fig.add_axes([0, 0, 1, 1])
-        self.plot_canvas = FigureCanvasTkAgg(self.fig, self)
-        self.plot_canvas.draw()
-        self.plot_canvas.get_tk_widget().grid(sticky=tk.W + tk.N + tk.S,
-                                              row=0,
-                                              column=0,
-                                              rowspan=3)
+        self.neuron_label = ttk.Label(
+                self.param_frame,
+                text='Neuron')
+        self.neuron_label.grid(row=info_frame_row, column=3)
+        info_frame_row += 2
 
-        self.scrollbar = tk.Scrollbar(
-                self, command=self.plot_canvas.get_tk_widget().yview)
-        self.scrollbar.grid(row=0, column=1, sticky=tk.NE + tk.SE)
+        self.actuator_location_label = ttk.Label(
+                self.param_frame,
+                text='I do not know yet')
+        self.actuator_location_label.grid(row=info_frame_row, column=3)
+        info_frame_row += 1
 
-        self.plot_canvas.get_tk_widget().config(
-                yscrollcommand=self.scrollbar.set,
-                yscrollincrement=5)
+        # TODO: clear actuator location button
+        # TODO: button for saving actuator location
 
 
 class AnalysisQueueFrame(tk.Frame):
@@ -756,7 +750,7 @@ class PlotResultsFrame(AnalyzeImageFrame):
         self.ax.clear()
 #        self.ax.plot(ycoords, strain)
         for i in range(len(strain)):
-            self.ax.step(ycoords[i][:-1], strain[i])
+            self.ax.step(ycoords[i], strain[i])
 
         self.plot_canvas.draw()
 

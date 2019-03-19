@@ -11,7 +11,7 @@ import pathlib
 import datetime
 import warnings
 from typing import Tuple
-
+import glob
 import numpy as np
 import pims
 import pandas as pd
@@ -125,7 +125,12 @@ class StrainPropagationTrial(object):
                 'trackpyBatchParamsHistory.yaml')
         self.unlinked_particles_file = self.analyzed_data_location.joinpath(
                 'unlinkedTrackpyBatchResults.yaml')
-        self.brightfield_file = pathlib.Path(self.filename[:-4] + '_bf.nd2')
+        data_dir = os.path.dirname(self.filename)
+        worm_id = self.experiment_id[:-4]
+        bf_filename = glob.glob(data_dir + '/' + worm_id + '*_bf.nd2')
+        if len(bf_filename) > 1:
+            warnings.warn('Found more than one brightfield image')
+        self.brightfield_file = pathlib.Path(bf_filename[0])
 
         # Create directory if necessary
         if not self.analyzed_data_location.is_dir():
@@ -324,9 +329,11 @@ class StrainPropagationTrial(object):
         save_location = self.analyzed_data_location
 
         # link the particles we found between time points
-        linked = tp.link_df(self.mitos_from_batch,
-                            search_range=tracking_seach_radius,
-                            pos_columns=['z', 'y', 'x'])
+        linked = tp.link_df(
+                self.mitos_from_batch.loc[
+                        (self.mitos_from_batch['frame'] < last_timepoint)],
+                search_range=tracking_seach_radius,
+                pos_columns=['z', 'y', 'x'])
 
         # only keep trajectories where point appears in all frames
         self.linked_mitos = tp.filter_stubs(linked, last_timepoint)
@@ -495,11 +502,16 @@ class StrainPropagationTrial(object):
                 / mito_pairs['z_rest_dist'])
         self.strain = np.empty((mito_pairs['frame'].nunique(),
                                mito_pairs['pair_id'].nunique()))
+        self.ycoords_for_strain = np.empty((mito_pairs['frame'].nunique(),
+                                            mito_pairs['pair_id'].nunique()))
         for stack in range(mito_pairs['frame'].nunique()):
             for interval in range(mito_pairs['pair_id'].nunique()):
                 self.strain[stack, interval] = mito_pairs.loc[
                         (mito_pairs['frame'] == stack) &
                         (mito_pairs['pair_id'] == interval)]['strain']
+                self.ycoords_for_strain[stack, interval] = mito_pairs.loc[
+                        (mito_pairs['frame'] == stack) &
+                        (mito_pairs['pair_id'] == interval)]['y_1']
 
         # save results
         df_to_save = mito_pairs[['frame', 'pair_id', 'pressure',
@@ -514,54 +526,6 @@ class StrainPropagationTrial(object):
                   'w') as yamlfile:
             yaml.dump(dict_to_save, yamlfile,
                       explicit_start=True, default_flow_style=False)
-
-        """
-        num_trajectories = mitos_df['particle'].nunique()
-        num_frames = mitos_df['frame'].nunique()
-        distances = np.empty([num_frames, num_trajectories - 1])
-        x_distances = np.empty([num_frames, num_trajectories - 1])
-        y_distances = np.empty([num_frames, num_trajectories - 1])
-        z_distances = np.empty([num_frames, num_trajectories - 1])
-        xz_distances = np.empty([num_frames, num_trajectories - 1])
-        dist_no_stim = np.empty([self.metadata['pressure_kPa'].count(0),
-                                 num_trajectories - 1])
-        self.ycoords_for_strain = []
-        for stack in range(num_frames):
-            # sort mitochondria in this stack by y values
-            current_stack = mitos_df.loc[mitos_df['frame'] == stack]
-            sorted_stack = current_stack.sort_values(['y'])
-            sorted_stack.reset_index(inplace=True, drop=True)
-            self.ycoords_for_strain.append(list(sorted_stack['y']))
-            for particle in range(num_trajectories - 1):
-                # calculate pairwise distances
-                mito1 = sorted_stack.loc[particle, ['x', 'y', 'z']].values
-                mito2 = sorted_stack.loc[particle + 1, ['x', 'y', 'z']].values
-                distances[stack, particle] = spatial.distance.euclidean(
-                        mito1, mito2)
-                x_distances[stack, particle] = spatial.distance.euclidean(
-                        mito1[0], mito2[0])
-                y_distances[stack, particle] = spatial.distance.euclidean(
-                        mito1[1], mito2[1])
-                z_distances[stack, particle] = spatial.distance.euclidean(
-                        mito1[2], mito2[2])
-                xz_distances[stack, particle] = spatial.distance.euclidean(
-                        mito1[0:3:2], mito2[0:3:2])
-                if self.metadata['pressure_kPa'][stack] == 0:
-                    dist_no_stim[int(stack / 2), particle] = distances[
-                            stack, particle]
-
-        # calculate change in distance over time
-        avg_dist_no_pressure = dist_no_stim.mean(axis=0)
-        self.strain = (distances - avg_dist_no_pressure)/avg_dist_no_pressure
-        strain_list = self.strain.tolist()
-        results_dict = {'strain': strain_list,
-                        'ycoords': self.ycoords_for_strain}
-        # save results
-        with open(self.analyzed_data_location.joinpath('strain.yaml'),
-                  'w') as yamlfile:
-            yaml.dump(results_dict, yamlfile,
-                      explicit_start=True, default_flow_style=False)
-        """
 
     def save_diag_figs(self,
                        image_array: np.ndarray,
@@ -813,7 +777,7 @@ class StrainPropagationTrial(object):
         time_str = combined_metadata['Timestamp']
         bleach_date = combined_metadata['Bleach Date']
         bleach_time = combined_metadata['Bleach Time']
-        if 'trial_rating' not in combined_metadata:
+        if 'Trial_rating' not in combined_metadata:
             combined_metadata['Trial rating'] = 'No rating given'
 
         metadata_dict = {
