@@ -130,7 +130,10 @@ class StrainPropagationTrial(object):
         bf_filename = glob.glob(data_dir + '/' + worm_id + '*_bf.nd2')
         if len(bf_filename) > 1:
             warnings.warn('Found more than one brightfield image')
-        self.brightfield_file = pathlib.Path(bf_filename[0])
+        try:
+            self.brightfield_file = pathlib.Path(bf_filename[0])
+        except IndexError:
+            pass
 
         # Create directory if necessary
         if not self.analyzed_data_location.is_dir():

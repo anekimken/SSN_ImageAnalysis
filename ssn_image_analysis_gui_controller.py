@@ -49,11 +49,11 @@ class StrainGUIController:
 
             # Analysis frame
             self.gui.analyze_trial_frame.plot_canvas._tkcanvas.bind(
-                    "<ButtonPress-1>", self.on_button_press)
+                    "<ButtonPress-1>", self.on_click_image)
             self.gui.analyze_trial_frame.plot_canvas._tkcanvas.bind(
-                    "<B1-Motion>", self.on_move_press)
+                    "<B1-Motion>", self.on_drag_roi)
             self.gui.analyze_trial_frame.plot_canvas._tkcanvas.bind(
-                    "<ButtonRelease-1>", self.on_button_release)
+                    "<ButtonRelease-1>", self.on_click_image_release)
             self.gui.analyze_trial_frame.plot_canvas._tkcanvas.bind(
                     "<Enter>", self._bound_to_mousewheel)
             self.gui.analyze_trial_frame.plot_canvas._tkcanvas.bind(
@@ -113,8 +113,6 @@ class StrainGUIController:
                     "<ButtonRelease-1>", func=self.plot_existing_strain)
             self.gui.plot_results_frame.plot_xz_disp_btn.bind(
                     "<ButtonRelease-1>", func=self.plot_xz_displacements)
-
-            # TODO: write callback for plot strain one trial button
 
     def run(self):
         self.root.title("SSN Image Analysis")
@@ -268,12 +266,6 @@ class StrainGUIController:
                     text=('Used actuator to the ' + self.actuation_side))
 
             # bindings for Brightfield image analysis frame
-            self.gui.bf_image_frame.plot_canvas._tkcanvas.bind(
-                    "<ButtonPress-1>", self.on_button_press)
-            self.gui.bf_image_frame.plot_canvas._tkcanvas.bind(
-                    "<B1-Motion>", self.on_move_press)
-            self.gui.bf_image_frame.plot_canvas._tkcanvas.bind(
-                    "<ButtonRelease-1>", self.on_button_release)
             self.gui.bf_image_frame.plot_canvas._tkcanvas.bind(
                     "<Enter>", self._bound_to_mousewheel)
             self.gui.bf_image_frame.plot_canvas._tkcanvas.bind(
@@ -853,7 +845,7 @@ class StrainGUIController:
             analysis_frame.ax.imshow(self.saved_photo)
             analysis_frame.plot_canvas.draw()
 
-    def on_button_press(self, event=None):
+    def on_click_image(self, event=None):
         canvas = event.widget  # analysis_frame.plot_canvas.get_tk_widget()
         init_size = 100
         cur_x = canvas.canvasx(event.x)
@@ -905,7 +897,7 @@ class StrainGUIController:
 
         analysis_frame.last_coords = (cur_x, cur_y)
 
-    def on_move_press(self, event=None):
+    def on_drag_roi(self, event=None):
 #        analysis_frame = self.gui.analyze_trial_frame
 #        canvas = analysis_frame.plot_canvas.get_tk_widget()
         nb = self.gui.notebook
@@ -927,8 +919,10 @@ class StrainGUIController:
             for i in range(len(analysis_frame.roi_corners)):
                 corner_coords = canvas.coords(
                         analysis_frame.roi_corners[i])
+                # Find out which corner is moving
                 compare_coords = [x == y for (x, y) in zip(
                         current_item_coords, corner_coords)]
+                # Only keep old coords if we're looking at opposite corner
                 new_coords = [new_crd if move_bool else old_crd
                               for old_crd, new_crd, move_bool
                               in zip(corner_coords,
@@ -949,7 +943,7 @@ class StrainGUIController:
                 self.actuator_bounds = new_rect_coords
 #            self.roi = new_rect_coords
 
-    def on_button_release(self, event=None):
+    def on_click_image_release(self, event=None):
         # limit ROI to values that make sense
         nb = self.gui.notebook
         tab_index = nb.index(nb.select())
@@ -1021,10 +1015,11 @@ class StrainGUIController:
         canvas = event.widget  # analysis_frame.plot_canvas.get_tk_widget()
         canvas.delete('corner')
         canvas.delete(analysis_frame.rect)
-        analysis_frame.rect = None
-        analysis_frame.roi_corners = [None, None, None, None]
-        analysis_frame.roi = [None, None, None, None]
         if tab_index == 1:
+            analysis_frame.rect = None
+            analysis_frame.roi_corners = [None, None, None, None]
+            analysis_frame.roi = [None, None, None, None]
+
             self.roi = [0,
                         0,
                         self.trial.image_array.shape[3],
@@ -1036,18 +1031,12 @@ class StrainGUIController:
 
     def _bound_to_mousewheel(self, event):
         event.widget.bind_all("<MouseWheel>", self._on_mousewheel)
-#        self.gui.analyze_trial_frame.plot_canvas.get_tk_widget().bind_all(
-#                "<MouseWheel>", self._on_mousewheel)
 
     def _unbound_to_mousewheel(self, event):
         event.widget.unbind_all("<MouseWheel>")
-#        self.gui.analyze_trial_frame.plot_canvas.get_tk_widget().unbind_all(
-#                "<MouseWheel>")
 
     def _on_mousewheel(self, event):
         event.widget.yview_scroll(-1*(event.delta), 'units')
-#        self.gui.analyze_trial_frame.plot_canvas.get_tk_widget().yview_scroll(
-#                -1*(event.delta), 'units')
 
     def get_analysis_progress(self, event=None):
         """Gets the analysis status of all trials and plots their status"""
