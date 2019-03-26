@@ -126,8 +126,10 @@ class StrainPropagationTrial(object):
         self.unlinked_particles_file = self.analyzed_data_location.joinpath(
                 'unlinkedTrackpyBatchResults.yaml')
         data_dir = os.path.dirname(self.filename)
-        worm_id = self.experiment_id[:-4]
-        bf_filename = glob.glob(data_dir + '/' + worm_id + '*_bf.nd2')
+#        worm_id = self.experiment_id[:-4]
+#        bf_filename = glob.glob(data_dir + '/' + worm_id + '*_bf.nd2')
+        bf_filename = glob.glob(data_dir + '/' +
+                                self.experiment_id + '*_bf.nd2')
         if len(bf_filename) > 1:
             warnings.warn('Found more than one brightfield image')
         try:

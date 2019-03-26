@@ -270,6 +270,8 @@ class StrainGUIController:
                     "<Enter>", self._bound_to_mousewheel)
             self.gui.bf_image_frame.plot_canvas._tkcanvas.bind(
                     "<Leave>", self._unbound_to_mousewheel)
+            self.gui.bf_image_frame.save_actuator_loc_btn.bind(
+                    "<ButtonRelease-1>", func=self.save_actuator_bounds)
 
         finish_time = time.time()
         print('Loaded file in ' + str(round(finish_time - start_time)) +
@@ -574,6 +576,17 @@ class StrainGUIController:
         self.gui.file_load_frame.update_file_tree()
         self.gui.root.update()
 
+    def save_actuator_bounds(self, event=None):
+        # Save actuator bounds to metadata file for later use
+        bf_frame = self.gui.bf_image_frame
+        self.trial.metadata['actuator_corners'] = bf_frame.actuator_bounds
+        print(type(bf_frame.actuator_center))
+        self.trial.metadata['actuator_center'] = [
+                float(bf_frame.actuator_center[0]),
+                float(bf_frame.actuator_center[1])]
+        self.trial.metadata['actuator_thickness'] = bf_frame.actuator_thickness
+        self.trial.write_metadata_to_yaml(self.trial.metadata)
+
     def plot_existing_strain(self, event=None):
         """"Plots strain of an existing trial"""
         plot_tab = self.gui.plot_results_frame
@@ -622,7 +635,8 @@ class StrainGUIController:
         else:
             metadata = self.trial.metadata
 
-        self.trial.batch_data_file = data_location + '/trackpyBatchResults.yaml'
+        self.trial.batch_data_file = (data_location +
+                                      '/trackpyBatchResults.yaml')
         with open(self.trial.batch_data_file, 'r') as yamlfile:
                 linked_mitos_dict = yaml.load(yamlfile)
                 self.trial.linked_mitos = pd.DataFrame.from_dict(

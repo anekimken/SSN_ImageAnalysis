@@ -1,5 +1,14 @@
 ---
 Experiment_id: SSN_164_001
+actuator_center:
+- 249.0
+- 594.5
+actuator_corners:
+- 252.0
+- 500.0
+- 246.0
+- 689.0
+actuator_thickness: 25.124402563815856
 analysis_status: Failed - too much movement
 bleach_time: 2019-02-10 10:00:00
 cultivation_temp: 20
