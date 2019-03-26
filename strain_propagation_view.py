@@ -18,6 +18,7 @@ import warnings
 import pandas as pd
 import scipy
 import math
+import pathlib
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from pandastable import Table
 
@@ -123,8 +124,10 @@ class FileLoadFrame(tk.Frame):
         experiment_days = glob.iglob(data_location)
 
         self.file_tree = tk.ttk.Treeview(self, height=37,
-                                         columns=("status", "rating", "queue"))
+                                         columns=("status", "bf_status",
+                                                  "rating", "queue"))
         self.file_tree.heading("status", text="Analysis Status")
+        self.file_tree.heading("bf_status", text="Brightfield Image Status")
         self.file_tree.heading("queue", text="Queue status")
         self.file_tree.heading("rating",
                                text="Rating to prioritize analysis")
@@ -152,10 +155,14 @@ class FileLoadFrame(tk.Frame):
                     trial_parts = trial.split('/')
                     iid = self.file_tree.insert(day_item, 'end',
                                                 text=trial_parts[-1])
+                    experiment_id = trial[-15:-4]
                     metadata_file_path = ('/Users/adam/Documents/'
                                           'SenseOfTouchResearch/'
                                           'SSN_ImageAnalysis/AnalyzedData/' +
-                                          trial[-15:-4] + '/metadata.yaml')
+                                          experiment_id + '/metadata.yaml')
+                    bf_filename = glob.glob(day + '/' +
+                                            experiment_id + '*_bf.nd2')
+
                     try:
                         metadata = self.load_metadata_from_yaml(
                                 metadata_file_path)
@@ -167,6 +174,15 @@ class FileLoadFrame(tk.Frame):
                             rating = metadata['trial_rating']
                         else:
                             rating = None
+                        if len(bf_filename) > 0:
+                            if pathlib.Path(bf_filename[0]).is_file():
+                                # if we get here, there is a bf image
+                                if 'actuator_center' in metadata:
+                                    bf_status = 'done'
+                                else:
+                                    bf_status = 'needs analysis'
+                        else:
+                            bf_status = ''
                         if metadata['Experiment_id'] in self.trials_in_queue:
                             queue_status = 'In queue'
                         elif metadata[
@@ -184,7 +200,8 @@ class FileLoadFrame(tk.Frame):
                         color_tag = 'working'
                     self.file_tree.item(
                             iid,
-                            values=(analysis_status, rating, queue_status),
+                            values=(analysis_status, bf_status,
+                                    rating, queue_status),
                             tags=(trial, color_tag))
 
             except ValueError:  # we get here if dir name is not a number
@@ -546,7 +563,7 @@ class BrightfieldImageFrame(AnalyzeImageFrame):
         self.actuator_width_line = None
         self.actuator_thick_line = None
         self.actuator_bounds = None
-        self.poly_corners = [None, None, None, None]
+        self.poly_corners = [None, None, None]
         self.drag_btn_size = 5  # radius of circle for dragging ROI corner
 
         info_frame_row = 0
@@ -555,6 +572,8 @@ class BrightfieldImageFrame(AnalyzeImageFrame):
         self.clear_actuator_loc_btn = ttk.Button(self.param_frame,
                                                  text='Clear selection')
         self.clear_actuator_loc_btn.grid(row=info_frame_row, column=1)
+        self.clear_actuator_loc_btn.bind("<ButtonPress-1>",
+                                         self.clear_actuator_bound)
 
         # Show vulva orientation from metadata
         self.vulva_orientation = ttk.Label(
@@ -582,6 +601,7 @@ class BrightfieldImageFrame(AnalyzeImageFrame):
         self.actuator_location_label.grid(row=info_frame_row, column=3)
         info_frame_row += 1
 
+        # Bindings for actuator selection
         self.plot_canvas._tkcanvas.bind("<ButtonPress-1>", self.on_click_image)
         self.plot_canvas._tkcanvas.bind("<B1-Motion>", self.drag_bound_corner)
         self.plot_canvas._tkcanvas.bind("<ButtonRelease-1>",
@@ -598,12 +618,13 @@ class BrightfieldImageFrame(AnalyzeImageFrame):
 
         if self.actuator_width_line is None:
             self.actuator_bounds = init_actuator_bounds
+            self.actuator_thickness = init_width
             self.actuator_width_line = canvas.create_line(
                     self.actuator_bounds, fill='white')
             x_mean = np.mean(self.actuator_bounds[0::2])
             y_mean = np.mean(self.actuator_bounds[1::2])
             self.actuator_thick_line = canvas.create_line(
-                    [x_mean, y_mean, x_mean - init_width, y_mean],
+                    [x_mean, y_mean, x_mean - self.actuator_thickness, y_mean],
                     fill='white')
 
             self.poly_corners[0] = canvas.create_oval(
@@ -619,9 +640,9 @@ class BrightfieldImageFrame(AnalyzeImageFrame):
                         self.actuator_bounds[3] + self.drag_btn_size,
                         fill='red', tag='corner', activefill='green')
             self.poly_corners[2] = canvas.create_oval(
-                        x_mean - init_width - self.drag_btn_size,
+                        x_mean - self.actuator_thickness - self.drag_btn_size,
                         y_mean - self.drag_btn_size,
-                        x_mean - init_width + self.drag_btn_size,
+                        x_mean - self.actuator_thickness + self.drag_btn_size,
                         y_mean + self.drag_btn_size,
                         fill='red', tag='corner', activefill='green')
 
@@ -632,7 +653,7 @@ class BrightfieldImageFrame(AnalyzeImageFrame):
         cur_x = canvas.canvasx(event.x)
         cur_y = canvas.canvasy(event.y)
         thickness_line_coords = canvas.coords(self.actuator_thick_line)
-        current_actuator_thickness = scipy.spatial.distance.euclidean(
+        self.actuator_thickness = scipy.spatial.distance.euclidean(
                 thickness_line_coords[:2], thickness_line_coords[2:])
 
         if canvas.type(tk.CURRENT) == 'oval':  # if corner selected
@@ -659,7 +680,7 @@ class BrightfieldImageFrame(AnalyzeImageFrame):
                         thickness_line[2] - thickness_line[0])
                 thickness_change = motion_distance * math.cos(
                         thickness_line_angle - motion_angle)
-                current_actuator_thickness += thickness_change
+                self.actuator_thickness += thickness_change
 
             x_mean = np.mean(self.actuator_bounds[0::2])
             y_mean = np.mean(self.actuator_bounds[1::2])
@@ -667,9 +688,9 @@ class BrightfieldImageFrame(AnalyzeImageFrame):
             y_diff = self.actuator_bounds[1] - self.actuator_bounds[3]
             actuator_orientation = math.atan2(y_diff, x_diff)
             thickness_orientation = actuator_orientation - math.pi / 2
-            actuator_back_y = y_mean + current_actuator_thickness * math.sin(
+            actuator_back_y = y_mean + self.actuator_thickness * math.sin(
                     thickness_orientation)
-            actuator_back_x = x_mean + current_actuator_thickness * math.cos(
+            actuator_back_x = x_mean + self.actuator_thickness * math.cos(
                     thickness_orientation)
 
             canvas.coords(self.actuator_thick_line,
@@ -686,283 +707,27 @@ class BrightfieldImageFrame(AnalyzeImageFrame):
 
     def release_bound_corner(self, event):
         # set variable that contains current coordinates of polygon
-        # TODO: save bounds to metadata
-        print('Click released')
+        if self.actuator_bounds[3] < self.actuator_bounds[1]:
+            # rearrange to make sure point on top is listed first
+            new_order = [2, 3, 0, 1]
+            self.actuator_bounds = [self.actuator_bounds[i] for i in new_order]
+        x_mean = np.mean(self.actuator_bounds[0::2])
+        y_mean = np.mean(self.actuator_bounds[1::2])
+        self.actuator_center = [x_mean, y_mean]
+        print('Thickness:', self.actuator_thickness, '   Center:',
+              self.actuator_center)
 
-    def clear_roi(self, event=None):
+    def clear_actuator_bound(self, event=None):
         # clear roi and start over from scratch
+        canvas = self.plot_canvas.get_tk_widget()
+        canvas.delete('corner')
+        canvas.delete(self.actuator_width_line, self.actuator_thick_line)
+        self.actuator_width_line = None
+        self.actuator_thick_line = None
+        self.actuator_bounds = None
+        self.poly_corners = [None, None, None]
+
         print('cleared roi')
-
-
-'''
-    def on_click_image(self, event):
-        # create 4-sided polygon with the expected size of the actuator
-        init_width = 20
-        init_heigt = 170
-        init_size = np.array(((0, 0),
-                              (init_width, 0),
-                              (init_width, init_heigt),
-                              (0, init_heigt)))
-        canvas = event.widget
-        cur_x = canvas.canvasx(event.x)
-        cur_y = canvas.canvasy(event.y)
-        self.actuator_bounds = init_size + np.array((cur_x, cur_y))
-        print('Clicked image ', self.actuator_bounds)
-#        id = C.create_polygon(x0, y0, x1, y1, ..., option, ...)
-        if self.poly is None:
-            self.poly = canvas.create_polygon(
-                    list(map(tuple, self.actuator_bounds)),  # change datatype
-                    fill='', outline='white')
-
-            canvas.tag_bind('corner', "<Any-Enter>", self.on_mouse_enter)
-            canvas.tag_bind('corner', "<Any-Leave>", self.on_mouse_leave)
-
-            for corner in range(self.actuator_bounds.shape[0]):
-                if corner == 0:
-                    x_shift = 0
-                    y_shift = 0
-                elif corner == 1:
-                    x_shift = init_width
-                    y_shift = 0
-                elif corner == 2:
-                    x_shift = init_width
-                    y_shift = init_heigt
-                elif corner == 3:
-                    x_shift = 0
-                    y_shift = init_heigt
-                self.poly_corners[corner] = canvas.create_oval(
-                        cur_x - self.drag_btn_size + x_shift,
-                        cur_y - self.drag_btn_size + y_shift,
-                        cur_x + self.drag_btn_size + x_shift,
-                        cur_y + self.drag_btn_size + y_shift,
-                        fill='red', tag='corner')
-
-        self.last_coords = (cur_x, cur_y)
-
-    def _get_orientation(start, end):
-        #Returns the orientation of line between two points and the image
-        dx = end[0] - start[0]
-        dy = end[1] - start[1]
-        try:
-            orientation = math.atan(dy / dx)
-        except ZeroDivisionError:
-            orientation = 0
-
-        return orientation
-
-#        canvas = self.plot_canvas.get_tk_widget()
-#        center = self.actuator_bounds.mean(axis=0)
-#        dx = canvas.canvasx(event.x) - center[0]
-#        dy = canvas.canvasy(event.y) - center[1]
-#        try:
-#            return complex(dx, dy) / abs(complex(dx, dy))
-#        except ZeroDivisionError:
-#            return 0.0  # cannot determine angle
-
-    def drag_roi_corner(self, event):
-        # move corner of polygon, maintaining rectangle shape and rotation
-        canvas = event.widget
-        cur_x = canvas.canvasx(event.x)
-        cur_y = canvas.canvasy(event.y)
-        moving_corner_pos = (cur_x, cur_y)
-
-        if canvas.type(tk.CURRENT) == 'oval':  # if corner selected
-            current_item_coords = canvas.coords(tk.CURRENT)
-            new_bounds = [cur_x - self.drag_btn_size,
-                          cur_y - self.drag_btn_size,
-                          cur_x + self.drag_btn_size,
-                          cur_y + self.drag_btn_size]
-
-            # Get rectangle and drag orientation, drag distance
-            possible_orientations = []
-            for i in range(self.actuator_bounds.shape[0]):
-                possible_orientations.append(
-                        _get_orientation(self.actuator_bounds[i-1],
-                                         self.actuator_bounds[i]))
-            rect_orientation = max(possible_orientations)
-            drag_dist = scipy.spatial.distance.euclidean(
-                    moving_corner_pos, self.last_coords)
-            drag_orientation = self._get_orientation(self.last_coords,
-                                                     moving_corner_pos)
-
-            # Set position of corners
-            distance_to_corners = scipy.spatial.distance.cdist(
-                    self.actuator_bounds, [[cur_x, cur_y]])
-            opposite_corner_index = np.argmax(distance_to_corners)
-            moving_corner_index = np.argmin(distance_to_corners)
-            self.actuator_bounds[opposite_corner_index] = self.actuator_bounds[
-                    opposite_corner_index]
-            self.actuator_bounds[moving_corner_index] = moving_corner_pos
-            self.actuator_bounds[1] =
-
-            # Set position of adjacent corners
-
-            for i in range(len(self.poly_corners)):
-                corner_coords = canvas.coords(
-                        self.poly_corners[i])
-                # Figure out which corner we're repositioning
-                if corner_coords == new_bounds:  # clicked corner
-                    new_coords = new_bounds
-#                elif
-                # Figure out where to reposition this corner
-
-                compare_coords = [x == y for (x, y) in zip(
-                        current_item_coords, corner_coords)]
-                new_coords = [new_crd if move_bool else old_crd
-                              for old_crd, new_crd, move_bool
-                              in zip(corner_coords,
-                                     new_bounds,
-                                     compare_coords)]
-                if sum(compare_coords) == 0:
-                    opposite_corner_coords = new_coords
-                canvas.coords(self.roi_corners[i], new_coords)
-
-            new_rect_coords = [sum(new_bounds[0::2]) / 2,
-                               sum(new_bounds[1::2]) / 2,
-                               sum(opposite_corner_coords[0::2]) / 2,
-                               sum(opposite_corner_coords[1::2]) / 2]
-            canvas.coords(self.poly, new_rect_coords)
-            self.actuator_bounds = new_rect_coords
-        print('Dragging on image...')
-'''
-
-'''
-    def on_click_bf(self, event=None):
-        canvas = event.widget  # analysis_frame.plot_canvas.get_tk_widget()
-        init_size = 100
-        cur_x = canvas.canvasx(event.x)
-        cur_y = canvas.canvasy(event.y)
-
-        nb = self.gui.notebook
-        tab_index = nb.index(nb.select())
-        if tab_index == 1:
-            analysis_frame = self.gui.analyze_trial_frame
-            self.roi = [cur_x,
-                        cur_y,
-                        cur_x + init_size,
-                        cur_y + init_size]
-        elif tab_index == 2:
-            analysis_frame = self.gui.bf_image_frame
-            self.actuator_bounds = [cur_x,
-                                    cur_y,
-                                    cur_x + init_size,
-                                    cur_y + init_size]
-
-        # create rectangle if not yet existing
-        if analysis_frame.rect is None:
-            analysis_frame.rect = canvas.create_rectangle(
-                    cur_x, cur_y, cur_x + init_size, cur_y + init_size,
-                    fill='', outline='white')
-            for index in range(len(analysis_frame.roi_corners)):
-                if index == 0:
-                    x_shift = 0
-                    y_shift = 0
-                elif index == 1:
-                    x_shift = init_size
-                    y_shift = 0
-                elif index == 2:
-                    x_shift = init_size
-                    y_shift = init_size
-                elif index == 3:
-                    x_shift = 0
-                    y_shift = init_size
-
-                analysis_frame.roi_corners[index] = canvas.create_oval(
-                    cur_x - analysis_frame.drag_btn_size + x_shift,
-                    cur_y - analysis_frame.drag_btn_size + y_shift,
-                    cur_x + analysis_frame.drag_btn_size + x_shift,
-                    cur_y + analysis_frame.drag_btn_size + y_shift,
-                    fill='red', tag='corner')
-
-            canvas.tag_bind('corner', "<Any-Enter>", self.mouseEnter)
-            canvas.tag_bind('corner', "<Any-Leave>", self.mouseLeave)
-
-        analysis_frame.last_coords = (cur_x, cur_y)
-
-    def on_drag_actuator_loc(self, event=None):
-#        analysis_frame = self.gui.analyze_trial_frame
-#        canvas = analysis_frame.plot_canvas.get_tk_widget()
-        nb = self.gui.notebook
-        tab_index = nb.index(nb.select())
-        if tab_index == 1:
-            analysis_frame = self.gui.analyze_trial_frame
-        elif tab_index == 2:
-            analysis_frame = self.gui.bf_image_frame
-        canvas = event.widget  # analysis_frame.plot_canvas.get_tk_widget()
-        cur_x = canvas.canvasx(event.x)
-        cur_y = canvas.canvasy(event.y)
-
-        if canvas.type(tk.CURRENT) == 'oval':  # if corner selected
-            current_item_coords = canvas.coords(tk.CURRENT)
-            new_bounds = [cur_x - analysis_frame.drag_btn_size,
-                          cur_y - analysis_frame.drag_btn_size,
-                          cur_x + analysis_frame.drag_btn_size,
-                          cur_y + analysis_frame.drag_btn_size]
-            for i in range(len(analysis_frame.roi_corners)):
-                corner_coords = canvas.coords(
-                        analysis_frame.roi_corners[i])
-                compare_coords = [x == y for (x, y) in zip(
-                        current_item_coords, corner_coords)]
-                new_coords = [new_crd if move_bool else old_crd
-                              for old_crd, new_crd, move_bool
-                              in zip(corner_coords,
-                                     new_bounds,
-                                     compare_coords)]
-                if sum(compare_coords) == 0:
-                    opposite_corner_coords = new_coords
-                canvas.coords(analysis_frame.roi_corners[i], new_coords)
-
-            new_rect_coords = [sum(new_bounds[0::2]) / 2,
-                               sum(new_bounds[1::2]) / 2,
-                               sum(opposite_corner_coords[0::2]) / 2,
-                               sum(opposite_corner_coords[1::2]) / 2]
-            canvas.coords(analysis_frame.rect, new_rect_coords)
-            if tab_index == 1:
-                self.roi = new_rect_coords
-            elif tab_index == 2:
-                self.actuator_bounds = new_rect_coords
-#            self.roi = new_rect_coords
-
-    def on_click_bf_release(self, event=None):
-        # limit ROI to values that make sense
-        nb = self.gui.notebook
-        tab_index = nb.index(nb.select())
-        for i in range(len(self.roi)):
-            if i % 2 == 0:
-                # x value
-                max_val = self.trial.image_array.shape[3]
-            else:
-                # y value
-                max_val = self.trial.image_array.shape[2]
-            if tab_index == 1:
-                self.roi[i] = np.clip(self.roi[i], 0, max_val)
-
-                # make sure lower values are listed first
-                xmin = int(min([self.roi[0], self.roi[2]]))
-                xmax = int(max([self.roi[0], self.roi[2]]))
-                ymin = int(min([self.roi[1], self.roi[3]]))
-                ymax = int(max([self.roi[1], self.roi[3]]))
-                self.roi = [xmin, ymin, xmax, ymax]
-            elif tab_index == 2:
-                self.actuator_bounds[i] = np.clip(
-                        self.actuator_bounds[i], 0, max_val)
-
-                # make sure lower values are listed first
-                xmin = int(min([self.actuator_bounds[0],
-                                self.actuator_bounds[2]]))
-                xmax = int(max([self.actuator_bounds[0],
-                                self.actuator_bounds[2]]))
-                ymin = int(min([self.actuator_bounds[1],
-                                self.actuator_bounds[3]]))
-                ymax = int(max([self.actuator_bounds[1],
-                                self.actuator_bounds[3]]))
-                self.actuator_bounds = [xmin, ymin, xmax, ymax]
-
-        if tab_index == 1:
-            print('Selected ROI: ', self.roi)
-        elif tab_index == 2:
-            print('Selected actuator bounds: ', self.actuator_bounds)
-'''
 
 
 class AnalysisQueueFrame(tk.Frame):
