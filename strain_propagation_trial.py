@@ -5,7 +5,7 @@ Created on Mon Jan  7 15:24:53 2019
 
 @author: Adam Nekimken
 """
-# TODO: UPDATE DOCSTRINGS!!!!
+
 import os
 import pathlib
 import datetime
@@ -16,12 +16,9 @@ import numpy as np
 import pims
 import pandas as pd
 from nd2reader import ND2Reader
-# from scipy import stats
-from scipy import spatial
 from scipy.spatial import distance
 import yaml
 import matplotlib.pyplot as plt
-import matplotlib as mpl
 
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
@@ -40,22 +37,32 @@ class StrainPropagationTrial(object):
 
     Loads previously analyzed data, by default loads images, by default
     loads metadata from file if available. Contains functions for
-    using particle-finding algorithm from Crocker–Grier
+    using particle-finding algorithm from Crocker–Grier, manipulating metadata,
+    and calculating strain.
 
     Args:
-        filename: A string indicating where the image file is located
-        load_images: A bool indicating if images should be loaded on init
-        overwrite_metadata: A bool indicating to overwrite yaml metadata file
+        None
 
     Attributes:
         filename: A string indicating where the image file is located
         load_images: A bool indicating if images should be loaded on init
         overwrite_metadata: A bool indicating to overwrite yaml metadata file
+        STATUSES: A list of possible statuses for a trial
         experiment_id: A string identifying this particular trial
-        analyzed_data_location: A string with the location of analyzed data
-        metadata_file_path: A string with absolute path to metadata.yaml
+        analyzed_data_location: A pathlib.Path with  location of analyzed data
+        metadata_file_path: A pathlib.Path with absolute path to metadata.yaml
+        param_test_history_file: A pathlib.Path to parameter history file
+        batch_data_file: A pathlink.Path to latest results from particle find
+        batch_history_file: A pathlib.Path to parameter history file for batch
+        unlinked_particles_file: A pathlib.Path to results before linking
+        brightfield_file: A pathlib.Path to brightfield image of FOV for trial
         metadata: A dictionary containing all the metadata
-        image_array: Numpy array with image data. Can be null if not loaded
+        image_array: Numpy array with image data. Can be None if not loaded
+        mito_candidates: Dataframe with results of analyzing one timepoint
+        linked_mitos: Dataframe with results of analyzing all timepoints
+        latest_test_params: A dictionary with the last set of  parameters used
+        strain: A Numpy array containing calculated strain for the trial
+        ycoords_for_strain: A numpy array with y coordinates matching strain
 
     """
     STATUSES = ['No metadata.yaml file',
@@ -89,10 +96,6 @@ class StrainPropagationTrial(object):
                    filename: str,
                    load_images: bool = True,
                    overwrite_metadata: bool = False) -> Tuple[np.array, dict]:
-        self.filename = filename
-        self.load_images = load_images
-        self.overwrite_metadata = overwrite_metadata
-
         """Loads the data and metadata for this trial from disk.
 
         Loads the data needed for analyzing the trial. Also handles
@@ -104,11 +107,22 @@ class StrainPropagationTrial(object):
         large amount of data, so the goal here is to load as little data
         as possible.
 
+        Args:
+            filename: A string indicating where the image file is located
+            load_images: A bool indicating if images should be loaded on init
+            overwrite_metadata: A bool indicating to overwrite  metadata file
+
+
         Returns:
             image_array (np.array): Image data. Can be empty if not loaded
             metadata (dict): All the metadata
 
         """
+
+        self.filename = filename
+        self.load_images = load_images
+        self.overwrite_metadata = overwrite_metadata
+
         # Get the experiment ID from the filename and load the data
         basename = os.path.basename(self.filename)
         self.experiment_id = os.path.splitext(basename)[0]
@@ -126,8 +140,6 @@ class StrainPropagationTrial(object):
         self.unlinked_particles_file = self.analyzed_data_location.joinpath(
                 'unlinkedTrackpyBatchResults.yaml')
         data_dir = os.path.dirname(self.filename)
-#        worm_id = self.experiment_id[:-4]
-#        bf_filename = glob.glob(data_dir + '/' + worm_id + '*_bf.nd2')
         bf_filename = glob.glob(data_dir + '/' +
                                 self.experiment_id + '*_bf.nd2')
         if len(bf_filename) > 1:
@@ -162,7 +174,6 @@ class StrainPropagationTrial(object):
             self.image_array[:] = np.nan
 
         else:
-            # TODO: load images in separate thread, use stored result for now
             self.image_array, images = self._load_images_from_disk()
             # If we don't have a yaml metadata file yet, we need to get
             # some information from Google Drive and build a yaml file
@@ -190,6 +201,29 @@ class StrainPropagationTrial(object):
                         bottom_slice: int,
                         top_slice: int,
                         time_point: int) -> dict:
+        """Tests a set of particle finding parameters on one stack
+
+        Runs the particle finding algorithm on only one stack to test a set
+        of parameters. Much faster than finding particles in the whole trial.
+        Useful if one stack in the trial is messing up linking of all the
+        other stacks.
+
+        Args:
+            images_ndarray: Numpy array with all the image data
+            roi: Tuple with xmin, ymin, xmax, ymax defining region of interest
+            gaussian_width: int specifying the width of Gaussian blur kernel
+            particle_z_diameter: int for maximum particle size in z
+            particle_xy_diameter: int for maximum particle size in x and y
+            brightness_percentile: int for brightness threshold as percentile
+            min_particle_mass: int for minimum integrated mass cutoff
+            bottom_slice: int for which slice to use as bottom of the stack
+            top_slice: int for which slice to use as top of the stack
+            time_point: int for which timepoint to test parameters on
+
+
+        Returns:
+            mito_candidates: dict of info about potential mitochondria
+        """
 
         analysisParams = dict(
                 {'gaussian_width': gaussian_width,
@@ -242,7 +276,32 @@ class StrainPropagationTrial(object):
                   top_slice: int,
                   tracking_seach_radius: int,
                   last_timepoint: int,
-                  notes: str) -> dict:
+                  notes: str) -> None:
+        """Runs particle finding algorithm on entire trial.
+
+        Runs the particle finding algorithm on the whole trial. Rather than
+        returning a dict with the particles, it just saves them directly to
+        the trackpyBatchResults.yaml file in analyzed_data_location. Also
+        saves unlinked particle finding results and images of results.
+
+        Args:
+            images_ndarray: Numpy array with all the image data
+            roi: Tuple with xmin, ymin, xmax, ymax defining region of interest
+            gaussian_width: int specifying the width of Gaussian blur kernel
+            particle_z_diameter: int for maximum particle size in z
+            particle_xy_diameter: int for maximum particle size in x and y
+            brightness_percentile: int for brightness threshold as percentile
+            min_particle_mass: int for minimum integrated mass cutoff
+            bottom_slice: int for which slice to use as bottom of the stack
+            top_slice: int for which slice to use as top of the stack
+            tracking_seach_radius: int for maximum search radius for linking
+            last_timepoint: int for last timepoint to analyze
+            notes: str for short note about goal of this run
+
+
+        Returns:
+            None
+        """
 
         slices_to_analyze = images_ndarray[:last_timepoint,
                                            bottom_slice:top_slice,
@@ -326,8 +385,25 @@ class StrainPropagationTrial(object):
 
     def link_mitos(self,
                    tracking_seach_radius: int,
-                   last_timepoint: int):
-        """Links previously found mitochondria into trajectories"""
+                   last_timepoint: int) -> None:
+        """Links previously found mitochondria into trajectories
+
+        Runs the particle linking algorithm using existing particle locations.
+        Much faster than finding particles again in the whole trial and then
+        linking with different parameters. Useful if particle locations look
+        good, but the trajectories look wrong. Rather than returning a dict
+        with the particles, it just saves them directly to the
+        trackpyBatchResults.yaml file in analyzed_data_location. Also
+        saves unlinked particle finding results and images of results.
+
+        Args:
+            tracking_seach_radius: int for maximum search radius for linking
+            last_timepoint: int for last timepoint to analyze
+
+
+        Returns:
+            None
+        """
 
         print('linking partiles...')
 
@@ -370,7 +446,18 @@ class StrainPropagationTrial(object):
                       explicit_start=True, default_flow_style=False)
 
     def calculate_strain(self):
-        """Calculates strain in the TRN using mitochondria positions"""
+        """Calculates strain in the TRN using mitochondria positions
+
+        Uses adjacent pairs of mitochondria as fiducial markers to calculate
+        strain as a function of y-coordinate and time. Saves the results to
+        strain.yaml file in analyzed_data_location.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
         mitos_df = self.linked_mitos.copy(deep=True)
         mito_locations = mitos_df.loc[:, ['frame', 'particle', 'x', 'y', 'z']]
 
@@ -537,7 +624,21 @@ class StrainPropagationTrial(object):
                        linked_mitos: pd.DataFrame,
                        mitos_from_batch: pd.DataFrame,
                        save_location: pathlib.Path):
-        """Saves figs with trajectories and individual particle candidates"""
+        """Saves figs with trajectories and individual particle candidates
+
+        Puts the particles that were found on a max projection of each stack
+        and saves the image. Makes it faster to load these figs later compared
+        to the time it takes to load the raw data.
+
+        Args:
+            image_array: Numpy array with the raw image data
+            linked_mitos: Dataframe with the linked particle finding results
+            mitos_from_batch: Dataframe with unlinked particle finding results
+            save_location: pathlib.Path to where the images are saved
+
+        Returns:
+            None
+        """
         traj_fig_num = 13
         one_stack_fig_num = 31
 
@@ -678,7 +779,17 @@ class StrainPropagationTrial(object):
         return image_array, images
 
     def load_metadata_from_yaml(self) -> dict:
-        """Loads metadata from an existing yaml file."""
+        """Loads metadata from an existing yaml file.
+
+        Uses the instance attribute self.metadata_file_path to load saved
+        metadata and hold it as instance attribute self.metadata
+
+        Args:
+            None
+
+        Returns:
+            metadata: dict containing the metadata for this trial
+        """
         with open(self.metadata_file_path, 'r') as yamlfile:
             metadata = yaml.load(yamlfile)
 
@@ -691,7 +802,17 @@ class StrainPropagationTrial(object):
         return analysis_status
 
     def _load_analysis_params(self) -> dict:
-        """Loads analysis parameters from an existing yaml file."""
+        """Loads analysis parameters from an existing yaml file.
+
+        Looks at the batch history file and loads up the last set of
+        parameters used in an analysis.
+
+        Args:
+            None
+
+        Returns:
+            all_params: dict containing last set of analysis parameters
+        """
 #        try:
 #            with open(self.param_test_history_file, 'r') as yamlfile:
 #                entire_history = yaml.load_all(yamlfile)
@@ -739,9 +860,16 @@ class StrainPropagationTrial(object):
     def _retrieve_metadata(self, images: ND2Reader) -> dict:
         """Retrieves metadata from Google Drive and from the image file.
 
+        Goes to google drive and retrieves the metadata for the current trial
+        and then combines it with some useful metadata from the image file
+        itself. Can be slow and sometimes hits Google API limit when running
+        a script that has to get some metadata from all trials.
+
         Args:
             images (ND2Reader): Reader object containing images for this trial
 
+        Returns:
+            metadata_dict: dict containing all metadata for this trial
         """
         # Access google drive spreadsheet
         scope = ['https://spreadsheets.google.com/feeds',
@@ -825,11 +953,6 @@ class StrainPropagationTrial(object):
                 'pressure_kPa': combined_metadata['pressure_kPa']}
 
         return metadata_dict
-
-
-class PrettySafeLoader(yaml.SafeLoader):  # not sure if I need this anymore
-    def construct_python_tuple(self, node):
-        return tuple(self.construct_sequence(node))
 
 
 if __name__ == '__main__':
