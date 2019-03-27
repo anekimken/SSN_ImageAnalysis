@@ -18,8 +18,8 @@
 - nd2reader
 - spread
 - oauth2client
-
-## Direct from github
 - pandastable
 - fast_histogram
+
+## Direct from github
 - trackpy

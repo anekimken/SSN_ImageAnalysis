@@ -624,7 +624,9 @@ class BrightfieldImageFrame(AnalyzeImageFrame):
             x_mean = np.mean(self.actuator_bounds[0::2])
             y_mean = np.mean(self.actuator_bounds[1::2])
             self.actuator_thick_line = canvas.create_line(
-                    [x_mean, y_mean, x_mean - self.actuator_thickness, y_mean],
+                    [x_mean, y_mean,
+                     x_mean + self.actuator_dir_sign * self.actuator_thickness,
+                     y_mean],
                     fill='white')
 
             self.poly_corners[0] = canvas.create_oval(
@@ -640,9 +642,13 @@ class BrightfieldImageFrame(AnalyzeImageFrame):
                         self.actuator_bounds[3] + self.drag_btn_size,
                         fill='red', tag='corner', activefill='green')
             self.poly_corners[2] = canvas.create_oval(
-                        x_mean - self.actuator_thickness - self.drag_btn_size,
+                        (x_mean +
+                         self.actuator_dir_sign * self.actuator_thickness -
+                         self.drag_btn_size),
                         y_mean - self.drag_btn_size,
-                        x_mean - self.actuator_thickness + self.drag_btn_size,
+                        (x_mean +
+                         self.actuator_dir_sign * self.actuator_thickness
+                         + self.drag_btn_size),
                         y_mean + self.drag_btn_size,
                         fill='red', tag='corner', activefill='green')
 
@@ -687,7 +693,8 @@ class BrightfieldImageFrame(AnalyzeImageFrame):
             x_diff = self.actuator_bounds[0] - self.actuator_bounds[2]
             y_diff = self.actuator_bounds[1] - self.actuator_bounds[3]
             actuator_orientation = math.atan2(y_diff, x_diff)
-            thickness_orientation = actuator_orientation - math.pi / 2
+            thickness_orientation = (actuator_orientation +
+                                     self.actuator_dir_sign * math.pi / 2)
             actuator_back_y = y_mean + self.actuator_thickness * math.sin(
                     thickness_orientation)
             actuator_back_x = x_mean + self.actuator_thickness * math.cos(
@@ -714,8 +721,8 @@ class BrightfieldImageFrame(AnalyzeImageFrame):
         x_mean = np.mean(self.actuator_bounds[0::2])
         y_mean = np.mean(self.actuator_bounds[1::2])
         self.actuator_center = [x_mean, y_mean]
-        print('Thickness:', self.actuator_thickness, '   Center:',
-              self.actuator_center)
+#        print('Thickness:', self.actuator_thickness, '   Center:',
+#              self.actuator_center)
 
     def clear_actuator_bound(self, event=None):
         # clear roi and start over from scratch

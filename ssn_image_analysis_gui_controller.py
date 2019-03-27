@@ -256,14 +256,23 @@ class StrainGUIController:
                     text=(trn_name + ' stimulated in this experiment'))
 
             if trn_name == 'AVM' or trn_name == 'PVM':
-                self.actuation_side = vulva_dir
+                self.gui.bf_image_frame.actuation_side = vulva_dir
             else:
                 if trn_name == 'ALM' and vulva_dir == 'East':
-                    self.actuation_side = 'West'
+                    self.gui.bf_image_frame.actuation_side = 'West'
                 elif trn_name == 'ALM' and vulva_dir == 'West':
-                    self.actuation_side = 'East'
+                    self.gui.bf_image_frame.actuation_side = 'East'
             self.gui.bf_image_frame.actuator_location_label.config(
-                    text=('Used actuator to the ' + self.actuation_side))
+                    text=('Used actuator to the ' +
+                          self.gui.bf_image_frame.actuation_side))
+            if self.gui.bf_image_frame.actuation_side == 'West':
+                print('found actuator to the west')
+                self.gui.bf_image_frame.actuator_dir_sign = -1
+            elif self.gui.bf_image_frame.actuation_side == 'East':
+                print('found actuator to the east')
+                self.gui.bf_image_frame.actuator_dir_sign = 1
+            else:
+                raise ValueError('Actuator should be to the East or West')
 
             # bindings for Brightfield image analysis frame
             self.gui.bf_image_frame.plot_canvas._tkcanvas.bind(
@@ -580,7 +589,6 @@ class StrainGUIController:
         # Save actuator bounds to metadata file for later use
         bf_frame = self.gui.bf_image_frame
         self.trial.metadata['actuator_corners'] = bf_frame.actuator_bounds
-        print(type(bf_frame.actuator_center))
         self.trial.metadata['actuator_center'] = [
                 float(bf_frame.actuator_center[0]),
                 float(bf_frame.actuator_center[1])]
