@@ -5,13 +5,12 @@ Created on Fri Jan 11 14:41:44 2019
 
 @author: adam
 """
-# import numpy as np
 
 import tkinter as tk
 from tkinter import ttk
 import glob
 import matplotlib as mpl
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import numpy as np
 import yaml
 import warnings

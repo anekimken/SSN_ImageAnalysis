@@ -873,6 +873,7 @@ class StrainGUIController:
         cur_x = canvas.canvasx(event.x)
         cur_y = canvas.canvasy(event.y)
 
+        # TODO: clean up these functions for setting roi
         nb = self.gui.notebook
         tab_index = nb.index(nb.select())
         if tab_index == 1:
@@ -920,8 +921,6 @@ class StrainGUIController:
         analysis_frame.last_coords = (cur_x, cur_y)
 
     def on_drag_roi(self, event=None):
-#        analysis_frame = self.gui.analyze_trial_frame
-#        canvas = analysis_frame.plot_canvas.get_tk_widget()
         nb = self.gui.notebook
         tab_index = nb.index(nb.select())
         if tab_index == 1:
