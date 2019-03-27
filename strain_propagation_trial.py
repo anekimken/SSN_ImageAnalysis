@@ -19,10 +19,8 @@ from nd2reader import ND2Reader
 from scipy.spatial import distance
 import yaml
 import matplotlib.pyplot as plt
-
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
-
 import trackpy as tp
 
 # warnings.filterwarnings("ignore", module="matplotlib")
@@ -112,7 +110,6 @@ class StrainPropagationTrial(object):
             load_images: A bool indicating if images should be loaded on init
             overwrite_metadata: A bool indicating to overwrite  metadata file
 
-
         Returns:
             image_array (np.array): Image data. Can be empty if not loaded
             metadata (dict): All the metadata
@@ -129,6 +126,7 @@ class StrainPropagationTrial(object):
         self.analyzed_data_location = pathlib.Path(
                 '/Users/adam/Documents/SenseOfTouchResearch/'
                 'SSN_ImageAnalysis/AnalyzedData/' + self.experiment_id + '/')
+        # TODO: move file path to config file
         self.metadata_file_path = self.analyzed_data_location.joinpath(
                  'metadata.yaml')
         self.param_test_history_file = self.analyzed_data_location.joinpath(

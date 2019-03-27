@@ -506,6 +506,7 @@ class StrainGUIController:
         """Runs the analysis on the first trial in the queue"""
         start_time = time.time()
         data_location = '/Users/adam/Documents/SenseOfTouchResearch/SSN_data/'
+        # TODO: Move file path to config file
         the_queue = queue_location + 'analysis_queue.yaml'
         queue_result_location = queue_location + 'review_queue.yaml'
 

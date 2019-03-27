@@ -1,3 +1,13 @@
+# Installation
+## conda-project
+## config file
+
+# Data storage structure
+## Raw Data
+## Metadata
+## Analyzed Data
+## Figures
+
 # Dependencies
 ## Managed with conda
 - tkinter

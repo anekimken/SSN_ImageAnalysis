@@ -10,7 +10,6 @@ import tkinter as tk
 from tkinter import ttk
 import glob
 import matplotlib as mpl
-#import matplotlib.pyplot as plt
 import numpy as np
 import yaml
 import warnings
@@ -113,8 +112,8 @@ class FileLoadFrame(tk.Frame):
         self.update_file_tree()
 
     def update_file_tree(self):
-        # TODO: Add bf image analysis status to tree
         # now, we load all the file names into a Treeview for user selection
+        # TODO: move file path to config file
         data_location = '/Users/adam/Documents/SenseOfTouchResearch/SSN_data/*'
         queue_location = ('/Users/adam/Documents/SenseOfTouchResearch/'
                           'SSN_ImageAnalysis/')
@@ -155,6 +154,7 @@ class FileLoadFrame(tk.Frame):
                     iid = self.file_tree.insert(day_item, 'end',
                                                 text=trial_parts[-1])
                     experiment_id = trial[-15:-4]
+                    # TODO: move file path to config file
                     metadata_file_path = ('/Users/adam/Documents/'
                                           'SenseOfTouchResearch/'
                                           'SSN_ImageAnalysis/AnalyzedData/' +
@@ -740,6 +740,7 @@ class AnalysisQueueFrame(tk.Frame):
     def __init__(self, parent):
         tk.Frame.__init__(self, parent)
         self.parent = parent
+        # TODO: move file path to config file
         self.queue_location = ('/Users/adam/Documents/SenseOfTouchResearch/'
                                'SSN_ImageAnalysis/')
         self.queue_tree = tk.ttk.Treeview(self, height=37,
@@ -768,6 +769,7 @@ class AnalysisQueueFrame(tk.Frame):
                     queue_item = self.queue_tree.insert(
                             '', 'end',
                             text=experiment_id)
+                    # TODO: move file path to config file
                     metadata_file_path = ('/Users/adam/Documents/'
                                           'SenseOfTouchResearch/'
                                           'SSN_ImageAnalysis/AnalyzedData/' +
@@ -834,6 +836,7 @@ class PlotResultsFrame(AnalyzeImageFrame):
 
     def update_plot_strain_tree(self):
         # Load trials with strain calculated into file tree
+        # TODO: move file path to config file
         data_location = ('/Users/adam/Documents/'
                          'SenseOfTouchResearch/SSN_data/*')
         experiment_days = glob.iglob(data_location)
@@ -852,6 +855,7 @@ class PlotResultsFrame(AnalyzeImageFrame):
                                     '', 'end',
                                     text=trial_parts[-1],
                                     tags=trial)
+                    # TODO: move file path to config file
                     metadata_path = ('/Users/adam/Documents/'
                                      'SenseOfTouchResearch/'
                                      'SSN_ImageAnalysis/AnalyzedData/' +

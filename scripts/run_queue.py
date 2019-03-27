@@ -11,6 +11,7 @@ import os
 import time
 import ssn_image_analysis_gui_controller as ssn_cont
 
+# TODO: move file path to config file
 queue_location = ('/Users/adam/Documents/SenseOfTouchResearch/'
                   'SSN_ImageAnalysis/')
 the_queue = queue_location + 'analysis_queue.yaml'
