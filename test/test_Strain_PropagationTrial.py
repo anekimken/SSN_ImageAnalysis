@@ -75,7 +75,7 @@ class TestLoadTrial(unittest.TestCase):
             self.assertEqual(trial.metadata["worm_strain"], 'NM3573')
 
 
-@unittest.skip("skipping run_batch tests")
+# @unittest.skip("skipping run_batch tests")
 class TestFindMitosArtificialData(unittest.TestCase):
     def setUp(self):
         self.mito_coords = pd.DataFrame([[30, 200, 350, 0],
@@ -131,6 +131,8 @@ class TestFindMitosArtificialData(unittest.TestCase):
         for case in self.test_cases:
             self.trial.run_batch(**case)
             linked = self.trial.linked_mitos.reset_index(drop=True)
+            linked.sort_values(by=['frame', 'particle'], inplace=True)
+            linked.reset_index(drop=True, inplace=True)
             pd.testing.assert_frame_equal(linked[['x', 'y', 'z', 'frame']],
                                           self.mito_coords,
                                           check_less_precise=True,

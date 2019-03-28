@@ -1,0 +1,27 @@
+name: install_test_env
+channels:
+  - spyder-ide
+  - conda-forge
+  - anaconda
+  - anaconda-fusion
+  - defaults
+dependencies:
+  - python=3.6
+  - spyder
+  - matplotlib
+  - numpy
+  - pyyaml
+  - pandas
+  - scipy
+  - pathlib
+  - time
+  - pims
+  - typing
+  - nd2reader
+  - gspread
+  - oauth2client
+  - pip:
+    - trackpy
+    - pandastable
+    - fast_histogram
+    

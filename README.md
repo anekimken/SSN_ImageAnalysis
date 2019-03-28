@@ -1,6 +1,7 @@
 # Installation
-## conda-project
-## config file
+## Create conda environment from environment.yml
+## Modify file locations in config.yml
+## Launch spyder and run code
 
 # Data storage structure
 ## Raw Data
@@ -8,13 +9,13 @@
 ## Analyzed Data
 ## Figures
 
-# Dependencies
+# Dependencies - probably don't need this because I have env.yml file
 ## Managed with conda
 - tkinter
 - glob
 - matplotlib
 - numpy
-- yams
+- yaml
 - warnings
 - pandas
 - scipy
