@@ -17,3 +17,33 @@ top_slice: 55
 topn: null
 tracking_seach_radius: 20
 trackpy_version: 0.4.1
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 200
+noise_size: 3
+notes: Added ROI. Movement and bleaching
+percentile: 50
+roi: [172, 0, 250, 1050]
+source: null
+timestamp: 2019-04-02-145808
+top_slice: 55
+tracking_seach_radius: 20
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 200
+noise_size: 3
+notes: Added ROI. Movement and bleaching
+percentile: 50
+roi: [172, 0, 250, 1050]
+source: null
+timestamp: 2019-04-02-145808
+top_slice: 55
+tracking_seach_radius: 35
+trackpy_version: 0.4.1+35.g10f756b

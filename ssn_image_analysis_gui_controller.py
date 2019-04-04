@@ -188,7 +188,6 @@ class StrainGUIController:
         self._display_last_test_params()
 
         # load param history into text field
-        # TODO: test what happens if this file doesn't exist yet
         with open(self.trial.batch_history_file, 'r') as hist_yaml:
             param_history = hist_yaml.read()
             hist_text = self.gui.analyze_trial_frame.param_history
@@ -237,7 +236,7 @@ class StrainGUIController:
             canvas.tag_raise('corner')
 
         # Check for brightfield image to process
-        if self.trial.brightfield_file.is_file():
+        if self.trial.brightfield_file is not None:
             self.gui.create_bf_frame()
             self.gui.notebook.pack(expand=1, fill=tk.BOTH)
 
@@ -362,7 +361,6 @@ class StrainGUIController:
               str(round(done_time - start_time)) + ' seconds. ')
 
     def run_multiple_files(self, event=None):
-        # TODO: merge into queue?
         fr = self.gui.file_load_frame
         overwrite_metadata = fr.overwrite_metadata_box.instate(['selected'])
         print('Running lots of files...')
@@ -436,7 +434,7 @@ class StrainGUIController:
 
     def add_trial_to_queue(self, event=None):
         """Add trial and analysis parameters to queue for running later"""
-
+        # TODO: Move file path to config file
         queue_location = self.gui.queue_frame.queue_location
         the_queue = queue_location + 'analysis_queue.yaml'
 
@@ -485,6 +483,7 @@ class StrainGUIController:
                 yaml.dump_all(new_queue, output_file, explicit_start=True)
 
     def run_queue(self, event=None):
+        # TODO: Move file path to config file
         queue_location = self.gui.queue_frame.queue_location
         the_queue = queue_location + 'analysis_queue.yaml'
 
@@ -523,7 +522,6 @@ class StrainGUIController:
         self.trial.load_trial(full_filename[0],
                               load_images=True, overwrite_metadata=False)
 
-        # TODO: add try/except block for trackpy computational errors
         self.trial.run_batch(
                 images_ndarray=self.trial.image_array,
                 roi=params['roi'],
@@ -605,6 +603,7 @@ class StrainGUIController:
             info = tree.item(this_item)
             exp_id = info['text'][0:-4]
 
+        # TODO: Move file path to config file
         data_location = ('/Users/adam/Documents/SenseOfTouchResearch/'
                          'SSN_ImageAnalysis/AnalyzedData/' + exp_id)
         self.trial.metadata_file_path = data_location + '/metadata.yaml'
@@ -636,6 +635,7 @@ class StrainGUIController:
             info = tree.item(this_item)
             exp_id = info['text'][0:-4]
 
+        # TODO: Move file path to config file
         data_location = ('/Users/adam/Documents/SenseOfTouchResearch/'
                          'SSN_ImageAnalysis/AnalyzedData/' + exp_id)
         self.trial.metadata_file_path = data_location + '/metadata.yaml'
@@ -1034,7 +1034,7 @@ class StrainGUIController:
             analysis_frame = self.gui.analyze_trial_frame
         elif tab_index == 2:
             analysis_frame = self.gui.bf_image_frame
-        canvas = event.widget  # analysis_frame.plot_canvas.get_tk_widget()
+        canvas = analysis_frame.plot_canvas.get_tk_widget()
         canvas.delete('corner')
         canvas.delete(analysis_frame.rect)
         if tab_index == 1:
@@ -1063,6 +1063,7 @@ class StrainGUIController:
     def get_analysis_progress(self, event=None):
         """Gets the analysis status of all trials and plots their status"""
 
+        # TODO: Move file path to config file
         all_statuses_dict = {}
         status_values = self.trial.STATUSES
         base_dir = '/Users/adam/Documents/SenseOfTouchResearch/'
