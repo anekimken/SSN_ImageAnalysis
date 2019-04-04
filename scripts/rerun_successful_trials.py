@@ -17,8 +17,11 @@ import pandas as pd
 import ssn_image_analysis_gui_controller as ssn_cont
 
 controller = ssn_cont.StrainGUIController(headless=True)
-analyzed_data_dir = ('/Users/adam/Documents/SenseOfTouchResearch/'
-                     'SSN_ImageAnalysis/AnalyzedData/')
+
+# TODO: move file path to config file
+with open('config.yaml', 'r') as config_file:
+    file_paths = yaml.safe_load(config_file)
+analyzed_data_dir = file_paths['analysis_dir'] + 'AnalyzedData/'
 
 # get all the metadata
 experiment_days = glob.iglob(analyzed_data_dir + '*')
@@ -32,5 +35,5 @@ for day in experiment_days:
 metadata_df = pd.DataFrame(all_metadata)
 
 # filter out trials we don't want
-trials_with_strain_calc= all_metadata.loc[
-        all_metadata['analysis_status'] == 'Strain calculated']
+trials_with_strain_calc = metadata_df.loc[
+        metadata_df['analysis_status'] == 'Strain calculated']

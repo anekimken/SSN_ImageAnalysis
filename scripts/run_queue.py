@@ -11,9 +11,9 @@ import os
 import time
 import ssn_image_analysis_gui_controller as ssn_cont
 
-# TODO: move file path to config file
-queue_location = ('/Users/adam/Documents/SenseOfTouchResearch/'
-                  'SSN_ImageAnalysis/')
+with open('config.yaml', 'r') as config_file:
+    file_paths = yaml.safe_load(config_file)
+queue_location = file_paths['analysis_dir']
 the_queue = queue_location + 'analysis_queue.yaml'
 controller = ssn_cont.StrainGUIController(headless=True)
 
