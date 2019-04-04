@@ -33,3 +33,18 @@ timestamp: 2019-04-02-144303
 top_slice: 55
 tracking_seach_radius: 20
 trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 500
+noise_size: 3
+notes: Increased minmass
+percentile: 50
+roi: [327, 0, 422, 1052]
+source: null
+timestamp: 2019-04-04-185732
+top_slice: 55
+tracking_seach_radius: 20
+trackpy_version: 0.4.1+35.g10f756b

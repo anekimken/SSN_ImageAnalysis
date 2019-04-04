@@ -36,6 +36,9 @@ class SSN_analysis_GUI(tk.Frame):
         """
         Initializes the Analysis gui object
         """
+        with open('config.yaml', 'r') as config_file:
+            self.file_paths = yaml.safe_load(config_file)
+
         tk.Frame.__init__(self, root)
         self.root = root
         w, h = self.root.winfo_screenwidth(), self.root.winfo_screenheight()
@@ -78,6 +81,8 @@ class FileLoadFrame(tk.Frame):
     def __init__(self, parent):
         tk.Frame.__init__(self, parent)
         self.parent = parent
+        with open('config.yaml', 'r') as config_file:
+            self.file_paths = yaml.safe_load(config_file)
 
         # define buttons for starting analysis
         self.button_frame = tk.Frame(self)
@@ -114,12 +119,15 @@ class FileLoadFrame(tk.Frame):
     def update_file_tree(self):
         # now, we load all the file names into a Treeview for user selection
         # TODO: move file path to config file
-        data_location = '/Users/adam/Documents/SenseOfTouchResearch/SSN_data/*'
-        queue_location = ('/Users/adam/Documents/SenseOfTouchResearch/'
-                          'SSN_ImageAnalysis/')
+#        data_location = '/Users/adam/Documents/SenseOfTouchResearch/SSN_data/*'
+#        queue_location = ('/Users/adam/Documents/SenseOfTouchResearch/'
+#                          'SSN_ImageAnalysis/')
+#        experiment_days = glob.iglob(data_location)
+
+        queue_location = self.file_paths['analysis_dir']
         the_queue = queue_location + 'analysis_queue.yaml'
         queue_result_location = queue_location + 'review_queue.yaml'
-        experiment_days = glob.iglob(data_location)
+        experiment_days = glob.iglob(self.file_paths['data_dir'] + '*')
 
         self.file_tree = tk.ttk.Treeview(self, height=37,
                                          columns=("status", "bf_status",
@@ -155,9 +163,12 @@ class FileLoadFrame(tk.Frame):
                                                 text=trial_parts[-1])
                     experiment_id = trial[-15:-4]
                     # TODO: move file path to config file
-                    metadata_file_path = ('/Users/adam/Documents/'
-                                          'SenseOfTouchResearch/'
-                                          'SSN_ImageAnalysis/AnalyzedData/' +
+#                    metadata_file_path = ('/Users/adam/Documents/'
+#                                          'SenseOfTouchResearch/'
+#                                          'SSN_ImageAnalysis/AnalyzedData/' +
+#                                          experiment_id + '/metadata.yaml')
+                    metadata_file_path = (self.file_paths['analysis_dir'] +
+                                          '/AnalyzedData/' +
                                           experiment_id + '/metadata.yaml')
                     bf_filename = glob.glob(day + '/' +
                                             experiment_id + '*_bf.nd2')
@@ -223,6 +234,8 @@ class AnalyzeImageFrame(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.parent = parent
         self.root = root
+        with open('config.yaml', 'r') as config_file:
+            self.file_paths = yaml.safe_load(config_file)
 
         # Variables for drawing ROI
         self.rect = None
@@ -739,10 +752,14 @@ class BrightfieldImageFrame(AnalyzeImageFrame):
 class AnalysisQueueFrame(tk.Frame):
     def __init__(self, parent):
         tk.Frame.__init__(self, parent)
+        with open('config.yaml', 'r') as config_file:
+            self.file_paths = yaml.safe_load(config_file)
+
         self.parent = parent
         # TODO: move file path to config file
-        self.queue_location = ('/Users/adam/Documents/SenseOfTouchResearch/'
-                               'SSN_ImageAnalysis/')
+#        self.queue_location = ('/Users/adam/Documents/SenseOfTouchResearch/'
+#                               'SSN_ImageAnalysis/')
+        self.queue_location = self.file_paths['analysis_dir']
         self.queue_tree = tk.ttk.Treeview(self, height=37,
                                           columns=("param_val", "rating"))
         self.queue_tree.heading("param_val", text="Value")
@@ -770,9 +787,12 @@ class AnalysisQueueFrame(tk.Frame):
                             '', 'end',
                             text=experiment_id)
                     # TODO: move file path to config file
-                    metadata_file_path = ('/Users/adam/Documents/'
-                                          'SenseOfTouchResearch/'
-                                          'SSN_ImageAnalysis/AnalyzedData/' +
+#                    metadata_file_path = ('/Users/adam/Documents/'
+#                                          'SenseOfTouchResearch/'
+#                                          'SSN_ImageAnalysis/AnalyzedData/' +
+#                                          experiment_id + '/metadata.yaml')
+                    metadata_file_path = (self.file_paths['analysis_dir'] +
+                                          '/AnalyzedData/' +
                                           experiment_id + '/metadata.yaml')
                     try:
                         with open(metadata_file_path, 'r') as yamlfile:
@@ -837,9 +857,10 @@ class PlotResultsFrame(AnalyzeImageFrame):
     def update_plot_strain_tree(self):
         # Load trials with strain calculated into file tree
         # TODO: move file path to config file
-        data_location = ('/Users/adam/Documents/'
-                         'SenseOfTouchResearch/SSN_data/*')
-        experiment_days = glob.iglob(data_location)
+#        data_location = ('/Users/adam/Documents/'
+#                         'SenseOfTouchResearch/SSN_data/*')
+#        experiment_days = glob.iglob(data_location)
+        experiment_days = glob.iglob(self.file_paths['data_dir'] + '*')
 
         self.plot_strain_tree = tk.ttk.Treeview(self.strain_plot_frame,
                                                 height=20, columns=("status"))
@@ -855,11 +876,15 @@ class PlotResultsFrame(AnalyzeImageFrame):
                                     '', 'end',
                                     text=trial_parts[-1],
                                     tags=trial)
+                    experiment_id = trial[-15:-4]
                     # TODO: move file path to config file
-                    metadata_path = ('/Users/adam/Documents/'
-                                     'SenseOfTouchResearch/'
-                                     'SSN_ImageAnalysis/AnalyzedData/' +
-                                     trial[-15:-4] + '/metadata.yaml')
+#                    metadata_path = ('/Users/adam/Documents/'
+#                                     'SenseOfTouchResearch/'
+#                                     'SSN_ImageAnalysis/AnalyzedData/' +
+#                                     trial[-15:-4] + '/metadata.yaml')
+                    metadata_path = (self.file_paths['analysis_dir'] +
+                                          '/AnalyzedData/' +
+                                          experiment_id + '/metadata.yaml')
                     try:
                         metadata = self.load_metadata_from_yaml(
                                 metadata_path)

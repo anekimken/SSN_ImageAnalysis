@@ -9,4 +9,4 @@ Notebooks/
 __pycache__/
 __pycache__/*
 test/results_data/
-
+*config.yaml

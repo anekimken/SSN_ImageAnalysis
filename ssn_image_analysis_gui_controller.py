@@ -30,6 +30,8 @@ class StrainGUIController:
     """
     def __init__(self, headless=False):
         self.root = tk.Tk()
+        with open('config.yaml', 'r') as config_file:
+            self.file_paths = yaml.safe_load(config_file)
 
         # Instantiate Model
         self.trial = ssn_trial.StrainPropagationTrial()
@@ -435,7 +437,9 @@ class StrainGUIController:
     def add_trial_to_queue(self, event=None):
         """Add trial and analysis parameters to queue for running later"""
         # TODO: Move file path to config file
-        queue_location = self.gui.queue_frame.queue_location
+#        queue_location = self.gui.queue_frame.queue_location
+        queue_location = self.file_paths['analysis_dir']
+
         the_queue = queue_location + 'analysis_queue.yaml'
 
         analysis_frame = self.gui.analyze_trial_frame
@@ -484,7 +488,8 @@ class StrainGUIController:
 
     def run_queue(self, event=None):
         # TODO: Move file path to config file
-        queue_location = self.gui.queue_frame.queue_location
+        # queue_location = self.gui.queue_frame.queue_location
+        queue_location = self.file_paths['analysis_dir']
         the_queue = queue_location + 'analysis_queue.yaml'
 
         with open(the_queue, 'r') as queue_file:
@@ -504,7 +509,9 @@ class StrainGUIController:
     def run_queue_item(self, queue_location):
         """Runs the analysis on the first trial in the queue"""
         start_time = time.time()
-        data_location = '/Users/adam/Documents/SenseOfTouchResearch/SSN_data/'
+#        data_location = '/Users/adam/Documents/SenseOfTouchResearch/SSN_data/'
+        data_location = self.file_paths['data_dir']
+
         # TODO: Move file path to config file
         the_queue = queue_location + 'analysis_queue.yaml'
         queue_result_location = queue_location + 'review_queue.yaml'
@@ -604,8 +611,9 @@ class StrainGUIController:
             exp_id = info['text'][0:-4]
 
         # TODO: Move file path to config file
-        data_location = ('/Users/adam/Documents/SenseOfTouchResearch/'
-                         'SSN_ImageAnalysis/AnalyzedData/' + exp_id)
+#        data_location = ('/Users/adam/Documents/SenseOfTouchResearch/'
+#                         'SSN_ImageAnalysis/AnalyzedData/' + exp_id)
+        data_location = (self.file_paths['analysis_dir'] + exp_id)
         self.trial.metadata_file_path = data_location + '/metadata.yaml'
 
         strain_file = data_location + '/strain.yaml'
@@ -636,8 +644,9 @@ class StrainGUIController:
             exp_id = info['text'][0:-4]
 
         # TODO: Move file path to config file
-        data_location = ('/Users/adam/Documents/SenseOfTouchResearch/'
-                         'SSN_ImageAnalysis/AnalyzedData/' + exp_id)
+#        data_location = ('/Users/adam/Documents/SenseOfTouchResearch/'
+#                         'SSN_ImageAnalysis/AnalyzedData/' + exp_id)
+        data_location = (self.file_paths['analysis_dir'] + exp_id)
         self.trial.metadata_file_path = data_location + '/metadata.yaml'
         if self.trial.metadata is None:
             metadata = self.trial.load_metadata_from_yaml()
@@ -1066,10 +1075,16 @@ class StrainGUIController:
         # TODO: Move file path to config file
         all_statuses_dict = {}
         status_values = self.trial.STATUSES
-        base_dir = '/Users/adam/Documents/SenseOfTouchResearch/'
-        data_location = (base_dir + 'SSN_data/*/SSN_*.nd2')
-        metadata_location = (base_dir + 'SSN_ImageAnalysis/'
-                             'AnalyzedData/')
+#        base_dir = '/Users/adam/Documents/SenseOfTouchResearch/'
+#        data_location = (base_dir + 'SSN_data/*/SSN_*.nd2')
+        data_dir = self.file_paths['data_dir']
+        data_location = (data_dir + '*/SSN_*.nd2')
+
+        analysis_dir = self.file_paths['analysis_dir']
+        metadata_location = analysis_dir + 'AnalyzedData/'
+
+#        metadata_location = (base_dir + 'SSN_ImageAnalysis/'
+#                             'AnalyzedData/')
 
         # for all subfiles ending in .nd2
         for nd2_file in glob.glob(data_location):

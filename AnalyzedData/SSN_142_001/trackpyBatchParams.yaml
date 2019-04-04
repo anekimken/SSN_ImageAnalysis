@@ -3,15 +3,15 @@ diameter: !!python/tuple
 - 21
 - 15
 - 15
-minmass: 200
+minmass: 500
 noise_size: 3
 percentile: 50
 source: null
-timestamp: 2019-04-02-150009
+timestamp: 2019-04-04-184117
 trackpy_version: 0.4.1+35.g10f756b
 bottom_slice: 0
 last_timepoint: 11
-notes: Added ROI. Pretty dim
+notes: Increased minmass
 roi:
 - 303
 - 0

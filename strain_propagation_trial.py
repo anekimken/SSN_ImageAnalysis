@@ -89,6 +89,8 @@ class StrainPropagationTrial(object):
                                     'time_point': 1,
                                     'tracking_seach_radius': 20,
                                     'last_timepoint': 11}
+        with open('config.yaml', 'r') as config_file:
+            self.file_paths = yaml.safe_load(config_file)
 
     def load_trial(self,
                    filename: str,
@@ -124,8 +126,11 @@ class StrainPropagationTrial(object):
         basename = os.path.basename(self.filename)
         self.experiment_id = os.path.splitext(basename)[0]
         self.analyzed_data_location = pathlib.Path(
-                '/Users/adam/Documents/SenseOfTouchResearch/'
-                'SSN_ImageAnalysis/AnalyzedData/' + self.experiment_id + '/')
+                self.file_paths['analysis_dir'] + 'AnalyzedData/' +
+                self.experiment_id + '/')
+#        self.analyzed_data_location = pathlib.Path(
+#                '/Users/adam/Documents/SenseOfTouchResearch/'
+#                'SSN_ImageAnalysis/AnalyzedData/' + self.experiment_id + '/')
         # TODO: move file path to config file
         self.metadata_file_path = self.analyzed_data_location.joinpath(
                  'metadata.yaml')
