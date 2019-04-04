@@ -7,15 +7,5 @@ minmass: 100
 noise_size: 3
 percentile: 10
 source: null
-timestamp: 2019-02-21-231453
+timestamp: 2019-04-04-200503
 trackpy_version: 0.4.1+35.g10f756b
-bottom_slice: 0
-last_timepoint: 5
-notes: Going back to param set from a few days ago
-roi:
-- 350
-- 56
-- 513
-- 1187
-top_slice: 67
-tracking_seach_radius: 30
