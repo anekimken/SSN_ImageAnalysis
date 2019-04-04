@@ -18,3 +18,18 @@ top_slice: 66
 topn: null
 tracking_seach_radius: 20
 trackpy_version: 0.4.1
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 200
+noise_size: 3
+notes: Added ROI. Lots of head movement
+percentile: 50
+roi: [152, 0, 240, 1052]
+source: null
+timestamp: 2019-04-02-144527
+top_slice: 66
+tracking_seach_radius: 20
+trackpy_version: 0.4.1+35.g10f756b

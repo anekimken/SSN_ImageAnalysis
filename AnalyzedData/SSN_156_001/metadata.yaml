@@ -1,5 +1,14 @@
 ---
 Experiment_id: SSN_156_001
+actuator_center:
+- 375.0
+- 573.5
+actuator_corners:
+- 380.0
+- 488.0
+- 370.0
+- 659.0
+actuator_thickness: 20.93991465334395
 analysis_status: Testing parameters
 bleach_time: 2019-02-03 01:15:00
 cultivation_temp: 20

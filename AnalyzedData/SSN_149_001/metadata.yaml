@@ -1,5 +1,14 @@
 ---
 Experiment_id: SSN_149_001
+actuator_center:
+- 202.0
+- 481.0
+actuator_corners:
+- 202.0
+- 396.0
+- 202.0
+- 566.0
+actuator_thickness: 38.0
 analysis_status: Testing parameters
 bleach_time: 2019-01-29 01:30:00
 cultivation_temp: 20
@@ -33,6 +42,6 @@ timestamp: 2019-02-01 15:45:51
 total_images: 605
 trial_rating: "\u2B50\uFE0F"
 user: anekimke@stanford.edu
-vulva_orientation: West
+vulva_orientation: East
 worm_life_stage: YA
 worm_strain: NM3573

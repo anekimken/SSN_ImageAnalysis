@@ -142,10 +142,11 @@ class StrainPropagationTrial(object):
                                 self.experiment_id + '*_bf.nd2')
         if len(bf_filename) > 1:
             warnings.warn('Found more than one brightfield image')
+        self.brightfield_file = None
         try:
             self.brightfield_file = pathlib.Path(bf_filename[0])
         except IndexError:
-            pass
+            self.brightfield_file = None
 
         # Create directory if necessary
         if not self.analyzed_data_location.is_dir():
