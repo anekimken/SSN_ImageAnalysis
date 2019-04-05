@@ -160,3 +160,18 @@ timestamp: 2019-03-04-032228
 top_slice: 71
 tracking_seach_radius: 30
 trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 4
+minmass: 280
+noise_size: 3
+notes: Reduced ROI on bottom
+percentile: 50
+roi: [134, 0, 238, 779]
+source: null
+timestamp: 2019-04-04-231408
+top_slice: 71
+tracking_seach_radius: 30
+trackpy_version: 0.4.1+35.g10f756b

@@ -97,11 +97,10 @@ class TestFindMitosArtificialData(unittest.TestCase):
                     self.mito_coords, size=self.stack_size)
         self.trial = StrainPropagationTrial()
         self.trial.metadata = {'pressure_kPa': [0, 300, 0]}
-        self.trial.analyzed_data_location = pathlib.Path('./results_data')
+        self.trial.analyzed_data_location = pathlib.Path('./test/results_data')
         data_loc = self.trial.analyzed_data_location
         self.trial.batch_history_file = data_loc.joinpath(
                 'trackpyBatchParamsHistory.yaml')
-        # TODO: make test case contain all relevant info
         self.test_cases = [{'images_ndarray': self.images,
                             'roi': [300, 100, 400, 450],
                             'gaussian_width': 3,
@@ -143,7 +142,7 @@ class TestFindMitosArtificialData(unittest.TestCase):
 class TestCalcStrainArtificialData(unittest.TestCase):
     def setUp(self):
         self.trial = StrainPropagationTrial()
-        self.trial.analyzed_data_location = pathlib.Path('./results_data')
+        self.trial.analyzed_data_location = pathlib.Path('./test/results_data')
 
         self.test_cases = [
                 [pd.DataFrame([[30, 200, 350, 0, 0],
@@ -245,6 +244,7 @@ class TestCalcStrainArtificialData(unittest.TestCase):
             self.trial.metadata = pressure
             self.trial.calculate_strain()
             np.testing.assert_almost_equal(self.trial.strain, desired_output)
+            print('tested a case')
 
 
 """

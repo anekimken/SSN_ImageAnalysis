@@ -505,3 +505,18 @@ timestamp: 2019-02-21-231453
 top_slice: 67
 tracking_seach_radius: 30
 trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [17, 13, 13]
+last_timepoint: 5
+minmass: 100
+noise_size: 3
+notes: Going back to param set from a few days ago
+percentile: 10
+roi: [350, 56, 513, 1187]
+source: null
+timestamp: 2019-04-04-220435
+top_slice: 67
+tracking_seach_radius: 30
+trackpy_version: 0.4.1+35.g10f756b
