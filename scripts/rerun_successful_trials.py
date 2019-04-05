@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Script that puts all trials with status "Strain calculated" into the queue
-so they can be analyzed again with the latest code. The main idea is to make
-sure bug fixes make their way to all the trials, not just trials after the
-bug got fixed.
+Script that puts all trials with status "Strain calculated" into the queue and
+then runs the queue so they can be analyzed again with the latest code. The
+main idea is to make sure bug fixes make their way to all the trials, not just
+trials after the bug got fixed.
 
 Created on Thu Apr  4 10:36:26 2019
 
@@ -13,12 +13,13 @@ Created on Thu Apr  4 10:36:26 2019
 
 import yaml
 import glob
+import os
 import pandas as pd
-import run_queue
+import warnings
+import scripts.run_queue as run_queue
 
 
 def add_successful_trials_to_queue():
-#    controller = ssn_cont.StrainGUIController(headless=True)
 
     with open('config.yaml', 'r') as config_file:
         file_paths = yaml.safe_load(config_file)
@@ -40,8 +41,11 @@ def add_successful_trials_to_queue():
             metadata_df['analysis_status'] == 'Strain calculated']
 
     the_queue = file_paths['analysis_dir'] + 'analysis_queue.yaml'
+    queue_file_size = os.stat(the_queue).st_size
+    if queue_file_size > 0:
+        warnings.warn('Queue not empty, might result in running the same '
+                      'trial more than once or overwriting new results.')
     for index, trial in trials_with_strain_calc.iterrows():
-        print(trial['Experiment_id'])
 
         batch_param_history_file = (file_paths['analysis_dir'] +
                                     'AnalyzedData/' +

@@ -118,11 +118,6 @@ class FileLoadFrame(tk.Frame):
 
     def update_file_tree(self):
         # now, we load all the file names into a Treeview for user selection
-        # TODO: move file path to config file
-#        data_location = '/Users/adam/Documents/SenseOfTouchResearch/SSN_data/*'
-#        queue_location = ('/Users/adam/Documents/SenseOfTouchResearch/'
-#                          'SSN_ImageAnalysis/')
-#        experiment_days = glob.iglob(data_location)
 
         queue_location = self.file_paths['analysis_dir']
         the_queue = queue_location + 'analysis_queue.yaml'
@@ -162,11 +157,6 @@ class FileLoadFrame(tk.Frame):
                     iid = self.file_tree.insert(day_item, 'end',
                                                 text=trial_parts[-1])
                     experiment_id = trial[-15:-4]
-                    # TODO: move file path to config file
-#                    metadata_file_path = ('/Users/adam/Documents/'
-#                                          'SenseOfTouchResearch/'
-#                                          'SSN_ImageAnalysis/AnalyzedData/' +
-#                                          experiment_id + '/metadata.yaml')
                     metadata_file_path = (self.file_paths['analysis_dir'] +
                                           '/AnalyzedData/' +
                                           experiment_id + '/metadata.yaml')
@@ -756,9 +746,7 @@ class AnalysisQueueFrame(tk.Frame):
             self.file_paths = yaml.safe_load(config_file)
 
         self.parent = parent
-        # TODO: move file path to config file
-#        self.queue_location = ('/Users/adam/Documents/SenseOfTouchResearch/'
-#                               'SSN_ImageAnalysis/')
+
         self.queue_location = self.file_paths['analysis_dir']
         self.queue_tree = tk.ttk.Treeview(self, height=37,
                                           columns=("param_val", "rating"))
@@ -786,11 +774,6 @@ class AnalysisQueueFrame(tk.Frame):
                     queue_item = self.queue_tree.insert(
                             '', 'end',
                             text=experiment_id)
-                    # TODO: move file path to config file
-#                    metadata_file_path = ('/Users/adam/Documents/'
-#                                          'SenseOfTouchResearch/'
-#                                          'SSN_ImageAnalysis/AnalyzedData/' +
-#                                          experiment_id + '/metadata.yaml')
                     metadata_file_path = (self.file_paths['analysis_dir'] +
                                           '/AnalyzedData/' +
                                           experiment_id + '/metadata.yaml')
@@ -856,10 +839,6 @@ class PlotResultsFrame(AnalyzeImageFrame):
 
     def update_plot_strain_tree(self):
         # Load trials with strain calculated into file tree
-        # TODO: move file path to config file
-#        data_location = ('/Users/adam/Documents/'
-#                         'SenseOfTouchResearch/SSN_data/*')
-#        experiment_days = glob.iglob(data_location)
         experiment_days = glob.iglob(self.file_paths['data_dir'] + '*')
 
         self.plot_strain_tree = tk.ttk.Treeview(self.strain_plot_frame,
@@ -877,14 +856,10 @@ class PlotResultsFrame(AnalyzeImageFrame):
                                     text=trial_parts[-1],
                                     tags=trial)
                     experiment_id = trial[-15:-4]
-                    # TODO: move file path to config file
-#                    metadata_path = ('/Users/adam/Documents/'
-#                                     'SenseOfTouchResearch/'
-#                                     'SSN_ImageAnalysis/AnalyzedData/' +
-#                                     trial[-15:-4] + '/metadata.yaml')
+
                     metadata_path = (self.file_paths['analysis_dir'] +
-                                          '/AnalyzedData/' +
-                                          experiment_id + '/metadata.yaml')
+                                     '/AnalyzedData/' +
+                                     experiment_id + '/metadata.yaml')
                     try:
                         metadata = self.load_metadata_from_yaml(
                                 metadata_path)

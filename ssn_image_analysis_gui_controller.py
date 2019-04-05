@@ -436,8 +436,6 @@ class StrainGUIController:
 
     def add_trial_to_queue(self, event=None):
         """Add trial and analysis parameters to queue for running later"""
-        # TODO: Move file path to config file
-#        queue_location = self.gui.queue_frame.queue_location
         queue_location = self.file_paths['analysis_dir']
 
         the_queue = queue_location + 'analysis_queue.yaml'
@@ -487,8 +485,6 @@ class StrainGUIController:
                 yaml.dump_all(new_queue, output_file, explicit_start=True)
 
     def run_queue(self, event=None):
-        # TODO: Move file path to config file
-        # queue_location = self.gui.queue_frame.queue_location
         queue_location = self.file_paths['analysis_dir']
         the_queue = queue_location + 'analysis_queue.yaml'
 
@@ -509,10 +505,8 @@ class StrainGUIController:
     def run_queue_item(self, queue_location):
         """Runs the analysis on the first trial in the queue"""
         start_time = time.time()
-#        data_location = '/Users/adam/Documents/SenseOfTouchResearch/SSN_data/'
         data_location = self.file_paths['data_dir']
 
-        # TODO: Move file path to config file
         the_queue = queue_location + 'analysis_queue.yaml'
         queue_result_location = queue_location + 'review_queue.yaml'
 
@@ -528,6 +522,9 @@ class StrainGUIController:
         self.trial = ssn_trial.StrainPropagationTrial()  # clear trial var
         self.trial.load_trial(full_filename[0],
                               load_images=True, overwrite_metadata=False)
+
+        if 'notes' not in params:
+            params['notes'] = 'none'
 
         self.trial.run_batch(
                 images_ndarray=self.trial.image_array,
@@ -610,9 +607,6 @@ class StrainGUIController:
             info = tree.item(this_item)
             exp_id = info['text'][0:-4]
 
-        # TODO: Move file path to config file
-#        data_location = ('/Users/adam/Documents/SenseOfTouchResearch/'
-#                         'SSN_ImageAnalysis/AnalyzedData/' + exp_id)
         data_location = (self.file_paths['analysis_dir'] + exp_id)
         self.trial.metadata_file_path = data_location + '/metadata.yaml'
 
@@ -643,9 +637,6 @@ class StrainGUIController:
             info = tree.item(this_item)
             exp_id = info['text'][0:-4]
 
-        # TODO: Move file path to config file
-#        data_location = ('/Users/adam/Documents/SenseOfTouchResearch/'
-#                         'SSN_ImageAnalysis/AnalyzedData/' + exp_id)
         data_location = (self.file_paths['analysis_dir'] + exp_id)
         self.trial.metadata_file_path = data_location + '/metadata.yaml'
         if self.trial.metadata is None:
@@ -882,22 +873,11 @@ class StrainGUIController:
         init_size = 100
         cur_x = canvas.canvasx(event.x)
         cur_y = canvas.canvasy(event.y)
-
-        # TODO: clean up these functions for setting roi
-        nb = self.gui.notebook
-        tab_index = nb.index(nb.select())
-        if tab_index == 1:
-            analysis_frame = self.gui.analyze_trial_frame
-            self.roi = [cur_x,
-                        cur_y,
-                        cur_x + init_size,
-                        cur_y + init_size]
-        elif tab_index == 2:
-            analysis_frame = self.gui.bf_image_frame
-            self.actuator_bounds = [cur_x,
-                                    cur_y,
-                                    cur_x + init_size,
-                                    cur_y + init_size]
+        analysis_frame = self.gui.analyze_trial_frame
+        self.roi = [cur_x,
+                    cur_y,
+                    cur_x + init_size,
+                    cur_y + init_size]
 
         # create rectangle if not yet existing
         if analysis_frame.rect is None:
@@ -931,13 +911,8 @@ class StrainGUIController:
         analysis_frame.last_coords = (cur_x, cur_y)
 
     def on_drag_roi(self, event=None):
-        nb = self.gui.notebook
-        tab_index = nb.index(nb.select())
-        if tab_index == 1:
-            analysis_frame = self.gui.analyze_trial_frame
-        elif tab_index == 2:
-            analysis_frame = self.gui.bf_image_frame
-        canvas = event.widget  # analysis_frame.plot_canvas.get_tk_widget()
+        analysis_frame = self.gui.analyze_trial_frame
+        canvas = event.widget
         cur_x = canvas.canvasx(event.x)
         cur_y = canvas.canvasy(event.y)
 
@@ -968,16 +943,11 @@ class StrainGUIController:
                                sum(opposite_corner_coords[0::2]) / 2,
                                sum(opposite_corner_coords[1::2]) / 2]
             canvas.coords(analysis_frame.rect, new_rect_coords)
-            if tab_index == 1:
-                self.roi = new_rect_coords
-            elif tab_index == 2:
-                self.actuator_bounds = new_rect_coords
-#            self.roi = new_rect_coords
+
+            self.roi = new_rect_coords
 
     def on_click_image_release(self, event=None):
         # limit ROI to values that make sense
-        nb = self.gui.notebook
-        tab_index = nb.index(nb.select())
         for i in range(len(self.roi)):
             if i % 2 == 0:
                 # x value
@@ -985,80 +955,46 @@ class StrainGUIController:
             else:
                 # y value
                 max_val = self.trial.image_array.shape[2]
-            if tab_index == 1:
-                self.roi[i] = np.clip(self.roi[i], 0, max_val)
+#            if tab_index == 1:
+            self.roi[i] = np.clip(self.roi[i], 0, max_val)
 
-                # make sure lower values are listed first
-                xmin = int(min([self.roi[0], self.roi[2]]))
-                xmax = int(max([self.roi[0], self.roi[2]]))
-                ymin = int(min([self.roi[1], self.roi[3]]))
-                ymax = int(max([self.roi[1], self.roi[3]]))
-                self.roi = [xmin, ymin, xmax, ymax]
-            elif tab_index == 2:
-                self.actuator_bounds[i] = np.clip(
-                        self.actuator_bounds[i], 0, max_val)
+            # make sure lower values are listed first
+            xmin = int(min([self.roi[0], self.roi[2]]))
+            xmax = int(max([self.roi[0], self.roi[2]]))
+            ymin = int(min([self.roi[1], self.roi[3]]))
+            ymax = int(max([self.roi[1], self.roi[3]]))
+            self.roi = [xmin, ymin, xmax, ymax]
 
-                # make sure lower values are listed first
-                xmin = int(min([self.actuator_bounds[0],
-                                self.actuator_bounds[2]]))
-                xmax = int(max([self.actuator_bounds[0],
-                                self.actuator_bounds[2]]))
-                ymin = int(min([self.actuator_bounds[1],
-                                self.actuator_bounds[3]]))
-                ymax = int(max([self.actuator_bounds[1],
-                                self.actuator_bounds[3]]))
-                self.actuator_bounds = [xmin, ymin, xmax, ymax]
-
-        if tab_index == 1:
             print('Selected ROI: ', self.roi)
-        elif tab_index == 2:
-            print('Selected actuator bounds: ', self.actuator_bounds)
 
     def mouseEnter(self, event):
-        nb = self.gui.notebook
-        tab_index = nb.index(nb.select())
-        if tab_index == 1:
-            analysis_frame = self.gui.analyze_trial_frame
-        elif tab_index == 2:
-            analysis_frame = self.gui.bf_image_frame
+        analysis_frame = self.gui.analyze_trial_frame
         canvas = event.widget  # analysis_frame.plot_canvas.get_tk_widget()
         canvas.itemconfig(tk.CURRENT, fill="green")
         analysis_frame.selected_item = tk.CURRENT
 
     def mouseLeave(self, event):
-        nb = self.gui.notebook
-        tab_index = nb.index(nb.select())
-        if tab_index == 1:
-            analysis_frame = self.gui.analyze_trial_frame
-        elif tab_index == 2:
-            analysis_frame = self.gui.bf_image_frame
+        analysis_frame = self.gui.analyze_trial_frame
         canvas = event.widget  # analysis_frame.plot_canvas.get_tk_widget()
         canvas.itemconfig(tk.CURRENT, fill="red")
         analysis_frame.selected_item = None
 
     def clear_roi(self, event=None):
-        nb = self.gui.notebook
-        tab_index = nb.index(nb.select())
-        if tab_index == 1:
-            analysis_frame = self.gui.analyze_trial_frame
-        elif tab_index == 2:
-            analysis_frame = self.gui.bf_image_frame
+        analysis_frame = self.gui.analyze_trial_frame
         canvas = analysis_frame.plot_canvas.get_tk_widget()
         canvas.delete('corner')
         canvas.delete(analysis_frame.rect)
-        if tab_index == 1:
-            analysis_frame.rect = None
-            analysis_frame.roi_corners = [None, None, None, None]
-            analysis_frame.roi = [None, None, None, None]
 
-            self.roi = [0,
-                        0,
-                        self.trial.image_array.shape[3],
-                        self.trial.image_array.shape[2]]
+        analysis_frame.rect = None
+        analysis_frame.roi_corners = [None, None, None, None]
+        analysis_frame.roi = [None, None, None, None]
 
-            print('Selected ROI: ', self.roi)
-        elif tab_index == 2:
-            self.actuator_bounds = None
+        self.roi = [0,
+                    0,
+                    self.trial.image_array.shape[3],
+                    self.trial.image_array.shape[2]]
+
+        print('Selected ROI: ', self.roi)
 
     def _bound_to_mousewheel(self, event):
         event.widget.bind_all("<MouseWheel>", self._on_mousewheel)
@@ -1072,19 +1008,13 @@ class StrainGUIController:
     def get_analysis_progress(self, event=None):
         """Gets the analysis status of all trials and plots their status"""
 
-        # TODO: Move file path to config file
         all_statuses_dict = {}
         status_values = self.trial.STATUSES
-#        base_dir = '/Users/adam/Documents/SenseOfTouchResearch/'
-#        data_location = (base_dir + 'SSN_data/*/SSN_*.nd2')
         data_dir = self.file_paths['data_dir']
         data_location = (data_dir + '*/SSN_*.nd2')
 
         analysis_dir = self.file_paths['analysis_dir']
         metadata_location = analysis_dir + 'AnalyzedData/'
-
-#        metadata_location = (base_dir + 'SSN_ImageAnalysis/'
-#                             'AnalyzedData/')
 
         # for all subfiles ending in .nd2
         for nd2_file in glob.glob(data_location):

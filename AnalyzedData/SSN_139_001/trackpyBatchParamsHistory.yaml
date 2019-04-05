@@ -177,3 +177,18 @@ timestamp: 2019-03-12-192301
 top_slice: 70
 tracking_seach_radius: 20
 trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 5
+minmass: 600
+noise_size: 3
+notes: Reduced final timepoint to 5 for mitos towards bottom
+percentile: 50
+roi: [376, 0, 478, 1052]
+source: null
+timestamp: 2019-04-04-231738
+top_slice: 70
+tracking_seach_radius: 20
+trackpy_version: 0.4.1+35.g10f756b

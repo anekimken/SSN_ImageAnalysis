@@ -48,6 +48,7 @@ def run_queue():
                         yaml.dump_all(new_queue, queue_file,
                                       explicit_start=True)
                     pass
+
             # update queue length variable
             with open(the_queue, 'r') as queue_file:
                 entire_queue = yaml.load_all(queue_file)

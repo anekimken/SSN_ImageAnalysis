@@ -131,7 +131,6 @@ class StrainPropagationTrial(object):
 #        self.analyzed_data_location = pathlib.Path(
 #                '/Users/adam/Documents/SenseOfTouchResearch/'
 #                'SSN_ImageAnalysis/AnalyzedData/' + self.experiment_id + '/')
-        # TODO: move file path to config file
         self.metadata_file_path = self.analyzed_data_location.joinpath(
                  'metadata.yaml')
         self.param_test_history_file = self.analyzed_data_location.joinpath(

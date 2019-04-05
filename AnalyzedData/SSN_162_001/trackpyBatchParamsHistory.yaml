@@ -223,3 +223,18 @@ timestamp: 2019-03-14-215930
 top_slice: 56
 tracking_seach_radius: 40
 trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 19, 19]
+last_timepoint: 10
+minmass: 800
+noise_size: 3
+notes: Increased minmass and link radius. need to check mitos at bottom
+percentile: 50
+roi: [165, 164, 270, 1070]
+source: null
+timestamp: 2019-04-04-232203
+top_slice: 56
+tracking_seach_radius: 40
+trackpy_version: 0.4.1+35.g10f756b
