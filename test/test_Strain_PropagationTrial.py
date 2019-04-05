@@ -245,7 +245,7 @@ class TestCalcStrainArtificialData(unittest.TestCase):
             self.trial.calculate_strain()
             np.testing.assert_almost_equal(self.trial.strain, desired_output)
             print('tested a case')
-
+#
 
 """
 Things to test:

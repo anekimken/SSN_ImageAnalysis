@@ -501,6 +501,13 @@ class StrainPropagationTrial(object):
         mito_locations['z_rest'] = mito_locations.apply(
                 lambda row: get_rest_location(row['particle'], 'z'), axis=1)
 
+        dict_to_save = mito_locations.to_dict('list')
+
+        with open(self.analyzed_data_location.joinpath('mito_locations.yaml'),
+                  'w') as yamlfile:
+            yaml.dump(dict_to_save, yamlfile,
+                      explicit_start=True, default_flow_style=False)
+
         mito_pairs = pd.DataFrame(columns=['x_dist', 'y_dist', 'z_dist',
                                            'x_1', 'x_2', 'y_1', 'y_2',
                                            'z_1', 'z_2', 'total_dist'
@@ -508,7 +515,8 @@ class StrainPropagationTrial(object):
                                            'pair_id'])
         mito_pairs_dicts = []
         for frame in mito_locations.frame.unique():
-            this_frame = mito_locations.loc[(mito_locations['frame'] == frame)]
+            this_frame = mito_locations.loc[
+                    (mito_locations['frame'] == frame)].copy()
             this_frame.sort_values(by=['y'], inplace=True)
             this_frame.reset_index(inplace=True)
             # make dataframe of adjacent mitos

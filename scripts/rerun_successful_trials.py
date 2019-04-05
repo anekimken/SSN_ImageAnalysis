@@ -76,11 +76,11 @@ def add_successful_trials_to_queue():
         if 'notes' in last_params:
             param_dict['notes'] = last_params['notes']
 
-#        with open(the_queue, 'a') as output_file:
-#                yaml.dump(param_dict, output_file, explicit_start=True)
+        with open(the_queue, 'a') as output_file:
+                yaml.dump(param_dict, output_file, explicit_start=True)
 
     # Actually do the particle finding for these trials
-#    run_queue.run_queue()
+    run_queue.run_queue()
 
     # Do the strain calculation for these trials
     for index, this_trial in trials_with_strain_calc.iterrows():
@@ -95,56 +95,9 @@ def add_successful_trials_to_queue():
             trial.linked_mitos = pd.DataFrame.from_dict(
                     linked_mitos_dict, orient='index')
         trial.metadata = this_trial.to_dict()
+        trial.calculate_strain()
 
 
 if __name__ == '__main__':
     # execute as script
     add_successful_trials_to_queue()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
