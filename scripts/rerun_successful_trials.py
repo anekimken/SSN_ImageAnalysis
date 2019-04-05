@@ -16,7 +16,9 @@ import glob
 import os
 import pandas as pd
 import warnings
+import pathlib
 import scripts.run_queue as run_queue
+from strain_propagation_trial import StrainPropagationTrial
 
 
 def add_successful_trials_to_queue():
@@ -40,6 +42,7 @@ def add_successful_trials_to_queue():
     trials_with_strain_calc = metadata_df.loc[
             metadata_df['analysis_status'] == 'Strain calculated']
 
+    # Load up the queue
     the_queue = file_paths['analysis_dir'] + 'analysis_queue.yaml'
     queue_file_size = os.stat(the_queue).st_size
     if queue_file_size > 0:
@@ -73,11 +76,75 @@ def add_successful_trials_to_queue():
         if 'notes' in last_params:
             param_dict['notes'] = last_params['notes']
 
-        with open(the_queue, 'a') as output_file:
-                yaml.dump(param_dict, output_file, explicit_start=True)
+#        with open(the_queue, 'a') as output_file:
+#                yaml.dump(param_dict, output_file, explicit_start=True)
+
+    # Actually do the particle finding for these trials
+#    run_queue.run_queue()
+
+    # Do the strain calculation for these trials
+    for index, this_trial in trials_with_strain_calc.iterrows():
+        trial = StrainPropagationTrial()
+        trial.analyzed_data_location = pathlib.Path(
+                file_paths['analysis_dir'] + 'AnalyzedData/' +
+                this_trial['Experiment_id'] + '/')
+        trial.batch_data_file = trial.analyzed_data_location.joinpath(
+                 'trackpyBatchResults.yaml')
+        with open(trial.batch_data_file, 'r') as yamlfile:
+            linked_mitos_dict = yaml.load(yamlfile)
+            trial.linked_mitos = pd.DataFrame.from_dict(
+                    linked_mitos_dict, orient='index')
+        trial.metadata = this_trial.to_dict()
 
 
 if __name__ == '__main__':
     # execute as script
     add_successful_trials_to_queue()
-    run_queue.run_queue()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
