@@ -6,18 +6,23 @@ This is software for calculating mechanical strain in *C. elegans* touch recepto
 
 The analysis code runs in spyder in a conda environment. Code for making figures is in jupyter notebooks that use the same conda environment.
 
-### Create conda environment from environment.yml
-This installs all the packages that are needed to run the analysis code and create figures. First, [install conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html) if you haven't already. Then, open a terminal and create the conda environment:
+### Clone the github repository
+
+### Create conda environment using setup_conda_env.yml
+This installs all the packages that are needed to run the analysis code and create figures. The setup_conda_env.yml file is in the root directory of the git repo. First, [install conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html) if you haven't already. Then, open a terminal and create the conda environment:
 ```
-conda env create -f environment.yml
+conda env create -f setup_conda_env.yml
 ```
 This might take a couple minutes.
 
-### Clone the github repository
+### Create a config.yaml file
 
-### Modify file locations in config.yml
-
-Open config.yml in a text editor. It should be in the base directory of the cloned repo. Change the file paths for the raw data and code. The analysis_dir should be where the repo is cloned.
+Open a text editor. Add the text
+```
+analysis_dir: /path/to/git/repo/
+data_dir: /path/to/raw/data/
+```
+but using the actual paths for the data and code on your computer.
 
 ### Launch the conda environment and then spyder or jupyter notebook
 The conda environment should automatically be called SSN_analysis_env. Launch it in a terminal:
