@@ -17,23 +17,23 @@ This might take a couple minutes.
 
 ### Modify file locations in config.yml
 
-Open config.yml in a text editor. It should be in the base directory of the cloned repo.
+Open config.yml in a text editor. It should be in the base directory of the cloned repo. Change the file paths for the raw data and code. The analysis_dir should be where the repo is cloned.
 
 ### Launch the conda environment and then spyder or jupyter notebook
 The conda environment should automatically be called SSN_analysis_env. Launch it in a terminal:
-'''
+```
 source activate SSN_analysis_env
-'''
+```
 
 Spyder is used for running the data analysis gui. Launch it simply by executing the command:
-'''
+```
 spyder
-'''
+```
 
 The code that pools together analyzed data into figures is in jupyter notebooks. Launch jupyter by navigating in a terminal to the directory where the repo is cloned and executing the command:
-'''
+```
 jupyter notebook
-'''
+```
 
 ## Data storage structure
 ### Raw Data
@@ -42,9 +42,6 @@ jupyter notebook
 ### Figures
 
 <!---
-your comment goes here
-and here
--->
 
 # Dependencies - probably don't need this because I have env.yml file
 ## Managed with conda
@@ -72,36 +69,5 @@ and here
 ## Direct from github
 - trackpy
 
-
-
-
-## Getting Started
-
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
-
-### Prerequisites
-
-What things you need to install the software and how to install them
-
-```
-Give examples
-```
-
-### Installing
-
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
-
-```
-Give the example
-```
-
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
+-->
 
