@@ -1,4 +1,4 @@
-name: install_test_env
+name: SSN_analysis_env
 channels:
   - spyder-ide
   - conda-forge
