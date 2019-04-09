@@ -33,6 +33,12 @@ class StrainGUIController:
         with open('config.yaml', 'r') as config_file:
             self.file_paths = yaml.safe_load(config_file)
 
+        def construct_python_tuple(self, node):
+            return tuple(self.construct_sequence(node))
+
+        yaml.add_constructor(u'tag:yaml.org,2002:python/tuple',
+                             construct_python_tuple, Loader=yaml.SafeLoader)
+
         # Instantiate Model
         self.trial = ssn_trial.StrainPropagationTrial()
 
@@ -418,7 +424,6 @@ class StrainGUIController:
                 analysis_frame.linking_radius_selector.get())
         last_timepoint = int(
                 analysis_frame.last_time_selector.get())
-        print(last_timepoint)
 
         self.trial.link_mitos(tracking_seach_radius=tracking_seach_radius,
                               last_timepoint=last_timepoint)
@@ -471,7 +476,8 @@ class StrainGUIController:
         new_queue = []
         overwrite_flag = False
         with open(the_queue, 'r') as queue_file:
-            entire_queue = yaml.load_all(queue_file)
+            entire_queue = yaml.safe_load_all(queue_file)#,
+#                                         Loader=self.SafeLoaderPlusTuples)
             for queue_member in entire_queue:
                 if (queue_member['experiment_id'] == self.trial.experiment_id):
                     new_queue.append(param_dict)
@@ -484,12 +490,18 @@ class StrainGUIController:
         with open(the_queue, 'w') as output_file:
                 yaml.dump_all(new_queue, output_file, explicit_start=True)
 
+        try:
+            self.remove_from_review_queue(self)
+        except Exception as err:
+            raise(err)
+
     def run_queue(self, event=None):
         queue_location = self.file_paths['analysis_dir']
         the_queue = queue_location + 'analysis_queue.yaml'
 
         with open(the_queue, 'r') as queue_file:
-            entire_queue = yaml.load_all(queue_file)
+            entire_queue = yaml.safe_load_all(queue_file)#,
+#                                         Loader=self.SafeLoaderPlusTuples)
             queue_length = len(list(entire_queue))
         print('Running queue with', queue_length, 'items.')
         while queue_length > 0:
@@ -497,7 +509,8 @@ class StrainGUIController:
 
             # update queue length variable
             with open(the_queue, 'r') as queue_file:
-                entire_queue = yaml.load_all(queue_file)
+                entire_queue = yaml.safe_load_all(queue_file)#,
+#                                             Loader=self.SafeLoaderPlusTuples)
                 queue_length = len(list(entire_queue))
 
         print('Queue is empty.')
@@ -512,7 +525,8 @@ class StrainGUIController:
 
         # Get first file from queue yaml
         with open(the_queue, 'r') as queue_file:
-            entire_queue = yaml.load_all(queue_file)
+            entire_queue = yaml.safe_load_all(queue_file)#,
+#                                         Loader=self.SafeLoaderPlusTuples)
             params = next(entire_queue)  # get first in line
 
         # Load file
@@ -554,7 +568,8 @@ class StrainGUIController:
 
         # Remove first trial in queue, since we're done with it
         with open(the_queue, 'r') as queue_file:
-            old_queue = yaml.load_all(queue_file)
+            old_queue = yaml.safe_load_all(queue_file)#,
+#                                      Loader=self.SafeLoaderPlusTuples)
             new_queue = [item for item in old_queue
                          if item['experiment_id'] != self.trial.experiment_id]
 
@@ -573,7 +588,8 @@ class StrainGUIController:
         if self.trial.metadata['Experiment_id'] in trials_for_review:
             # Remove first trial in queue, since we're done with it
             with open(review_q, 'r') as queue_file:
-                old_queue = yaml.load_all(queue_file)
+                old_queue = yaml.safe_load_all(queue_file)#,
+#                                          Loader=self.SafeLoaderPlusTuples)
                 new_q = [item for item in old_queue
                          if item['experiment_id'] != self.trial.experiment_id]
 
@@ -647,7 +663,8 @@ class StrainGUIController:
         self.trial.batch_data_file = (data_location +
                                       '/trackpyBatchResults.yaml')
         with open(self.trial.batch_data_file, 'r') as yamlfile:
-                linked_mitos_dict = yaml.load(yamlfile)
+                linked_mitos_dict = yaml.safe_load(yamlfile,
+                                              Loader=self.SafeLoaderPlusTuples)
                 self.trial.linked_mitos = pd.DataFrame.from_dict(
                         linked_mitos_dict, orient='index')
         mitos_df = self.trial.linked_mitos.copy(deep=True)
@@ -817,12 +834,15 @@ class StrainGUIController:
             columns = df_columns
             try:
                 df_for_plot = df_for_plot[columns]
-            except Exception as e:
-                print(e)
 
-            analysis_frame.dataframe_widget.updateModel(
-                    TableModel(df_for_plot))
-            analysis_frame.dataframe_widget.redraw()
+                analysis_frame.dataframe_widget.show()
+                analysis_frame.dataframe_widget.updateModel(
+                        TableModel(df_for_plot))
+
+                analysis_frame.dataframe_widget.redraw()
+
+            except Exception as e:
+                raise(e)
 
         if load_images is True or overwrite_metadata is True:
             # get image that we're going to show
@@ -1025,7 +1045,8 @@ class StrainGUIController:
             # try to load metadata
             try:
                 with open(metadata_file, 'r') as yamlfile:
-                    metadata = yaml.load(yamlfile)
+                    metadata = yaml.safe_load(yamlfile)#,
+#                                         Loader=self.SafeLoaderPlusTuples)
                     # if metadata exists, get analysis status and store it
                     all_statuses_dict[experiment_id] = metadata[
                             'analysis_status'], metadata['neuron']
@@ -1077,6 +1098,16 @@ class StrainGUIController:
         analysis_frame.linking_radius_selector.delete(0, 'end')
         analysis_frame.linking_radius_selector.insert(
                 0, params['tracking_seach_radius'])
+
+
+#class MySafeLoader(yaml.SafeLoader):
+#        def construct_python_tuple(self, node):
+#            return tuple(self.construct_sequence(node))
+#
+#
+#SafeLoaderPlusTuples = MySafeLoader.add_constructor(
+#        u'tag:yaml.org,2002:python/tuple',
+#        MySafeLoader.construct_python_tuple)
 
 
 if __name__ == '__main__':

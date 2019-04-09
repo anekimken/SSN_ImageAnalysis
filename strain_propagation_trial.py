@@ -89,6 +89,12 @@ class StrainPropagationTrial(object):
                                     'time_point': 1,
                                     'tracking_seach_radius': 20,
                                     'last_timepoint': 11}
+
+        def construct_python_tuple(self, node):
+            return tuple(self.construct_sequence(node))
+        yaml.add_constructor(u'tag:yaml.org,2002:python/tuple',
+                             construct_python_tuple, Loader=yaml.SafeLoader)
+
         with open('config.yaml', 'r') as config_file:
             self.file_paths = yaml.safe_load(config_file)
 
@@ -159,12 +165,14 @@ class StrainPropagationTrial(object):
         # Load analyzed data
         if self.batch_data_file.is_file():
             with open(self.batch_data_file, 'r') as yamlfile:
-                linked_mitos_dict = yaml.load(yamlfile)
+                linked_mitos_dict = yaml.safe_load(yamlfile)#,
+#                                              Loader=SafeLoaderPlusTuples)
                 self.linked_mitos = pd.DataFrame.from_dict(
                         linked_mitos_dict, orient='index')
         if self.unlinked_particles_file.is_file():
             with open(self.unlinked_particles_file, 'r') as yamlfile:
-                unlinked_mitos_dict = yaml.load(yamlfile)
+                unlinked_mitos_dict = yaml.safe_load(yamlfile)#,
+#                                                Loader=SafeLoaderPlusTuples)
                 self.mitos_from_batch = pd.DataFrame.from_dict(
                         unlinked_mitos_dict, orient='index')
 
@@ -363,7 +371,8 @@ class StrainPropagationTrial(object):
         # load the file again now that it has all parameters
         with open(save_location.joinpath('trackpyBatchParams.yaml'),
                   'r') as yamlfile:
-            cur_yaml = yaml.load(yamlfile)
+            cur_yaml = yaml.safe_load(yamlfile)#,
+#                                 Loader=SafeLoaderPlusTuples)
 
         # dump the latest analysis into the history file
         with open(self.batch_history_file, 'a') as yamlfile:
@@ -425,7 +434,8 @@ class StrainPropagationTrial(object):
         # load the file of parameters that tp.batch saved previously
         with open(save_location.joinpath('trackpyBatchParams.yaml'),
                   'r') as yamlfile:
-            old_yaml = yaml.load(yamlfile)
+            old_yaml = yaml.safe_load(yamlfile)#,
+#                                 Loader=SafeLoaderPlusTuples)
 
         # add parameters used for linking to the yaml created by tp.batch
         other_param_dict = dict(
@@ -802,7 +812,8 @@ class StrainPropagationTrial(object):
             metadata: dict containing the metadata for this trial
         """
         with open(self.metadata_file_path, 'r') as yamlfile:
-            metadata = yaml.load(yamlfile)
+            metadata = yaml.safe_load(yamlfile)#,
+#                                 Loader=SafeLoaderPlusTuples)
 
         return metadata
 
@@ -826,7 +837,8 @@ class StrainPropagationTrial(object):
         """
 #        try:
 #            with open(self.param_test_history_file, 'r') as yamlfile:
-#                entire_history = yaml.load_all(yamlfile)
+#                entire_history = yaml.safe_load_all(yamlfile)#,
+#                                                #Loader=SafeLoaderPlusTuples)
 #                trackpy_locate_params = None
 #                for trackpy_locate_params in entire_history:  # get newest
 #                    pass
@@ -837,7 +849,8 @@ class StrainPropagationTrial(object):
 
         try:
             with open(self.batch_history_file, 'r') as yamlfile:
-                entire_history = yaml.load_all(yamlfile)
+                entire_history = yaml.safe_load_all(yamlfile)#,
+#                                               Loader=SafeLoaderPlusTuples)
                 trackpy_batch_params = None
                 for trackpy_batch_params in entire_history:  # get most recent
                     pass
@@ -964,6 +977,16 @@ class StrainPropagationTrial(object):
                 'pressure_kPa': combined_metadata['pressure_kPa']}
 
         return metadata_dict
+
+
+#class SafeLoaderPlusTuples(yaml.SafeLoader):
+#    def construct_python_tuple(self, node):
+#        return tuple(self.construct_sequence(node))
+#
+#
+#SafeLoaderPlusTuples.add_constructor(
+#    u'tag:yaml.org,2002:python/tuple',
+#    SafeLoaderPlusTuples.construct_python_tuple)
 
 
 if __name__ == '__main__':

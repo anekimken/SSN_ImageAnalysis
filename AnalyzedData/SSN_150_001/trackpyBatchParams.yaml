@@ -1,21 +1,21 @@
+bottom_slice: 0
 characterize: true
 diameter: !!python/tuple
 - 21
 - 15
 - 15
-minmass: 500
+last_timepoint: 3
+minmass: 300
 noise_size: 3
+notes: Reduced minmass and last timepoint
 percentile: 50
-source: null
-timestamp: 2019-04-04-184918
-trackpy_version: 0.4.1+35.g10f756b
-bottom_slice: 0
-last_timepoint: 11
-notes: Increased minmass, might be too close to top edge
 roi:
 - 338
 - 0
-- 457
+- 455
 - 1050
+source: null
+timestamp: 2019-04-09-182918
 top_slice: 54
 tracking_seach_radius: 30
+trackpy_version: 0.4.1+35.g10f756b

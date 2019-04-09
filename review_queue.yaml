@@ -40,19 +40,6 @@ tracking_seach_radius: 20
 ---
 bottom_slice: 0
 brightness_percentile: 50
-experiment_id: SSN_158_001
-gaussian_width: 3
-last_timepoint: 11
-min_particle_mass: 700
-notes: Increased minmass and link radius
-particle_xy_diameter: 15
-particle_z_diameter: 21
-roi: [152, 0, 240, 1052]
-top_slice: 66
-tracking_seach_radius: 30
----
-bottom_slice: 0
-brightness_percentile: 50
 experiment_id: SSN_159_001
 gaussian_width: 3
 last_timepoint: 11
@@ -376,3 +363,55 @@ particle_z_diameter: 21
 roi: [355, 0, 451, 1052]
 top_slice: 60
 tracking_seach_radius: 30
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_129_001
+gaussian_width: 3
+last_timepoint: 6
+min_particle_mass: 500
+notes: Rerun with correct final timepoint
+particle_xy_diameter: 11
+particle_z_diameter: 21
+roi: [338, 19, 478, 1156]
+top_slice: 69
+tracking_seach_radius: 40
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_157_001
+gaussian_width: 3
+last_timepoint: 7
+min_particle_mass: 1000
+notes: Increased minmass. Mito near top jumping around
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [321, 0, 415, 1052]
+top_slice: 54
+tracking_seach_radius: 50
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_156_001
+gaussian_width: 3
+last_timepoint: 9
+min_particle_mass: 500
+notes: Moved ROI up from bottom because of movement. Cut out last two timepoint.
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [350, 0, 431, 769]
+top_slice: 55
+tracking_seach_radius: 35
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_158_001
+gaussian_width: 3
+last_timepoint: 11
+min_particle_mass: 700
+notes: Increased link radius, moved ROI up from bottom due to head movement.
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [177, 0, 259, 940]
+top_slice: 66
+tracking_seach_radius: 40
