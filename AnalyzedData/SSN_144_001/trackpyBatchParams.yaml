@@ -1,21 +1,21 @@
-bottom_slice: 0
 characterize: true
 diameter: !!python/tuple
 - 21
 - 15
 - 15
-last_timepoint: 8
 minmass: 200
 noise_size: 3
-notes: Added ROI
 percentile: 50
-roi:
-- 362
-- 0
-- 437
-- 1050
 source: null
-timestamp: 2019-04-02-150631
+timestamp: 2019-04-09-183142
+trackpy_version: 0.4.1+35.g10f756b
+bottom_slice: 0
+last_timepoint: 8
+notes: Adjusted ROI, final timepoint, and link radius. might be good for strain.
+roi:
+- 365
+- 130
+- 433
+- 1050
 top_slice: 57
 tracking_seach_radius: 45
-trackpy_version: 0.4.1+35.g10f756b

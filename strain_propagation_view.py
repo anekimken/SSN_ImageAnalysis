@@ -36,6 +36,10 @@ class SSN_analysis_GUI(tk.Frame):
         """
         Initializes the Analysis gui object
         """
+        def construct_python_tuple(self, node):
+            return tuple(self.construct_sequence(node))
+        yaml.add_constructor(u'tag:yaml.org,2002:python/tuple',
+                             construct_python_tuple, Loader=yaml.SafeLoader)
         with open('config.yaml', 'r') as config_file:
             self.file_paths = yaml.safe_load(config_file)
 
@@ -134,13 +138,15 @@ class FileLoadFrame(tk.Frame):
                                text="Rating to prioritize analysis")
 
         with open(the_queue, 'r') as queue_file:
-            entire_queue = yaml.load_all(queue_file)
+            entire_queue = yaml.safe_load_all(queue_file)#,
+#                                         Loader=SafeLoaderPlusTuples)
             self.trials_in_queue = []
             for queue_member in entire_queue:
                 self.trials_in_queue.append(queue_member['experiment_id'])
 
         with open(queue_result_location, 'r') as queue_result:
-            all_queue_results = yaml.load_all(queue_result)
+            all_queue_results = yaml.safe_load_all(queue_result)#,
+#                                              Loader=SafeLoaderPlusTuples)
             self.trials_for_review = []
             for trial in all_queue_results:
                 self.trials_for_review.append(trial['experiment_id'])
@@ -214,7 +220,8 @@ class FileLoadFrame(tk.Frame):
     def load_metadata_from_yaml(self, metadata_file_path: str) -> dict:
         """Loads metadata from an existing yaml file."""
         with open(metadata_file_path, 'r') as yamlfile:
-            metadata = yaml.load(yamlfile)
+            metadata = yaml.safe_load(yamlfile)#,
+#                                 Loader=SafeLoaderPlusTuples)
 
         return metadata
 
@@ -520,7 +527,8 @@ class AnalyzeTrialFrame(AnalyzeImageFrame):
         self.dataframe = None  # TableModel.getSampleData()
         self.dataframe_widget = Table(self.explore_data_frame,
                                       dataframe=self.dataframe)
-        self.dataframe_widget.show()
+#        self.dataframe_widget.redraw()
+#        self.dataframe_widget.show()
 
         self.param_history_frame = tk.Frame(self.analysis_notebook)
         self.param_history_tab = self.analysis_notebook.add(
@@ -765,7 +773,8 @@ class AnalysisQueueFrame(tk.Frame):
         def update_queue(event=None):
             the_queue = self.queue_location + 'analysis_queue.yaml'
             with open(the_queue, 'r') as queue_file:
-                entire_queue = yaml.load_all(queue_file)
+                entire_queue = yaml.safe_load_all(queue_file)#,
+#                                             Loader=SafeLoaderPlusTuples)
                 for queue_member in entire_queue:
                     self.run_queue_button.config(state=tk.NORMAL)
                     experiment_id = queue_member['experiment_id']
@@ -779,7 +788,8 @@ class AnalysisQueueFrame(tk.Frame):
                                           experiment_id + '/metadata.yaml')
                     try:
                         with open(metadata_file_path, 'r') as yamlfile:
-                            metadata = yaml.load(yamlfile)
+                            metadata = yaml.safe_load(yamlfile)#,
+#                                                 Loader=SafeLoaderPlusTuples)
                         if 'trial_rating' in metadata:
                             rating = metadata['trial_rating']
                         else:
@@ -973,10 +983,21 @@ class PlotResultsFrame(AnalyzeImageFrame):
     def load_metadata_from_yaml(self, metadata_file_path: str) -> dict:
         """Loads metadata from an existing yaml file."""
         with open(metadata_file_path, 'r') as yamlfile:
-            metadata = yaml.load(yamlfile)
+            metadata = yaml.safe_load(yamlfile)#,
+#                                 Loader=SafeLoaderPlusTuples)
 
         return metadata
     # TODO: controls for selecting what data are plotted
+
+
+#class SafeLoaderPlusTuples(yaml.SafeLoader):
+#    def construct_python_tuple(self, node):
+#        return tuple(self.construct_sequence(node))
+#
+#
+#SafeLoaderPlusTuples.add_constructor(
+#    u'tag:yaml.org,2002:python/tuple',
+#    SafeLoaderPlusTuples.construct_python_tuple)
 
 
 if __name__ == '__main__':
