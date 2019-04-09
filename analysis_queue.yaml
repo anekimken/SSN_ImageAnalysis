@@ -1,0 +1,117 @@
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_129_001
+gaussian_width: 3
+last_timepoint: 6
+min_particle_mass: 500
+notes: Rerun with correct final timepoint
+particle_xy_diameter: 11
+particle_z_diameter: 21
+roi: [338, 19, 478, 1156]
+top_slice: 69
+tracking_seach_radius: 40
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_142_001
+gaussian_width: 3
+last_timepoint: 11
+min_particle_mass: 730
+notes: Increased minmass, actuation looks weird
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [240, 472, 340, 572]
+top_slice: 77
+tracking_seach_radius: 20
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_148_001
+gaussian_width: 3
+last_timepoint: 7
+min_particle_mass: 500
+notes: Adjusted ROI, might be good enough
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [202, 0, 267, 869]
+top_slice: 72
+tracking_seach_radius: 45
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_150_001
+gaussian_width: 3
+last_timepoint: 5
+min_particle_mass: 300
+notes: Reduced minmass and last timepoint
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [338, 0, 455, 1050]
+top_slice: 54
+tracking_seach_radius: 30
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_144_001
+gaussian_width: 3
+last_timepoint: 8
+min_particle_mass: 200
+notes: Adjusted ROI, final timepoint, and link radius. might be good for strain.
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [365, 130, 433, 1050]
+top_slice: 57
+tracking_seach_radius: 45
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_147_001
+gaussian_width: 3
+last_timepoint: 8
+min_particle_mass: 300
+notes: Increased minmass and decreased final timepoint
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [211, 0, 289, 1050]
+top_slice: 64
+tracking_seach_radius: 35
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_146_001
+gaussian_width: 3
+last_timepoint: 11
+min_particle_mass: 800
+notes: Increased minmass
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [214, 0, 284, 1050]
+top_slice: 61
+tracking_seach_radius: 20
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_157_001
+gaussian_width: 3
+last_timepoint: 7
+min_particle_mass: 1000
+notes: Increased minmass. Mito near top jumping around
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [321, 0, 415, 1052]
+top_slice: 54
+tracking_seach_radius: 50
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_156_001
+gaussian_width: 3
+last_timepoint: 9
+min_particle_mass: 500
+notes: Moved ROI up from bottom because of movement. Cut out last two timepoint.
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [350, 0, 431, 769]
+top_slice: 55
+tracking_seach_radius: 35

@@ -18,7 +18,7 @@ The analysis code runs in spyder in a conda environment. Code for making figures
 ### Clone the github repository
 
 ### Create conda environment using setup_conda_env.yml
-This installs all the packages that are needed to run the analysis code and create figures. The `setup_conda_env.yml` file is in the root directory of the git repo. First, [install conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html) if you haven't already. Then, open a terminal and create the conda environment:
+This installs all the packages that are needed to run the analysis code and create figures. The `setup_conda_env.yml` file is in the root directory of the git repo. First, [install conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html) if you haven't already. Then, open a terminal, go to the base directory for the cloned repo, and create the conda environment:
 ```
 conda env create -f setup_conda_env.yml
 ```
