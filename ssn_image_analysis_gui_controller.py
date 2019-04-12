@@ -38,14 +38,15 @@ class StrainGUIController:
 
         yaml.add_constructor(u'tag:yaml.org,2002:python/tuple',
                              construct_python_tuple, Loader=yaml.SafeLoader)
-
+        print('tuple added to yaml')
         # Instantiate Model
         self.trial = ssn_trial.StrainPropagationTrial()
 
+        print('trial instantiated')
         if headless is not True:
             # Instantiate View
             self.gui = ssn_view.SSN_analysis_GUI(self.root)
-
+            print('gui instantiated')
             # Bind UI elements to functions
             # Load trial tab
             self.gui.file_load_frame.load_trial_button.bind(
@@ -125,6 +126,7 @@ class StrainGUIController:
     def run(self):
         self.root.title("SSN Image Analysis")
         self.root.mainloop()
+        print('running')
 
     def load_trial(self, event=None):
         """Loads the data for this trial from disk and sends us to the
