@@ -62,3 +62,94 @@ timestamp: 2019-04-09-183432
 top_slice: 61
 tracking_seach_radius: 20
 trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 9
+minmass: 800
+noise_size: 3
+notes: Made ROI smaller on the right
+percentile: 50
+roi: [214, 2, 273, 1050]
+source: null
+timestamp: 2019-04-10-141300
+top_slice: 61
+tracking_seach_radius: 35
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 8
+minmass: 800
+noise_size: 3
+notes: Made ROI smaller on the right
+percentile: 50
+roi: [214, 2, 273, 1050]
+source: null
+timestamp: 2019-04-10-141300
+top_slice: 61
+tracking_seach_radius: 35
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 8
+minmass: 800
+noise_size: 3
+notes: Made ROI smaller on the right
+percentile: 50
+roi: [214, 2, 273, 1050]
+source: null
+timestamp: 2019-04-10-141300
+top_slice: 61
+tracking_seach_radius: 40
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 7
+minmass: 800
+noise_size: 3
+notes: Made ROI smaller on the right
+percentile: 50
+roi: [214, 2, 273, 1050]
+source: null
+timestamp: 2019-04-10-141300
+top_slice: 61
+tracking_seach_radius: 40
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 7
+minmass: 1000
+noise_size: 3
+notes: Increased minmass to remove spurious particle in first frame near actuator.
+  Might lose some mitos
+percentile: 50
+roi: [214, 7, 276, 1050]
+source: null
+timestamp: 2019-04-10-183615
+top_slice: 61
+tracking_seach_radius: 40
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 7
+minmass: 800
+noise_size: 3
+notes: Increased brightness percentile to eliminate spurious particle in first frame
+percentile: 92
+roi: [214, 7, 276, 1050]
+source: null
+timestamp: 2019-04-11-055521
+top_slice: 61
+tracking_seach_radius: 40
+trackpy_version: 0.4.1+35.g10f756b

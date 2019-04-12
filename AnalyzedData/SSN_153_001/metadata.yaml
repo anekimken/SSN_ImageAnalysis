@@ -1,6 +1,15 @@
 ---
 Experiment_id: SSN_153_001
-analysis_status: Not started
+actuator_center:
+- 189.5
+- 450.5
+actuator_corners:
+- 192.0
+- 359.0
+- 187.0
+- 542.0
+actuator_thickness: 37.07559481874034
+analysis_status: Testing parameters
 bleach_time: 2019-02-01 05:00:00
 cultivation_temp: 20
 device_ID: Y4P7-3
@@ -31,7 +40,7 @@ slice_width_pix: 600
 stack_height: 40
 timestamp: 2019-02-04 13:32:08
 total_images: 440
-trial_rating: "\u2B50\uFE0F\u2B50\uFE0F\u2B50\uFE0F"
+trial_rating: No rating given
 user: anekimke@stanford.edu
 vulva_orientation: West
 worm_life_stage: YA

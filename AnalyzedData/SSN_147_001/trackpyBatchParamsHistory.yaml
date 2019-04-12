@@ -92,3 +92,78 @@ timestamp: 2019-04-09-183251
 top_slice: 64
 tracking_seach_radius: 35
 trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 6
+minmass: 460
+noise_size: 3
+notes: Further Increased minmass and decreased final timepoint
+percentile: 50
+roi: [211, 0, 289, 1050]
+source: null
+timestamp: 2019-04-10-141509
+top_slice: 64
+tracking_seach_radius: 35
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 6
+minmass: 460
+noise_size: 3
+notes: Further Increased minmass and decreased final timepoint
+percentile: 50
+roi: [211, 0, 289, 1050]
+source: null
+timestamp: 2019-04-10-141509
+top_slice: 64
+tracking_seach_radius: 45
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 6
+minmass: 460
+noise_size: 3
+notes: Further Increased minmass and decreased final timepoint
+percentile: 50
+roi: [211, 0, 289, 1050]
+source: null
+timestamp: 2019-04-10-141509
+top_slice: 64
+tracking_seach_radius: 40
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 5
+minmass: 460
+noise_size: 3
+notes: Further Increased minmass and decreased final timepoint
+percentile: 50
+roi: [211, 0, 289, 1050]
+source: null
+timestamp: 2019-04-10-141509
+top_slice: 64
+tracking_seach_radius: 40
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 5
+minmass: 460
+noise_size: 3
+notes: Removed last timepoint and increased search radius. Probably ready for strain
+percentile: 50
+roi: [211, 0, 289, 1050]
+source: null
+timestamp: 2019-04-10-183803
+top_slice: 64
+tracking_seach_radius: 40
+trackpy_version: 0.4.1+35.g10f756b

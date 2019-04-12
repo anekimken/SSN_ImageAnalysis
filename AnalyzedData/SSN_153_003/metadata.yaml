@@ -1,14 +1,14 @@
 ---
-Experiment_id: SSN_152_001
+Experiment_id: SSN_153_003
 actuator_center:
-- 322.5
-- 469.0
+- 187.0
+- 522.0
 actuator_corners:
-- 326.0
-- 377.0
-- 319.0
-- 561.0
-actuator_thickness: 28.03223302939042
+- 191.0
+- 433.0
+- 183.0
+- 611.0
+actuator_thickness: 30.988907094115106
 analysis_status: Testing parameters
 bleach_time: 2019-02-01 05:00:00
 cultivation_temp: 20
@@ -18,8 +18,9 @@ microscope: Spinning Disk Confocal in CSIF Shriram
 microscope_channel: SDC 561-ALN
 microscope_objective: 40x oil
 neuron: AVM
-notes: Dim and bleached quickly. ALM visible on West side of image.
-num_eggs: 3
+notes: Taller stacks than other SSN_153 trial. pretty dim, probably can only work
+  with first few stacks, if that.
+num_eggs: 2
 num_timepoints: 11
 pixel_microns: 0.275
 pressure_kPa:
@@ -37,11 +38,11 @@ pressure_kPa:
 purpose: Baseline measurement
 slice_height_pix: 1054
 slice_width_pix: 600
-stack_height: 47
-timestamp: 2019-02-04 13:11:28
-total_images: 517
+stack_height: 53
+timestamp: 2019-02-04 13:36:18
+total_images: 583
 trial_rating: No rating given
 user: anekimke@stanford.edu
-vulva_orientation: East
+vulva_orientation: West
 worm_life_stage: YA
 worm_strain: NM3573

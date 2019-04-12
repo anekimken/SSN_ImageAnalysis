@@ -415,3 +415,68 @@ particle_z_diameter: 21
 roi: [177, 0, 259, 940]
 top_slice: 66
 tracking_seach_radius: 40
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_153_001
+gaussian_width: 3
+last_timepoint: 11
+min_particle_mass: 900
+notes: Increased minmass
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [192, 0, 287, 1054]
+top_slice: 40
+tracking_seach_radius: 30
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_153_003
+gaussian_width: 3
+last_timepoint: 11
+min_particle_mass: 1000
+notes: Increased minmass. might be lost cause
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [201, 0, 282, 1054]
+top_slice: 53
+tracking_seach_radius: 30
+---
+bottom_slice: 0
+brightness_percentile: 92
+experiment_id: SSN_146_001
+gaussian_width: 3
+last_timepoint: 7
+min_particle_mass: 800
+notes: Increased brightness percentile to eliminate spurious particle in first frame
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [214, 7, 276, 1050]
+top_slice: 61
+tracking_seach_radius: 40
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_150_001
+gaussian_width: 3
+last_timepoint: 3
+min_particle_mass: 440
+notes: Reduced ROI on bottom. should be good to go
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [345, 11, 432, 745]
+top_slice: 54
+tracking_seach_radius: 30
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_152_001
+gaussian_width: 3
+last_timepoint: 11
+min_particle_mass: 300
+notes: Increased minmass a bit. might be too dim
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [271, 0, 339, 1054]
+top_slice: 47
+tracking_seach_radius: 35

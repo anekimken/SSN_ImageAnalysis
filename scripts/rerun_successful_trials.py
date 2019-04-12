@@ -22,6 +22,10 @@ from strain_propagation_trial import StrainPropagationTrial
 
 
 def add_successful_trials_to_queue():
+    def construct_python_tuple(self, node):
+        return tuple(self.construct_sequence(node))
+    yaml.add_constructor(u'tag:yaml.org,2002:python/tuple',
+                         construct_python_tuple, Loader=yaml.SafeLoader)
 
     with open('config.yaml', 'r') as config_file:
         file_paths = yaml.safe_load(config_file)
@@ -56,7 +60,7 @@ def add_successful_trials_to_queue():
                                     '/trackpyBatchParamsHistory.yaml')
 
         with open(batch_param_history_file, 'r') as param_file:
-            entire_history = yaml.load_all(param_file)
+            entire_history = yaml.safe_load_all(param_file)
             last_params = None
             for last_params in entire_history:
                 pass  # pass until we get to most recent
@@ -91,7 +95,7 @@ def add_successful_trials_to_queue():
         trial.batch_data_file = trial.analyzed_data_location.joinpath(
                  'trackpyBatchResults.yaml')
         with open(trial.batch_data_file, 'r') as yamlfile:
-            linked_mitos_dict = yaml.load(yamlfile)
+            linked_mitos_dict = yaml.safe_load(yamlfile)
             trial.linked_mitos = pd.DataFrame.from_dict(
                     linked_mitos_dict, orient='index')
         trial.metadata = this_trial.to_dict()
