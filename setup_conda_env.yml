@@ -7,7 +7,7 @@ channels:
   - defaults
 dependencies:
   - python=3.6
-  - spyder=3.3
+  - spyder=3.3.3
   - matplotlib
   - numpy
   - pyyaml
