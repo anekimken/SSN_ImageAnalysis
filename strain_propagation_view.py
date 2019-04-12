@@ -119,6 +119,7 @@ class FileLoadFrame(tk.Frame):
         self.button_frame.pack(side=tk.BOTTOM)
 
         self.update_file_tree()
+        print('file load frame created')
 
     def update_file_tree(self):
         # now, we load all the file names into a Treeview for user selection
@@ -267,6 +268,7 @@ class AnalyzeImageFrame(tk.Frame):
                 self.param_frame, text="Adjust Parameters")
         self.analysis_notebook.grid(row=0, column=2, sticky=tk.N)
         self.root.update()
+        print('analyze image frame created')
 
 
 class AnalyzeTrialFrame(AnalyzeImageFrame):
