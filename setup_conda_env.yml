@@ -8,6 +8,7 @@ channels:
 dependencies:
   - python=3.6
   - spyder=3.3.3
+  - tk=3.6.8
   - matplotlib
   - numpy
   - pyyaml
