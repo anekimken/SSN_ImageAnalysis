@@ -137,3 +137,18 @@ timestamp: 2019-04-09-182539
 top_slice: 77
 tracking_seach_radius: 35
 trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 10
+minmass: 730
+noise_size: 3
+notes: Cut off very top of image, increased link radius
+percentile: 50
+roi: [301, 65, 382, 1050]
+source: null
+timestamp: 2019-04-10-141106
+top_slice: 77
+tracking_seach_radius: 35
+trackpy_version: 0.4.1+35.g10f756b

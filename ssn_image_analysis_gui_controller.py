@@ -196,14 +196,15 @@ class StrainGUIController:
         self._display_last_test_params()
 
         # load param history into text field
-        with open(self.trial.batch_history_file, 'r') as hist_yaml:
-            param_history = hist_yaml.read()
-            hist_text = self.gui.analyze_trial_frame.param_history
-            hist_text.config(state=tk.NORMAL)
-            hist_text.delete(1.0, tk.END)
-            hist_text.insert(tk.END, param_history)
-            hist_text.config(state=tk.DISABLED)
-            hist_text.yview_moveto(1)
+        if self.trial.batch_history_file.is_file():
+            with open(self.trial.batch_history_file, 'r') as hist_yaml:
+                param_history = hist_yaml.read()
+                hist_text = self.gui.analyze_trial_frame.param_history
+                hist_text.config(state=tk.NORMAL)
+                hist_text.delete(1.0, tk.END)
+                hist_text.insert(tk.END, param_history)
+                hist_text.config(state=tk.DISABLED)
+                hist_text.yview_moveto(1)
 
         if self.trial.metadata['Experiment_id'] in fl_fr.trials_for_review:
             self.gui.analyze_trial_frame.remove_q_result.config(
@@ -476,8 +477,7 @@ class StrainGUIController:
         new_queue = []
         overwrite_flag = False
         with open(the_queue, 'r') as queue_file:
-            entire_queue = yaml.safe_load_all(queue_file)#,
-#                                         Loader=self.SafeLoaderPlusTuples)
+            entire_queue = yaml.safe_load_all(queue_file)
             for queue_member in entire_queue:
                 if (queue_member['experiment_id'] == self.trial.experiment_id):
                     new_queue.append(param_dict)
@@ -500,8 +500,7 @@ class StrainGUIController:
         the_queue = queue_location + 'analysis_queue.yaml'
 
         with open(the_queue, 'r') as queue_file:
-            entire_queue = yaml.safe_load_all(queue_file)#,
-#                                         Loader=self.SafeLoaderPlusTuples)
+            entire_queue = yaml.safe_load_all(queue_file)
             queue_length = len(list(entire_queue))
         print('Running queue with', queue_length, 'items.')
         while queue_length > 0:
@@ -509,8 +508,7 @@ class StrainGUIController:
 
             # update queue length variable
             with open(the_queue, 'r') as queue_file:
-                entire_queue = yaml.safe_load_all(queue_file)#,
-#                                             Loader=self.SafeLoaderPlusTuples)
+                entire_queue = yaml.safe_load_all(queue_file)
                 queue_length = len(list(entire_queue))
 
         print('Queue is empty.')
@@ -525,8 +523,7 @@ class StrainGUIController:
 
         # Get first file from queue yaml
         with open(the_queue, 'r') as queue_file:
-            entire_queue = yaml.safe_load_all(queue_file)#,
-#                                         Loader=self.SafeLoaderPlusTuples)
+            entire_queue = yaml.safe_load_all(queue_file)
             params = next(entire_queue)  # get first in line
 
         # Load file
@@ -568,8 +565,7 @@ class StrainGUIController:
 
         # Remove first trial in queue, since we're done with it
         with open(the_queue, 'r') as queue_file:
-            old_queue = yaml.safe_load_all(queue_file)#,
-#                                      Loader=self.SafeLoaderPlusTuples)
+            old_queue = yaml.safe_load_all(queue_file)
             new_queue = [item for item in old_queue
                          if item['experiment_id'] != self.trial.experiment_id]
 
@@ -588,8 +584,7 @@ class StrainGUIController:
         if self.trial.metadata['Experiment_id'] in trials_for_review:
             # Remove first trial in queue, since we're done with it
             with open(review_q, 'r') as queue_file:
-                old_queue = yaml.safe_load_all(queue_file)#,
-#                                          Loader=self.SafeLoaderPlusTuples)
+                old_queue = yaml.safe_load_all(queue_file)
                 new_q = [item for item in old_queue
                          if item['experiment_id'] != self.trial.experiment_id]
 
@@ -663,8 +658,7 @@ class StrainGUIController:
         self.trial.batch_data_file = (data_location +
                                       '/trackpyBatchResults.yaml')
         with open(self.trial.batch_data_file, 'r') as yamlfile:
-                linked_mitos_dict = yaml.safe_load(yamlfile,
-                                              Loader=self.SafeLoaderPlusTuples)
+                linked_mitos_dict = yaml.safe_load(yamlfile)
                 self.trial.linked_mitos = pd.DataFrame.from_dict(
                         linked_mitos_dict, orient='index')
         mitos_df = self.trial.linked_mitos.copy(deep=True)
@@ -736,6 +730,7 @@ class StrainGUIController:
         analysis_frame.ax.clear()
         analysis_frame.hist_ax.clear()
         df_for_plot = None
+        # TODO: fix settingwithcopywarning for df_for_plot. deepcopy maybe?
 
         # Get dataframe with data we're going to plot on top of image
         if plot_mitos_status == 'Linked mitos for this stack':
@@ -744,7 +739,7 @@ class StrainGUIController:
                     max(self.trial.linked_mitos['frame'])):
                 df_for_plot = self.trial.linked_mitos.loc[
                         self.trial.linked_mitos[
-                                'frame'] == selected_timepoint]
+                                'frame'] == selected_timepoint].copy()
                 mito_labels = df_for_plot
                 df_columns = ['x', 'y', 'z', 'frame', 'mass', 'particle',
                               'signal', 'raw_mass', 'size_x', 'size_y',
@@ -753,7 +748,7 @@ class StrainGUIController:
                 traj_line = 'None'
         elif plot_mitos_status == 'Plot trajectories':
             if self.trial.linked_mitos is not None:
-                df_for_plot = self.trial.linked_mitos
+                df_for_plot = self.trial.linked_mitos.copy()
                 mito_labels = df_for_plot
                 df_columns = ['x', 'y', 'z', 'frame', 'mass', 'particle',
                               'signal', 'raw_mass', 'size_x', 'size_y',
@@ -812,14 +807,14 @@ class StrainGUIController:
                     max(self.trial.mitos_from_batch['frame'])):
                 df_for_plot = self.trial.mitos_from_batch.loc[
                         self.trial.mitos_from_batch[
-                                'frame'] == selected_timepoint]
+                                'frame'] == selected_timepoint].copy()
                 df_columns = ['x', 'y', 'z', 'frame', 'mass',
                               'signal', 'raw_mass', 'size_x', 'size_y',
                               'size_z', 'ecc', 'ep_x', 'ep_y', 'ep_z']
         elif plot_mitos_status == 'Mitos from param test':
             if self.trial.mito_candidates is not None:
-                df_for_plot = self.trial.mito_candidates
-                df_columns = ['x', 'y', 'z', 'frame', 'mass',
+                df_for_plot = self.trial.mito_candidates.copy()
+                df_columns = ['x', 'y', 'z', 'mass',
                               'signal', 'raw_mass', 'size_x', 'size_y',
                               'size_z', 'ecc', 'ep_x', 'ep_y', 'ep_z']
         # plot data before linking, so no text here
@@ -829,20 +824,16 @@ class StrainGUIController:
                              color='#FB8072', marker='o', linestyle='None')
 
         if df_for_plot is not None:
-            analysis_frame.dataframe = df_for_plot.sort_values('y',
-                                                               inplace=True)
+            df_for_plot.sort_values('y', inplace=True)
             columns = df_columns
-            try:
-                df_for_plot = df_for_plot[columns]
 
-                analysis_frame.dataframe_widget.show()
-                analysis_frame.dataframe_widget.updateModel(
-                        TableModel(df_for_plot))
+            df_for_plot = df_for_plot[columns]
 
-                analysis_frame.dataframe_widget.redraw()
+            analysis_frame.dataframe_widget.show()
+            analysis_frame.dataframe_widget.updateModel(
+                    TableModel(df_for_plot))
 
-            except Exception as e:
-                raise(e)
+            analysis_frame.dataframe_widget.redraw()
 
         if load_images is True or overwrite_metadata is True:
             # get image that we're going to show
@@ -876,17 +867,20 @@ class StrainGUIController:
             analysis_frame.hist_ax.set_yscale('log')
             analysis_frame.histogram_canvas.draw()
         else:
-            if plot_mitos_status == 'Unlinked mitos for this stack':
-                one_stack_fig = self.trial.analyzed_data_location.joinpath(
-                        'diag_images/stack_' +
-                        str(selected_timepoint) + '_fig.png')
-                self.saved_photo = plt.imread(str(one_stack_fig))
-            else:
-                traj_fig_file = self.trial.analyzed_data_location.joinpath(
-                        'diag_images/trajectory_fig.png')
-                self.saved_photo = plt.imread(str(traj_fig_file))
-            analysis_frame.ax.imshow(self.saved_photo)
-            analysis_frame.plot_canvas.draw()
+            try:
+                if plot_mitos_status == 'Unlinked mitos for this stack':
+                    one_stack_fig = self.trial.analyzed_data_location.joinpath(
+                            'diag_images/stack_' +
+                            str(selected_timepoint) + '_fig.png')
+                    self.saved_photo = plt.imread(str(one_stack_fig))
+                else:
+                    traj_fig_file = self.trial.analyzed_data_location.joinpath(
+                            'diag_images/trajectory_fig.png')
+                    self.saved_photo = plt.imread(str(traj_fig_file))
+                analysis_frame.ax.imshow(self.saved_photo)
+                analysis_frame.plot_canvas.draw()
+            except FileNotFoundError:
+                pass
 
     def on_click_image(self, event=None):
         canvas = event.widget  # analysis_frame.plot_canvas.get_tk_widget()
@@ -1045,8 +1039,7 @@ class StrainGUIController:
             # try to load metadata
             try:
                 with open(metadata_file, 'r') as yamlfile:
-                    metadata = yaml.safe_load(yamlfile)#,
-#                                         Loader=self.SafeLoaderPlusTuples)
+                    metadata = yaml.safe_load(yamlfile)
                     # if metadata exists, get analysis status and store it
                     all_statuses_dict[experiment_id] = metadata[
                             'analysis_status'], metadata['neuron']
@@ -1073,23 +1066,40 @@ class StrainGUIController:
         analysis_frame.top_slice_selector.insert(0, params['top_slice'])
 
         analysis_frame.gaussian_blur_width.delete(0, 'end')
-        analysis_frame.gaussian_blur_width.insert(0, params['noise_size'])
+        if 'noise_size' in params:
+            analysis_frame.gaussian_blur_width.insert(0, params['noise_size'])
+        else:
+            analysis_frame.gaussian_blur_width.insert(0,
+                                                      params['gaussian_width'])
 
         analysis_frame.z_diameter_selector.delete(0, 'end')
-        analysis_frame.z_diameter_selector.insert(
-                0, params['diameter'][0])
-
         analysis_frame.xy_diameter_selector.delete(0, 'end')
-        analysis_frame.xy_diameter_selector.insert(
-                0, params['diameter'][1])
+        if 'diameter' in params:
+            analysis_frame.z_diameter_selector.insert(
+                    0, params['diameter'][0])
+            analysis_frame.xy_diameter_selector.insert(
+                    0, params['diameter'][1])
+        else:
+            analysis_frame.z_diameter_selector.insert(
+                    0, params['particle_z_diameter'])
+            analysis_frame.xy_diameter_selector.insert(
+                    0, params['particle_xy_diameter'])
 
         analysis_frame.brightness_percentile_selector.delete(0, 'end')
-        analysis_frame.brightness_percentile_selector.insert(
-                0, params['percentile'])
+        if 'percentile' in params:
+            analysis_frame.brightness_percentile_selector.insert(
+                    0, params['percentile'])
+        else:
+            analysis_frame.brightness_percentile_selector.insert(
+                    0, params['brightness_percentile'])
 
         analysis_frame.min_mass_selector.delete(0, 'end')
-        analysis_frame.min_mass_selector.insert(
+        if 'minmass' in params:
+            analysis_frame.min_mass_selector.insert(
                 0, params['minmass'])
+        else:
+            analysis_frame.min_mass_selector.insert(
+                0, params['min_particle_mass'])
 
         analysis_frame.last_time_selector.delete(0, 'end')
         analysis_frame.last_time_selector.insert(
@@ -1098,16 +1108,6 @@ class StrainGUIController:
         analysis_frame.linking_radius_selector.delete(0, 'end')
         analysis_frame.linking_radius_selector.insert(
                 0, params['tracking_seach_radius'])
-
-
-#class MySafeLoader(yaml.SafeLoader):
-#        def construct_python_tuple(self, node):
-#            return tuple(self.construct_sequence(node))
-#
-#
-#SafeLoaderPlusTuples = MySafeLoader.add_constructor(
-#        u'tag:yaml.org,2002:python/tuple',
-#        MySafeLoader.construct_python_tuple)
 
 
 if __name__ == '__main__':

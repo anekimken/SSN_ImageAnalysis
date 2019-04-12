@@ -3,19 +3,19 @@ diameter: !!python/tuple
 - 21
 - 15
 - 15
-minmass: 730
+minmass: 300
 noise_size: 3
 percentile: 50
 source: null
-timestamp: 2019-04-10-141106
+timestamp: 2019-04-11-055714
 trackpy_version: 0.4.1+35.g10f756b
 bottom_slice: 0
-last_timepoint: 10
-notes: Cut off very top of image, increased link radius
+last_timepoint: 11
+notes: Increased minmass a bit. might be too dim
 roi:
-- 301
-- 65
-- 382
-- 1050
-top_slice: 77
+- 271
+- 0
+- 339
+- 1054
+top_slice: 47
 tracking_seach_radius: 35

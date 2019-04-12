@@ -134,9 +134,7 @@ class StrainPropagationTrial(object):
         self.analyzed_data_location = pathlib.Path(
                 self.file_paths['analysis_dir'] + 'AnalyzedData/' +
                 self.experiment_id + '/')
-#        self.analyzed_data_location = pathlib.Path(
-#                '/Users/adam/Documents/SenseOfTouchResearch/'
-#                'SSN_ImageAnalysis/AnalyzedData/' + self.experiment_id + '/')
+
         self.metadata_file_path = self.analyzed_data_location.joinpath(
                  'metadata.yaml')
         self.param_test_history_file = self.analyzed_data_location.joinpath(
@@ -165,14 +163,12 @@ class StrainPropagationTrial(object):
         # Load analyzed data
         if self.batch_data_file.is_file():
             with open(self.batch_data_file, 'r') as yamlfile:
-                linked_mitos_dict = yaml.safe_load(yamlfile)#,
-#                                              Loader=SafeLoaderPlusTuples)
+                linked_mitos_dict = yaml.safe_load(yamlfile)
                 self.linked_mitos = pd.DataFrame.from_dict(
                         linked_mitos_dict, orient='index')
         if self.unlinked_particles_file.is_file():
             with open(self.unlinked_particles_file, 'r') as yamlfile:
-                unlinked_mitos_dict = yaml.safe_load(yamlfile)#,
-#                                                Loader=SafeLoaderPlusTuples)
+                unlinked_mitos_dict = yaml.safe_load(yamlfile)
                 self.mitos_from_batch = pd.DataFrame.from_dict(
                         unlinked_mitos_dict, orient='index')
 
@@ -371,8 +367,7 @@ class StrainPropagationTrial(object):
         # load the file again now that it has all parameters
         with open(save_location.joinpath('trackpyBatchParams.yaml'),
                   'r') as yamlfile:
-            cur_yaml = yaml.safe_load(yamlfile)#,
-#                                 Loader=SafeLoaderPlusTuples)
+            cur_yaml = yaml.safe_load(yamlfile)
 
         # dump the latest analysis into the history file
         with open(self.batch_history_file, 'a') as yamlfile:
@@ -434,8 +429,7 @@ class StrainPropagationTrial(object):
         # load the file of parameters that tp.batch saved previously
         with open(save_location.joinpath('trackpyBatchParams.yaml'),
                   'r') as yamlfile:
-            old_yaml = yaml.safe_load(yamlfile)#,
-#                                 Loader=SafeLoaderPlusTuples)
+            old_yaml = yaml.safe_load(yamlfile)
 
         # add parameters used for linking to the yaml created by tp.batch
         other_param_dict = dict(
@@ -812,8 +806,7 @@ class StrainPropagationTrial(object):
             metadata: dict containing the metadata for this trial
         """
         with open(self.metadata_file_path, 'r') as yamlfile:
-            metadata = yaml.safe_load(yamlfile)#,
-#                                 Loader=SafeLoaderPlusTuples)
+            metadata = yaml.safe_load(yamlfile)
 
         return metadata
 
@@ -849,8 +842,7 @@ class StrainPropagationTrial(object):
 
         try:
             with open(self.batch_history_file, 'r') as yamlfile:
-                entire_history = yaml.safe_load_all(yamlfile)#,
-#                                               Loader=SafeLoaderPlusTuples)
+                entire_history = yaml.safe_load_all(yamlfile)
                 trackpy_batch_params = None
                 for trackpy_batch_params in entire_history:  # get most recent
                     pass
@@ -977,16 +969,6 @@ class StrainPropagationTrial(object):
                 'pressure_kPa': combined_metadata['pressure_kPa']}
 
         return metadata_dict
-
-
-#class SafeLoaderPlusTuples(yaml.SafeLoader):
-#    def construct_python_tuple(self, node):
-#        return tuple(self.construct_sequence(node))
-#
-#
-#SafeLoaderPlusTuples.add_constructor(
-#    u'tag:yaml.org,2002:python/tuple',
-#    SafeLoaderPlusTuples.construct_python_tuple)
 
 
 if __name__ == '__main__':

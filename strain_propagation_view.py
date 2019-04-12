@@ -138,15 +138,13 @@ class FileLoadFrame(tk.Frame):
                                text="Rating to prioritize analysis")
 
         with open(the_queue, 'r') as queue_file:
-            entire_queue = yaml.safe_load_all(queue_file)#,
-#                                         Loader=SafeLoaderPlusTuples)
+            entire_queue = yaml.safe_load_all(queue_file)
             self.trials_in_queue = []
             for queue_member in entire_queue:
                 self.trials_in_queue.append(queue_member['experiment_id'])
 
         with open(queue_result_location, 'r') as queue_result:
-            all_queue_results = yaml.safe_load_all(queue_result)#,
-#                                              Loader=SafeLoaderPlusTuples)
+            all_queue_results = yaml.safe_load_all(queue_result)
             self.trials_for_review = []
             for trial in all_queue_results:
                 self.trials_for_review.append(trial['experiment_id'])
@@ -220,8 +218,7 @@ class FileLoadFrame(tk.Frame):
     def load_metadata_from_yaml(self, metadata_file_path: str) -> dict:
         """Loads metadata from an existing yaml file."""
         with open(metadata_file_path, 'r') as yamlfile:
-            metadata = yaml.safe_load(yamlfile)#,
-#                                 Loader=SafeLoaderPlusTuples)
+            metadata = yaml.safe_load(yamlfile)
 
         return metadata
 
@@ -773,8 +770,7 @@ class AnalysisQueueFrame(tk.Frame):
         def update_queue(event=None):
             the_queue = self.queue_location + 'analysis_queue.yaml'
             with open(the_queue, 'r') as queue_file:
-                entire_queue = yaml.safe_load_all(queue_file)#,
-#                                             Loader=SafeLoaderPlusTuples)
+                entire_queue = yaml.safe_load_all(queue_file)
                 for queue_member in entire_queue:
                     self.run_queue_button.config(state=tk.NORMAL)
                     experiment_id = queue_member['experiment_id']
@@ -788,8 +784,7 @@ class AnalysisQueueFrame(tk.Frame):
                                           experiment_id + '/metadata.yaml')
                     try:
                         with open(metadata_file_path, 'r') as yamlfile:
-                            metadata = yaml.safe_load(yamlfile)#,
-#                                                 Loader=SafeLoaderPlusTuples)
+                            metadata = yaml.safe_load(yamlfile)
                         if 'trial_rating' in metadata:
                             rating = metadata['trial_rating']
                         else:
@@ -983,21 +978,8 @@ class PlotResultsFrame(AnalyzeImageFrame):
     def load_metadata_from_yaml(self, metadata_file_path: str) -> dict:
         """Loads metadata from an existing yaml file."""
         with open(metadata_file_path, 'r') as yamlfile:
-            metadata = yaml.safe_load(yamlfile)#,
-#                                 Loader=SafeLoaderPlusTuples)
-
+            metadata = yaml.safe_load(yamlfile)
         return metadata
-    # TODO: controls for selecting what data are plotted
-
-
-#class SafeLoaderPlusTuples(yaml.SafeLoader):
-#    def construct_python_tuple(self, node):
-#        return tuple(self.construct_sequence(node))
-#
-#
-#SafeLoaderPlusTuples.add_constructor(
-#    u'tag:yaml.org,2002:python/tuple',
-#    SafeLoaderPlusTuples.construct_python_tuple)
 
 
 if __name__ == '__main__':
