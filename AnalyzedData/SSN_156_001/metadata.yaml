@@ -9,7 +9,7 @@ actuator_corners:
 - 370.0
 - 659.0
 actuator_thickness: 20.93991465334395
-analysis_status: Testing parameters
+analysis_status: Strain calculated
 bleach_time: 2019-02-03 01:15:00
 cultivation_temp: 20
 device_ID: Y4P7-3

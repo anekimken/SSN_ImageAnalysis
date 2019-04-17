@@ -72,9 +72,9 @@ class SSN_analysis_GUI(tk.Frame):
 
         self.notebook.pack(expand=1, fill=tk.BOTH)
 
-    def create_bf_frame(self):
+    def create_bf_frame(self, fig_h, fig_w):
         self.bf_image_frame = BrightfieldImageFrame(
-                self.notebook, self.dpi, self.root)
+                self.notebook, self.dpi, self.root, fig_h, fig_w)
         self.notebook.insert(2, self.bf_image_frame, text="Brightfield Image")
 
 
@@ -119,7 +119,6 @@ class FileLoadFrame(tk.Frame):
         self.button_frame.pack(side=tk.BOTTOM)
 
         self.update_file_tree()
-        print('file load frame created')
 
     def update_file_tree(self):
         # now, we load all the file names into a Treeview for user selection
@@ -229,6 +228,7 @@ class AnalyzeImageFrame(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.parent = parent
         self.root = root
+        self.screen_dpi = screen_dpi
         with open('config.yaml', 'r') as config_file:
             self.file_paths = yaml.safe_load(config_file)
 
@@ -242,9 +242,13 @@ class AnalyzeImageFrame(tk.Frame):
         notebook_height = self.parent.winfo_height() - 100
         self.notebook_height_in = notebook_height / screen_dpi
 
+#        self.create_fig(600, 1200)
+
+    def create_fig(self, fig_width, fig_height):
         # Create a figure and a canvas for showing images
-        self.fig = mpl.figure.Figure(figsize=(600 / screen_dpi,
-                                              1200 / screen_dpi))
+        self.fig = mpl.figure.Figure(figsize=(fig_width / self.screen_dpi,
+                                              fig_height / self.screen_dpi))
+        # TODO: change figsize to match actual size of image
         self.ax = self.fig.add_axes([0, 0, 1, 1])
         self.plot_canvas = FigureCanvasTkAgg(self.fig, self)
         self.plot_canvas.draw()
@@ -267,13 +271,15 @@ class AnalyzeImageFrame(tk.Frame):
         self.param_frame_tab = self.analysis_notebook.add(
                 self.param_frame, text="Adjust Parameters")
         self.analysis_notebook.grid(row=0, column=2, sticky=tk.N)
-        self.root.update()
-        print('analyze image frame created')
+#        self.root.update()
+#        self.plot_canvas.draw()
 
 
 class AnalyzeTrialFrame(AnalyzeImageFrame):
     def __init__(self, parent, screen_dpi, root):
         AnalyzeImageFrame.__init__(self, parent, screen_dpi, root)
+
+        self.create_fig(600, 1200)
 
         param_frame_row = 0
 
@@ -567,7 +573,7 @@ class AnalyzeTrialFrame(AnalyzeImageFrame):
 
 
 class BrightfieldImageFrame(AnalyzeImageFrame):
-    def __init__(self, parent, screen_dpi, root):
+    def __init__(self, parent, screen_dpi, root, fig_w, fig_h):
         AnalyzeImageFrame.__init__(self,  parent, screen_dpi, root)
         self.actuator_width_line = None
         self.actuator_thick_line = None
@@ -575,6 +581,7 @@ class BrightfieldImageFrame(AnalyzeImageFrame):
         self.poly_corners = [None, None, None]
         self.drag_btn_size = 5  # radius of circle for dragging ROI corner
 
+        self.create_fig(fig_h, fig_w)
         info_frame_row = 0
 
         # Button for clearing selection
@@ -730,8 +737,7 @@ class BrightfieldImageFrame(AnalyzeImageFrame):
         x_mean = np.mean(self.actuator_bounds[0::2])
         y_mean = np.mean(self.actuator_bounds[1::2])
         self.actuator_center = [x_mean, y_mean]
-#        print('Thickness:', self.actuator_thickness, '   Center:',
-#              self.actuator_center)
+        print('Center:', self.actuator_center)
 
     def clear_actuator_bound(self, event=None):
         # clear roi and start over from scratch
@@ -819,6 +825,8 @@ class AnalysisQueueFrame(tk.Frame):
 class PlotResultsFrame(AnalyzeImageFrame):
     def __init__(self, parent, screen_dpi, root):
         AnalyzeImageFrame.__init__(self, parent, screen_dpi, root)
+
+        self.create_fig(600, 1200)
 
         # Reset fig size since we don't need a big figure here
         self.plot_canvas.get_tk_widget().config(height=600)

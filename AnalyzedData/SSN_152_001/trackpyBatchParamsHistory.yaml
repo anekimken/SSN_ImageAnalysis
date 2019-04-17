@@ -88,3 +88,33 @@ timestamp: 2019-04-11-055714
 top_slice: 47
 tracking_seach_radius: 35
 trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 9
+minmass: 300
+noise_size: 3
+notes: Increased minmass a bit. might be too dim
+percentile: 50
+roi: [271, 0, 339, 1054]
+source: null
+timestamp: 2019-04-11-055714
+top_slice: 47
+tracking_seach_radius: 35
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 9
+minmass: 300
+noise_size: 3
+notes: Removed last two timepoints. probably good to go
+percentile: 50
+roi: [271, 0, 339, 1054]
+source: null
+timestamp: 2019-04-16-051232
+top_slice: 47
+tracking_seach_radius: 35
+trackpy_version: 0.4.1+35.g10f756b

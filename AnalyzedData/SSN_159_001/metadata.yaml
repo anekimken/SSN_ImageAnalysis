@@ -1,15 +1,15 @@
 ---
 Experiment_id: SSN_159_001
 actuator_center:
-- 359.0
-- 576.0
+- 362.5
+- 499.0
 actuator_corners:
-- 363.0
-- 489.0
-- 355.0
-- 663.0
-actuator_thickness: 25.94773988638522
-analysis_status: Testing parameters
+- 365.0
+- 413.0
+- 360.0
+- 585.0
+actuator_thickness: 19.999999999999932
+analysis_status: Strain calculated
 bleach_time: 2019-02-03 01:15:00
 cultivation_temp: 20
 device_ID: Y4P7-3

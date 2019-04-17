@@ -1,0 +1,47 @@
+---
+Experiment_id: SSN_170_001
+actuator_center:
+- 420.0
+- 473.0
+actuator_corners:
+- 423.0
+- 382.0
+- 417.0
+- 564.0
+actuator_thickness: 20.000000000000195
+analysis_status: Testing parameters
+bleach_time: 2019-03-17 12:00:00
+cultivation_temp: 20
+device_ID: Y4P7-3
+head_orientation: Tailfirst
+microscope: Spinning Disk Confocal in CSIF Shriram
+microscope_channel: SDC 561-ALN
+microscope_objective: 40x oil
+neuron: ALM
+notes: Probably too close to bottom of stack. Bleached towards end.
+num_eggs: 5
+num_timepoints: 11
+pixel_microns: 0.275
+pressure_kPa:
+- 0
+- 300
+- 0
+- 300
+- 0
+- 300
+- 0
+- 300
+- 0
+- 300
+- 0
+purpose: Tissue attachment manipulation
+slice_height_pix: 1074
+slice_width_pix: 600
+stack_height: 59
+timestamp: 2019-03-20 16:12:49
+total_images: 649
+trial_rating: No rating given
+user: anekimke@stanford.edu
+vulva_orientation: West
+worm_life_stage: YA
+worm_strain: GN885

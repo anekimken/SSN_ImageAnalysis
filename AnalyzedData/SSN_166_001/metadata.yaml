@@ -1,14 +1,14 @@
 ---
 Experiment_id: SSN_166_001
 actuator_center:
-- 370.5
-- 609.5
+- 370.0
+- 523.0
 actuator_corners:
-- 374.0
-- 507.0
+- 373.0
+- 439.0
 - 367.0
-- 712.0
-actuator_thickness: 22.964126116986268
+- 607.0
+actuator_thickness: 20.99936285434755
 analysis_status: Strain calculated
 bleach_time: 2019-02-10 10:00:00
 cultivation_temp: 20

@@ -7,15 +7,15 @@ minmass: 700
 noise_size: 3
 percentile: 50
 source: null
-timestamp: 2019-04-09-184024
+timestamp: 2019-04-16-051618
 trackpy_version: 0.4.1+35.g10f756b
 bottom_slice: 0
 last_timepoint: 11
-notes: Increased link radius, moved ROI up from bottom due to head movement.
+notes: Adjusted ROI to fix spurious mito near bottom
 roi:
 - 177
-- 0
-- 259
-- 940
+- 11
+- 244
+- 837
 top_slice: 66
 tracking_seach_radius: 40

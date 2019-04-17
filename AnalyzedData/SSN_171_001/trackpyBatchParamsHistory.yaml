@@ -1,0 +1,15 @@
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 600
+noise_size: 3
+notes: First run
+percentile: 50
+roi: [135, 0, 222, 1070]
+source: null
+timestamp: 2019-04-16-053222
+top_slice: 69
+tracking_seach_radius: 30
+trackpy_version: 0.4.1+35.g10f756b

@@ -1,0 +1,38 @@
+---
+Experiment_id: SSN_175_001
+analysis_status: Testing parameters
+bleach_time: 2019-04-05 04:15:00
+cultivation_temp: 20
+device_ID: Y4P7-3
+head_orientation: Headfirst
+microscope: Spinning Disk Confocal in CSIF Shriram
+microscope_channel: SDC 561-ALN
+microscope_objective: 40x oil
+neuron: ALM
+notes: TRN pretty close to cover slip.
+num_eggs: 7
+num_timepoints: 11
+pixel_microns: 0.275
+pressure_kPa:
+- 0
+- 300
+- 0
+- 300
+- 0
+- 300
+- 0
+- 300
+- 0
+- 300
+- 0
+purpose: Tissue attachment manipulation
+slice_height_pix: 1070
+slice_width_pix: 602
+stack_height: 51
+timestamp: 2019-04-08 14:05:54
+total_images: 561
+trial_rating: No rating given
+user: anekimke@stanford.edu
+vulva_orientation: West
+worm_life_stage: YA
+worm_strain: GN885

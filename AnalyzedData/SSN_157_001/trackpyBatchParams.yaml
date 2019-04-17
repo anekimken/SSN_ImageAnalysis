@@ -7,15 +7,15 @@ minmass: 1000
 noise_size: 3
 percentile: 50
 source: null
-timestamp: 2019-04-09-183657
+timestamp: 2019-04-16-051423
 trackpy_version: 0.4.1+35.g10f756b
 bottom_slice: 0
 last_timepoint: 7
-notes: Increased minmass. Mito near top jumping around
+notes: Moved ROI to eliminate mito at top jumping around
 roi:
-- 321
-- 0
-- 415
-- 1052
+- 314
+- 118
+- 403
+- 1051
 top_slice: 54
 tracking_seach_radius: 50
