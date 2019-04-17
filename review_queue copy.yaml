@@ -1,0 +1,495 @@
+---
+bottom_slice: 0
+brightness_percentile: 10
+experiment_id: SSN_105_001
+gaussian_width: 3
+last_timepoint: 5
+min_particle_mass: 100
+notes: Going back to param set from a few days ago
+particle_xy_diameter: 13
+particle_z_diameter: 17
+roi: [350, 56, 513, 1187]
+top_slice: 67
+tracking_seach_radius: 30
+---
+bottom_slice: 1
+brightness_percentile: 50
+experiment_id: SSN_106_001
+gaussian_width: 3
+last_timepoint: 5
+min_particle_mass: 200
+notes: none
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [421, 55, 550, 1170]
+top_slice: 68
+tracking_seach_radius: 40
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_106_002
+gaussian_width: 3
+last_timepoint: 5
+min_particle_mass: 500
+notes: Decreased final timepoint, probably ready for strain calc.
+particle_xy_diameter: 15
+particle_z_diameter: 25
+roi: [396, 66, 558, 1179]
+top_slice: 67
+tracking_seach_radius: 40
+---
+bottom_slice: 0
+brightness_percentile: 25
+experiment_id: SSN_108_001
+gaussian_width: 3
+last_timepoint: 3
+min_particle_mass: 200
+notes: Shrunk ROI
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [190, 36, 287, 1068]
+top_slice: 44
+tracking_seach_radius: 40
+---
+bottom_slice: 20
+brightness_percentile: 50
+experiment_id: SSN_111_001
+gaussian_width: 3
+last_timepoint: 9
+min_particle_mass: 300
+notes: Returned minmass to 300
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [123, 47, 292, 1152]
+top_slice: 64
+tracking_seach_radius: 40
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_115_001
+gaussian_width: 3
+last_timepoint: 8
+min_particle_mass: 340
+notes: Ready for strain calc after increased linking search radius.
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [122, 379, 256, 1062]
+top_slice: 66
+tracking_seach_radius: 35
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_116_001
+gaussian_width: 3
+last_timepoint: 7
+min_particle_mass: 300
+notes: Increased minmass to remove spurious particles
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [147, 89, 286, 965]
+top_slice: 52
+tracking_seach_radius: 35
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_120_001
+gaussian_width: 3
+last_timepoint: 11
+min_particle_mass: 200
+notes: none
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [174, 233, 375, 1067]
+top_slice: 69
+tracking_seach_radius: 20
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_121_001
+gaussian_width: 3
+last_timepoint: 8
+min_particle_mass: 950
+notes: Reduced final timepoint and linking radius. Need to check 54 and 6
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [212, 59, 346, 1065]
+top_slice: 69
+tracking_seach_radius: 20
+---
+bottom_slice: 0
+brightness_percentile: 75
+experiment_id: SSN_122_001
+gaussian_width: 5
+last_timepoint: 5
+min_particle_mass: 280
+notes: Reduced minmass for particle near y=450
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [155, 0, 243, 1134]
+top_slice: 69
+tracking_seach_radius: 30
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_131_001
+gaussian_width: 3
+last_timepoint: 6
+min_particle_mass: 400
+notes: Reduced ROI
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [332, 74, 473, 1014]
+top_slice: 60
+tracking_seach_radius: 30
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_132_001
+gaussian_width: 3
+last_timepoint: 5
+min_particle_mass: 600
+notes: Reduced last timepoint
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [322, 23, 409, 1106]
+top_slice: 50
+tracking_seach_radius: 20
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_135_001
+gaussian_width: 3
+last_timepoint: 7
+min_particle_mass: 230
+notes: Moved ROI back left a bit and reduced minmass a bit. working for mito at y=576
+  in frame 4
+particle_xy_diameter: 15
+particle_z_diameter: 15
+roi: [376, 72, 453, 1052]
+top_slice: 58
+tracking_seach_radius: 30
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_137_001
+gaussian_width: 3
+last_timepoint: 4
+min_particle_mass: 280
+notes: Reduced ROI on bottom
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [134, 0, 238, 779]
+top_slice: 71
+tracking_seach_radius: 30
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_138_001
+gaussian_width: 3
+last_timepoint: 6
+min_particle_mass: 1500
+notes: Ready for strain calc. Increased link radius
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [356, 0, 480, 1052]
+top_slice: 54
+tracking_seach_radius: 30
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_139_001
+gaussian_width: 3
+last_timepoint: 5
+min_particle_mass: 600
+notes: Reduced final timepoint to 5 for mitos towards bottom
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [376, 0, 478, 1052]
+top_slice: 70
+tracking_seach_radius: 20
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_140_001
+gaussian_width: 3
+last_timepoint: 9
+min_particle_mass: 350
+notes: Increased minmass
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [340, 63, 450, 972]
+top_slice: 61
+tracking_seach_radius: 30
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_163_001
+gaussian_width: 3
+last_timepoint: 7
+min_particle_mass: 200
+notes: Increased link radius. Ready for strain calc.
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [325, 0, 457, 1070]
+top_slice: 52
+tracking_seach_radius: 30
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_165_001
+gaussian_width: 3
+last_timepoint: 11
+min_particle_mass: 600
+notes: Super high link radius
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [182, 0, 261, 930]
+top_slice: 60
+tracking_seach_radius: 75
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_166_001
+gaussian_width: 3
+last_timepoint: 9
+min_particle_mass: 300
+notes: Reduced final timepoint due to bleaching. moved ROI up on bottom
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [304, 0, 425, 959]
+top_slice: 57
+tracking_seach_radius: 30
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_167_001
+gaussian_width: 3
+last_timepoint: 10
+min_particle_mass: 700
+notes: Removed final time point
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [185, 0, 261, 1070]
+top_slice: 53
+tracking_seach_radius: 40
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_168_001
+gaussian_width: 3
+last_timepoint: 11
+min_particle_mass: 200
+notes: Added ROI
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [355, 0, 451, 1052]
+top_slice: 60
+tracking_seach_radius: 30
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_152_001
+gaussian_width: 3
+last_timepoint: 9
+min_particle_mass: 300
+notes: Removed last two timepoints. probably good to go
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [271, 0, 339, 1054]
+top_slice: 47
+tracking_seach_radius: 35
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_153_003
+gaussian_width: 3
+last_timepoint: 3
+min_particle_mass: 500
+notes: Decreased minmass and limited to first 3 timepoints
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [201, 0, 282, 1054]
+top_slice: 53
+tracking_seach_radius: 30
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_157_001
+gaussian_width: 3
+last_timepoint: 7
+min_particle_mass: 1000
+notes: Moved ROI to eliminate mito at top jumping around
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [314, 118, 403, 1051]
+top_slice: 54
+tracking_seach_radius: 50
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_158_001
+gaussian_width: 3
+last_timepoint: 11
+min_particle_mass: 700
+notes: Adjusted ROI to fix spurious mito near bottom
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [177, 11, 244, 837]
+top_slice: 66
+tracking_seach_radius: 40
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_159_001
+gaussian_width: 3
+last_timepoint: 11
+min_particle_mass: 600
+notes: Reduced ROI because mito closest to top is jumping around
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [303, 236, 396, 1052]
+top_slice: 62
+tracking_seach_radius: 35
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_160_001
+gaussian_width: 3
+last_timepoint: 11
+min_particle_mass: 551
+notes: Moved ROI on top. Increased minmass to avoid spurious mito near top
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [305, 97, 385, 1052]
+top_slice: 56
+tracking_seach_radius: 35
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_161_001
+gaussian_width: 3
+last_timepoint: 11
+min_particle_mass: 500
+notes: Increased minmass
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [218, 0, 284, 1052]
+top_slice: 54
+tracking_seach_radius: 30
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_154_001
+gaussian_width: 3
+last_timepoint: 11
+min_particle_mass: 500
+notes: Increased minmass and link radius
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [196, 0, 267, 1052]
+top_slice: 73
+tracking_seach_radius: 30
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_155_001
+gaussian_width: 3
+last_timepoint: 11
+min_particle_mass: 500
+notes: Increased minmass and link radius
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [357, 0, 443, 1052]
+top_slice: 58
+tracking_seach_radius: 30
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_169_001
+gaussian_width: 3
+last_timepoint: 11
+min_particle_mass: 600
+notes: First run
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [211, 0, 281, 1074]
+top_slice: 59
+tracking_seach_radius: 30
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_170_001
+gaussian_width: 3
+last_timepoint: 11
+min_particle_mass: 600
+notes: First run
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [347, 0, 452, 1074]
+top_slice: 59
+tracking_seach_radius: 30
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_171_001
+gaussian_width: 3
+last_timepoint: 11
+min_particle_mass: 600
+notes: First run
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [135, 0, 222, 1070]
+top_slice: 69
+tracking_seach_radius: 30
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_175_001
+gaussian_width: 3
+last_timepoint: 11
+min_particle_mass: 600
+notes: First run
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [292, 0, 387, 1070]
+top_slice: 51
+tracking_seach_radius: 30
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_176_001
+gaussian_width: 3
+last_timepoint: 11
+min_particle_mass: 600
+notes: First run
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [299, 15, 398, 1070]
+top_slice: 51
+tracking_seach_radius: 30
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_177_001
+gaussian_width: 3
+last_timepoint: 11
+min_particle_mass: 600
+notes: ''
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [204, 0, 305, 1070]
+top_slice: 69
+tracking_seach_radius: 30
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_178_001
+gaussian_width: 3
+last_timepoint: 11
+min_particle_mass: 600
+notes: ''
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [297, 0, 379, 1070]
+top_slice: 69
+tracking_seach_radius: 30

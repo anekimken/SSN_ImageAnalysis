@@ -9,7 +9,7 @@ actuator_corners:
 - 183.0
 - 611.0
 actuator_thickness: 30.988907094115106
-analysis_status: Testing parameters
+analysis_status: Failed - not bright enough
 bleach_time: 2019-02-01 05:00:00
 cultivation_temp: 20
 device_ID: Y4P7-3

@@ -63,3 +63,18 @@ timestamp: 2019-04-04-190213
 top_slice: 62
 tracking_seach_radius: 35
 trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 11
+minmass: 600
+noise_size: 3
+notes: Reduced ROI because mito closest to top is jumping around
+percentile: 50
+roi: [303, 236, 396, 1052]
+source: null
+timestamp: 2019-04-16-051754
+top_slice: 62
+tracking_seach_radius: 35
+trackpy_version: 0.4.1+35.g10f756b

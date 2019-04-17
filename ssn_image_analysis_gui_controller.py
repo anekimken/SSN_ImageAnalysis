@@ -11,6 +11,7 @@ import numpy as np
 import tkinter as tk
 import pandas as pd
 from scipy import spatial
+import matplotlib as mpl
 import glob
 import yaml
 import pims
@@ -38,15 +39,14 @@ class StrainGUIController:
 
         yaml.add_constructor(u'tag:yaml.org,2002:python/tuple',
                              construct_python_tuple, Loader=yaml.SafeLoader)
-        print('tuple added to yaml')
+
         # Instantiate Model
         self.trial = ssn_trial.StrainPropagationTrial()
 
-        print('trial instantiated')
         if headless is not True:
             # Instantiate View
             self.gui = ssn_view.SSN_analysis_GUI(self.root)
-            print('gui instantiated')
+
             # Bind UI elements to functions
             # Load trial tab
             self.gui.file_load_frame.load_trial_button.bind(
@@ -126,7 +126,6 @@ class StrainGUIController:
     def run(self):
         self.root.title("SSN Image Analysis")
         self.root.mainloop()
-        print('running')
 
     def load_trial(self, event=None):
         """Loads the data for this trial from disk and sends us to the
@@ -248,13 +247,23 @@ class StrainGUIController:
 
         # Check for brightfield image to process
         if self.trial.brightfield_file is not None:
-            self.gui.create_bf_frame()
-            self.gui.notebook.pack(expand=1, fill=tk.BOTH)
-
             self.bf_image = pims.open(str(self.trial.brightfield_file))
             bf_image_array = np.asarray(self.bf_image)
             self.bf_image_array = bf_image_array.squeeze()
-            self.gui.bf_image_frame.ax.imshow(self.bf_image_array)
+            self.gui.create_bf_frame(
+                    self.bf_image_array.shape[0],
+                    self.bf_image_array.shape[1])
+            self.gui.notebook.pack(expand=1, fill=tk.BOTH)
+
+#            self.gui.bf_image_frame.create_fig(
+#                    self.bf_image_array.shape[0] / self.gui.dpi,
+#                    self.bf_image_array.shape[1] / self.gui.dpi)
+#            self.gui.bf_image_frame.fig = mpl.figure.Figure(figsize=(
+#                    self.bf_image_array.shape[0] / self.gui.dpi,
+#                    self.bf_image_array.shape[1] / self.gui.dpi))
+#            self.gui.bf_image_frame.ax.clear()
+            self.gui.bf_image_frame.ax.imshow(self.bf_image_array,
+                                              interpolation='none')
             self.gui.bf_image_frame.ax.axis('off')
             self.gui.bf_image_frame.plot_canvas.draw()
 
@@ -291,6 +300,9 @@ class StrainGUIController:
                     "<Leave>", self._unbound_to_mousewheel)
             self.gui.bf_image_frame.save_actuator_loc_btn.bind(
                     "<ButtonRelease-1>", func=self.save_actuator_bounds)
+            self.gui.bf_image_frame.plot_canvas.draw()
+            self.root.update()
+            self.gui.bf_image_frame.plot_canvas.draw()
 
         finish_time = time.time()
         print('Loaded file in ' + str(round(finish_time - start_time)) +
@@ -854,12 +866,14 @@ class StrainGUIController:
             analysis_frame.ax.imshow(image_to_display, interpolation='none',
                                      vmin=min_pixel, vmax=max_pixel)
             analysis_frame.ax.axis('off')
+#            analysis_frame.ax.set_ylim(0, image_to_display.shape[0])
+#            analysis_frame.ax.set_xlim(0, image_to_display.shape[1])
             analysis_frame.plot_canvas.draw()
 
             min_pixel = int(np.amin(image_to_display))
             max_pixel = int(np.amax(image_to_display))
             bins = max_pixel - min_pixel + 1
-            bin_list = list(range(min_pixel, max_pixel+1))
+            bin_list = list(range(min_pixel, max_pixel + 1))
             hist_array = fast_histogram.histogram1d(image_to_display,
                                                     bins=bins,
                                                     range=(min_pixel,

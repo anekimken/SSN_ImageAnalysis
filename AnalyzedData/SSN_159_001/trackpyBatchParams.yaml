@@ -7,15 +7,15 @@ minmass: 600
 noise_size: 3
 percentile: 50
 source: null
-timestamp: 2019-04-04-190213
+timestamp: 2019-04-16-051754
 trackpy_version: 0.4.1+35.g10f756b
 bottom_slice: 0
 last_timepoint: 11
-notes: Increased minmass and link radius
+notes: Reduced ROI because mito closest to top is jumping around
 roi:
 - 303
-- 0
-- 390
+- 236
+- 396
 - 1052
 top_slice: 62
 tracking_seach_radius: 35
