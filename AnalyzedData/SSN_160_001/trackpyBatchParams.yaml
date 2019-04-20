@@ -1,21 +1,21 @@
+bottom_slice: 0
 characterize: true
 diameter: !!python/tuple
 - 21
 - 15
 - 15
-minmass: 551
-noise_size: 3
-percentile: 50
-source: null
-timestamp: 2019-04-16-051944
-trackpy_version: 0.4.1+35.g10f756b
-bottom_slice: 0
 last_timepoint: 11
-notes: Moved ROI on top. Increased minmass to avoid spurious mito near top
+minmass: 600
+noise_size: 3
+notes: Increased minmass to eliminate spurious particle near top
+percentile: 50
 roi:
 - 305
 - 97
 - 385
 - 1052
+source: null
+timestamp: 2019-04-17-052335
 top_slice: 56
 tracking_seach_radius: 35
+trackpy_version: 0.4.1+35.g10f756b
