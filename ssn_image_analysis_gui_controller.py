@@ -262,8 +262,9 @@ class StrainGUIController:
 #                    self.bf_image_array.shape[0] / self.gui.dpi,
 #                    self.bf_image_array.shape[1] / self.gui.dpi))
 #            self.gui.bf_image_frame.ax.clear()
-            self.gui.bf_image_frame.ax.imshow(self.bf_image_array,
-                                              interpolation='none')
+#            self.gui.bf_image_frame.ax.imshow(self.bf_image_array,
+#                                              interpolation='none')
+            self.gui.bf_image_frame.fig.figimage(self.bf_image_array)
             self.gui.bf_image_frame.ax.axis('off')
             self.gui.bf_image_frame.plot_canvas.draw()
 
@@ -726,6 +727,58 @@ class StrainGUIController:
     def spinbox_delay_then_update_image(self, event=None):
         self.gui.analyze_trial_frame.after(1, self.update_inspection_image)
 
+    def new_update_image(self, event=None):
+#        fr = self.gui.file_load_frame
+#        load_images = fr.load_images_box.instate(['selected'])
+#        overwrite_metadata = fr.overwrite_metadata_box.instate(['selected'])
+
+        # get parameters
+        current_frame = self.gui.analyze_trial_frame
+        plot_mitos_status = current_frame.plot_labels_drop.get()
+        max_proj_checkbox = current_frame.max_proj_checkbox.instate(
+                ['selected'])
+        particle_label_checkbox = current_frame.part_label_checkbox.instate(
+                ['selected'])
+        selected_slice = int(current_frame.slice_selector.get())
+        selected_timepoint = int(current_frame.timepoint_selector.get()) - 1
+        min_pixel = int(current_frame.min_pixel_disp.get())
+        max_pixel = int(current_frame.max_pixel_disp.get())
+        current_frame.ax.clear()
+        current_frame.hist_ax.clear()
+        df_for_plot = None
+
+        # get image that we're going to show
+        if self.trial.image_array is not None:
+            if max_proj_checkbox is True:  # max projection
+                stack = self.trial.image_array[selected_timepoint]
+                image_to_display = np.amax(stack, 0)  # collapse z axis
+                image_to_display = image_to_display.squeeze()
+            else:  # single slice
+                image_to_display = self.trial.image_array[
+                        selected_timepoint, selected_slice]
+        else:
+            # get stored image if available
+            try:
+                if plot_mitos_status == 'Unlinked mitos for this stack':
+                    one_stack_fig = self.trial.analyzed_data_location.joinpath(
+                            'diag_images/stack_' +
+                            str(selected_timepoint) + '_fig.png')
+                    image_to_display = plt.imread(str(one_stack_fig))
+                else:
+                    traj_fig_file = self.trial.analyzed_data_location.joinpath(
+                            'diag_images/trajectory_fig.png')
+                    image_to_display = plt.imread(str(traj_fig_file))
+            except FileNotFoundError:
+                pass
+
+        # show image
+        current_frame.fig.figimage(image_to_display, origin='upper',
+                                   vmin=min_pixel, vmax=max_pixel)
+
+        # show particle find results
+
+        # show text labels
+
     def update_inspection_image(self, event=None):
         fr = self.gui.file_load_frame
         load_images = fr.load_images_box.instate(['selected'])
@@ -799,6 +852,7 @@ class StrainGUIController:
                             str(int(this_particle.iloc[0][
                                      'particle'])), color='white')
                     analysis_frame.ax.legend_.remove()
+            analysis_frame.ax.plot(10, 10, 'ro', markersize=12)
         except ValueError:
             if len(mito_labels) == 0:
                 pass
@@ -863,11 +917,13 @@ class StrainGUIController:
                     forward=True,
                     h=image_to_display.shape[0] / self.gui.dpi,
                     w=image_to_display.shape[1] / self.gui.dpi)
-            analysis_frame.ax.imshow(image_to_display, interpolation='none',
-                                     vmin=min_pixel, vmax=max_pixel)
+#            analysis_frame.ax.imshow(image_to_display, interpolation='none',
+#                                     vmin=min_pixel, vmax=max_pixel)
+            analysis_frame.ax.set_ylim(0, image_to_display.shape[0])
+            analysis_frame.ax.set_xlim(0, image_to_display.shape[1])
+            analysis_frame.fig.figimage(image_to_display, origin='upper')
             analysis_frame.ax.axis('off')
-#            analysis_frame.ax.set_ylim(0, image_to_display.shape[0])
-#            analysis_frame.ax.set_xlim(0, image_to_display.shape[1])
+
             analysis_frame.plot_canvas.draw()
 
             min_pixel = int(np.amin(image_to_display))
@@ -893,10 +949,12 @@ class StrainGUIController:
                     traj_fig_file = self.trial.analyzed_data_location.joinpath(
                             'diag_images/trajectory_fig.png')
                     self.saved_photo = plt.imread(str(traj_fig_file))
-                analysis_frame.ax.imshow(self.saved_photo)
+#                analysis_frame.ax.imshow(self.saved_photo)
+                analysis_frame.fig.figimage(self.saved_photo)
                 analysis_frame.plot_canvas.draw()
             except FileNotFoundError:
                 pass
+        analysis_frame.ax.invert_yaxis()
 
     def on_click_image(self, event=None):
         canvas = event.widget  # analysis_frame.plot_canvas.get_tk_widget()

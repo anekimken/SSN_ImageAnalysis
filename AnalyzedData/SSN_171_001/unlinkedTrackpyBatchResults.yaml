@@ -1,9 +1,9 @@
 ---
 0:
   ecc: .nan
-  ep_x: 0.006761998117777436
-  ep_y: 0.006761998117777436
-  ep_z: 0.009710328491476522
+  ep_x: 0.6921117410236683
+  ep_y: 0.6921117410236683
+  ep_z: 0.9938826129630031
   frame: 0
   mass: .nan
   raw_mass: .nan
@@ -15,6 +15,36 @@
   y: .nan
   z: .nan
 1:
+  ecc: .nan
+  ep_x: 0.22454296756193107
+  ep_y: 0.22454296756193107
+  ep_z: 0.3224469953259861
+  frame: 0
+  mass: .nan
+  raw_mass: .nan
+  signal: .nan
+  size_x: .nan
+  size_y: .nan
+  size_z: .nan
+  x: .nan
+  y: .nan
+  z: .nan
+2:
+  ecc: .nan
+  ep_x: 0.006761998117777436
+  ep_y: 0.006761998117777436
+  ep_z: 0.009710328491476522
+  frame: 0
+  mass: 210.175228855888
+  raw_mass: 204517.0
+  signal: 0.5942749166518982
+  size_x: 3.6388572120397322
+  size_y: 4.72714502572649
+  size_z: 4.073661984064793
+  x: 188.4618284637135
+  y: 895.9048067860509
+  z: 13.044297832233742
+3:
   ecc: .nan
   ep_x: 0.07909645434196583
   ep_y: 0.07909645434196583
@@ -29,7 +59,7 @@
   x: .nan
   y: .nan
   z: .nan
-2:
+4:
   ecc: .nan
   ep_x: 0.01135981529675481
   ep_y: 0.01135981529675481
@@ -44,7 +74,7 @@
   x: .nan
   y: .nan
   z: .nan
-3:
+5:
   ecc: .nan
   ep_x: 0.09335523465797216
   ep_y: 0.09335523465797216
@@ -59,22 +89,22 @@
   x: .nan
   y: .nan
   z: .nan
-4:
+6:
   ecc: .nan
   ep_x: 0.17746794957027695
   ep_y: 0.17746794957027695
   ep_z: 0.2548465789284472
   frame: 0
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-5:
+  mass: 232.75767568866013
+  raw_mass: 207563.0
+  signal: 0.3961832777679321
+  size_x: 3.7261582520270036
+  size_y: 4.200607858748389
+  size_z: 7.458994285068252
+  x: 154.88765957446807
+  y: 294.58553191489364
+  z: 17.474893617021277
+7:
   ecc: .nan
   ep_x: 0.06158714333030037
   ep_y: 0.06158714333030037
@@ -89,41 +119,11 @@
   x: .nan
   y: .nan
   z: .nan
-6:
+8:
   ecc: .nan
   ep_x: 0.22675580995695951
   ep_y: 0.22675580995695951
   ep_z: 0.3256246694662821
-  frame: 0
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-7:
-  ecc: .nan
-  ep_x: 0.2118120601782025
-  ep_y: 0.2118120601782025
-  ep_z: 0.30416522556838066
-  frame: 0
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-8:
-  ecc: .nan
-  ep_x: 0.14414121073001526
-  ep_y: 0.14414121073001526
-  ep_z: 0.20698889307109633
   frame: 0
   mass: 39072.387220029006
   raw_mass: 352776.0
@@ -136,9 +136,9 @@
   z: 35.788845288069595
 9:
   ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
+  ep_x: 0.5262607566992008
+  ep_y: 0.5262607566992008
+  ep_z: 0.7557181665412642
   frame: 0
   mass: 3593.778512632912
   raw_mass: 215854.0
@@ -151,9 +151,9 @@
   z: 36.163984125234265
 10:
   ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
+  ep_x: 0.8199072931619212
+  ep_y: 0.8199072931619212
+  ep_z: 1.1773989005155834
   frame: 0
   mass: 20665.51404329199
   raw_mass: 292177.0
@@ -166,9 +166,9 @@
   z: 36.90927216433576
 11:
   ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
+  ep_x: 0.2118120601782025
+  ep_y: 0.2118120601782025
+  ep_z: 0.30416522556838066
   frame: 0
   mass: 2942.8493872602
   raw_mass: 213899.0
@@ -181,9 +181,9 @@
   z: 37.0275309639203
 12:
   ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
+  ep_x: 1.3083785541895692
+  ep_y: 1.3083785541895692
+  ep_z: 1.8788507969238681
   frame: 0
   mass: 1704.3804609576441
   raw_mass: 208759.0
@@ -196,9 +196,9 @@
   z: 37.526266852626684
 13:
   ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
+  ep_x: 0.28297265006736955
+  ep_y: 0.28297265006736955
+  ep_z: 0.4063528765312552
   frame: 0
   mass: 4671.99130307834
   raw_mass: 219493.0
@@ -210,6 +210,21 @@
   y: 902.0942972228111
   z: 38.19520881916472
 14:
+  ecc: .nan
+  ep_x: 0.14414121073001526
+  ep_y: 0.14414121073001526
+  ep_z: 0.20698889307109633
+  frame: 0
+  mass: .nan
+  raw_mass: .nan
+  signal: .nan
+  size_x: .nan
+  size_y: .nan
+  size_z: .nan
+  x: .nan
+  y: .nan
+  z: .nan
+15:
   ecc: .nan
   ep_x: .nan
   ep_y: .nan
@@ -224,7 +239,37 @@
   x: 152.71188405797102
   y: 538.6871497584541
   z: 44.79014492753623
-15:
+16:
+  ecc: .nan
+  ep_x: .nan
+  ep_y: .nan
+  ep_z: .nan
+  frame: 0
+  mass: 307.6363151867993
+  raw_mass: 204978.0
+  signal: 0.5942749166518982
+  size_x: 4.296032102100665
+  size_y: 4.772951801443772
+  size_z: 6.339859494970617
+  x: 155.5988409529942
+  y: 450.22472633612364
+  z: 47.59047005795235
+17:
+  ecc: .nan
+  ep_x: .nan
+  ep_y: .nan
+  ep_z: .nan
+  frame: 0
+  mass: 247.02027368830568
+  raw_mass: 204289.0
+  signal: 0.5942749166518982
+  size_x: 4.093729435326078
+  size_y: 3.1836339708932466
+  size_z: 6.209455500304728
+  x: 172.07698476343222
+  y: 95.87409783480354
+  z: 46.843624699278266
+18:
   ecc: .nan
   ep_x: .nan
   ep_y: .nan
@@ -239,7 +284,37 @@
   x: 168.09048034934497
   y: 222.84034934497816
   z: 50.391441048034935
-16:
+19:
+  ecc: .nan
+  ep_x: .nan
+  ep_y: .nan
+  ep_z: .nan
+  frame: 0
+  mass: 213.34469507803146
+  raw_mass: 203828.0
+  signal: 0.3961832777679321
+  size_x: 4.546264804966845
+  size_y: 5.292818490804467
+  size_z: 3.658469777681118
+  x: 185.01114206128133
+  y: 1022.0232126276694
+  z: 49.839368616527395
+20:
+  ecc: .nan
+  ep_x: .nan
+  ep_y: .nan
+  ep_z: .nan
+  frame: 0
+  mass: 361.913424241006
+  raw_mass: 206632.0
+  signal: 0.5942749166518982
+  size_x: 4.981740056460973
+  size_y: 5.102077879293014
+  size_z: 5.205939515566549
+  x: 191.01423097974822
+  y: 260.34756431308153
+  z: 55.00054734537493
+21:
   ecc: .nan
   ep_x: .nan
   ep_y: .nan
@@ -254,7 +329,52 @@
   x: 188.0568720379147
   y: 280.0750394944708
   z: 56.15692469720906
-17:
+22:
+  ecc: .nan
+  ep_x: 0.4008951532761375
+  ep_y: 0.4008951532761375
+  ep_z: 0.5756913209895475
+  frame: 1
+  mass: .nan
+  raw_mass: .nan
+  signal: .nan
+  size_x: .nan
+  size_y: .nan
+  size_z: .nan
+  x: .nan
+  y: .nan
+  z: .nan
+23:
+  ecc: .nan
+  ep_x: 0.33856089794997435
+  ep_y: 0.33856089794997435
+  ep_z: 0.48617841593603894
+  frame: 1
+  mass: .nan
+  raw_mass: .nan
+  signal: .nan
+  size_x: .nan
+  size_y: .nan
+  size_z: .nan
+  x: .nan
+  y: .nan
+  z: .nan
+24:
+  ecc: .nan
+  ep_x: 0.19591829613824455
+  ep_y: 0.19591829613824455
+  ep_z: 0.2813415472552705
+  frame: 1
+  mass: .nan
+  raw_mass: .nan
+  signal: .nan
+  size_x: .nan
+  size_y: .nan
+  size_z: .nan
+  x: .nan
+  y: .nan
+  z: .nan
+25:
   ecc: .nan
   ep_x: 0.2157040937383781
   ep_y: 0.2157040937383781
@@ -269,7 +389,7 @@
   x: .nan
   y: .nan
   z: .nan
-18:
+26:
   ecc: .nan
   ep_x: 0.07947685274700177
   ep_y: 0.07947685274700177
@@ -284,7 +404,7 @@
   x: .nan
   y: .nan
   z: .nan
-19:
+27:
   ecc: .nan
   ep_x: 0.008598614836756724
   ep_y: 0.008598614836756724
@@ -299,7 +419,7 @@
   x: .nan
   y: .nan
   z: .nan
-20:
+28:
   ecc: .nan
   ep_x: 0.08333318946195074
   ep_y: 0.08333318946195074
@@ -314,41 +434,41 @@
   x: .nan
   y: .nan
   z: .nan
-21:
+29:
   ecc: .nan
   ep_x: 0.016019618242298188
   ep_y: 0.016019618242298188
   ep_z: 0.0230044067938744
   frame: 1
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-22:
+  mass: 247.5773433542042
+  raw_mass: 205475.0
+  signal: 0.61357458080348
+  size_x: 4.852087275530813
+  size_y: 5.038697831427404
+  size_z: 4.103448545166039
+  x: 207.0285006195787
+  y: 730.4801734820322
+  z: 15.964684014869889
+30:
   ecc: .nan
   ep_x: 0.10210350740145062
   ep_y: 0.10210350740145062
   ep_z: 0.14662213442405791
   frame: 1
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-23:
+  mass: 222.42078554126152
+  raw_mass: 205938.0
+  signal: 0.4601809356026101
+  size_x: 3.661542919552376
+  size_y: 5.594948460518834
+  size_z: 5.567888227177772
+  x: 184.8648275862069
+  y: 308.03862068965515
+  z: 15.895172413793103
+31:
   ecc: .nan
-  ep_x: 0.17475988842765808
-  ep_y: 0.17475988842765808
-  ep_z: 0.2509577634020573
+  ep_x: 0.8299325257784945
+  ep_y: 0.8299325257784945
+  ep_z: 1.1917952816169712
   frame: 1
   mass: .nan
   raw_mass: .nan
@@ -359,7 +479,52 @@
   x: .nan
   y: .nan
   z: .nan
-24:
+32:
+  ecc: .nan
+  ep_x: 0.17475988842765808
+  ep_y: 0.17475988842765808
+  ep_z: 0.2509577634020573
+  frame: 1
+  mass: 489.47912183597623
+  raw_mass: 208106.0
+  signal: 0.7669682260043501
+  size_x: 4.298338393222573
+  size_y: 5.132893902271035
+  size_z: 6.413589262873198
+  x: 159.01942964587903
+  y: 298.39298025697275
+  z: 18.298652460043876
+33:
+  ecc: .nan
+  ep_x: 0.3611176540355166
+  ep_y: 0.3611176540355166
+  ep_z: 0.5185702485685982
+  frame: 1
+  mass: .nan
+  raw_mass: .nan
+  signal: .nan
+  size_x: .nan
+  size_y: .nan
+  size_z: .nan
+  x: .nan
+  y: .nan
+  z: .nan
+34:
+  ecc: .nan
+  ep_x: 0.7558829652067367
+  ep_y: 0.7558829652067367
+  ep_z: 1.0854590263744757
+  frame: 1
+  mass: .nan
+  raw_mass: .nan
+  signal: .nan
+  size_x: .nan
+  size_y: .nan
+  size_z: .nan
+  x: .nan
+  y: .nan
+  z: .nan
+35:
   ecc: .nan
   ep_x: 0.2660899024193811
   ep_y: 0.2660899024193811
@@ -374,7 +539,37 @@
   x: .nan
   y: .nan
   z: .nan
-25:
+36:
+  ecc: .nan
+  ep_x: 0.47853461331859926
+  ep_y: 0.47853461331859926
+  ep_z: 0.6871827245335883
+  frame: 1
+  mass: .nan
+  raw_mass: .nan
+  signal: .nan
+  size_x: .nan
+  size_y: .nan
+  size_z: .nan
+  x: .nan
+  y: .nan
+  z: .nan
+37:
+  ecc: .nan
+  ep_x: 0.1618016805327502
+  ep_y: 0.1618016805327502
+  ep_z: 0.23234958677603984
+  frame: 1
+  mass: .nan
+  raw_mass: .nan
+  signal: .nan
+  size_x: .nan
+  size_y: .nan
+  size_z: .nan
+  x: .nan
+  y: .nan
+  z: .nan
+38:
   ecc: .nan
   ep_x: .nan
   ep_y: .nan
@@ -389,7 +584,7 @@
   x: 161.87119856887298
   y: 855.8800238521169
   z: 34.99725700655933
-26:
+39:
   ecc: .nan
   ep_x: .nan
   ep_y: .nan
@@ -404,7 +599,7 @@
   x: 164.4436740284198
   y: 894.0429292929293
   z: 36.03882040746448
-27:
+40:
   ecc: .nan
   ep_x: .nan
   ep_y: .nan
@@ -419,7 +614,7 @@
   x: 172.99471400069933
   y: 290.25571792920465
   z: 36.990898619881115
-28:
+41:
   ecc: .nan
   ep_x: .nan
   ep_y: .nan
@@ -434,7 +629,7 @@
   x: 160.25926441259682
   y: 756.1092249895645
   z: 36.79142896897176
-29:
+42:
   ecc: .nan
   ep_x: .nan
   ep_y: .nan
@@ -449,7 +644,7 @@
   x: 174.08045933449557
   y: 271.50970211475783
   z: 38.58314068066399
-30:
+43:
   ecc: .nan
   ep_x: .nan
   ep_y: .nan
@@ -464,7 +659,22 @@
   x: 165.22790723854553
   y: 609.3378363165597
   z: 45.1199482156929
-31:
+44:
+  ecc: .nan
+  ep_x: .nan
+  ep_y: .nan
+  ep_z: .nan
+  frame: 1
+  mass: 249.87824803221727
+  raw_mass: 204175.0
+  signal: 0.61357458080348
+  size_x: 3.5930155286776313
+  size_y: 3.811874439213796
+  size_z: 7.22105576829592
+  x: 187.27501534683856
+  y: 519.7483118477594
+  z: 50.416206261510126
+45:
   ecc: .nan
   ep_x: .nan
   ep_y: .nan
@@ -479,7 +689,37 @@
   x: 182.91945256999583
   y: 540.0008357709987
   z: 51.29951943167572
-32:
+46:
+  ecc: .nan
+  ep_x: .nan
+  ep_y: .nan
+  ep_z: .nan
+  frame: 1
+  mass: 553.59766552994
+  raw_mass: 205752.0
+  signal: 0.9203618712052202
+  size_x: 4.223494434340802
+  size_y: 5.495256021014135
+  size_z: 5.704047650659794
+  x: 169.2014408423386
+  y: 219.57744527569963
+  z: 51.946522582432806
+47:
+  ecc: .nan
+  ep_x: .nan
+  ep_y: .nan
+  ep_z: .nan
+  frame: 1
+  mass: 281.47733894359646
+  raw_mass: 204294.0
+  signal: 0.61357458080348
+  size_x: 3.6522547251878086
+  size_y: 3.996183465361461
+  size_z: 7.017533510198401
+  x: 173.98855585831063
+  y: 375.7482288828338
+  z: 51.257220708446866
+48:
   ecc: .nan
   ep_x: .nan
   ep_y: .nan
@@ -494,37 +734,112 @@
   x: 187.94622892635314
   y: 445.6555456965395
   z: 52.481810115350484
-33:
+49:
+  ecc: .nan
+  ep_x: .nan
+  ep_y: .nan
+  ep_z: .nan
+  frame: 1
+  mass: 410.9415754931308
+  raw_mass: 205067.0
+  signal: 0.9203618712052202
+  size_x: 4.325760747779802
+  size_y: 4.126363495850556
+  size_z: 5.630066462863454
+  x: 189.1724524076148
+  y: 488.77491601343786
+  z: 53.91265397536394
+50:
+  ecc: .nan
+  ep_x: .nan
+  ep_y: .nan
+  ep_z: .nan
+  frame: 1
+  mass: 595.4741306697774
+  raw_mass: 209191.0
+  signal: 1.22714916160696
+  size_x: 4.0727541198256025
+  size_y: 5.4596312527280695
+  size_z: 4.37164532457688
+  x: 190.0046367851623
+  y: 278.8786707882535
+  z: 57.025759917568266
+51:
+  ecc: .nan
+  ep_x: 0.2469447564377286
+  ep_y: 0.2469447564377286
+  ep_z: 0.35461629277207835
+  frame: 2
+  mass: .nan
+  raw_mass: .nan
+  signal: .nan
+  size_x: .nan
+  size_y: .nan
+  size_z: .nan
+  x: .nan
+  y: .nan
+  z: .nan
+52:
+  ecc: .nan
+  ep_x: 0.4153890586860137
+  ep_y: 0.4153890586860137
+  ep_z: 0.5965047817747962
+  frame: 2
+  mass: .nan
+  raw_mass: .nan
+  signal: .nan
+  size_x: .nan
+  size_y: .nan
+  size_z: .nan
+  x: .nan
+  y: .nan
+  z: .nan
+53:
+  ecc: .nan
+  ep_x: 0.4880699866247341
+  ep_y: 0.4880699866247341
+  ep_z: 0.7008756604792522
+  frame: 2
+  mass: .nan
+  raw_mass: .nan
+  signal: .nan
+  size_x: .nan
+  size_y: .nan
+  size_z: .nan
+  x: .nan
+  y: .nan
+  z: .nan
+54:
   ecc: .nan
   ep_x: 0.017187663861200117
   ep_y: 0.017187663861200117
   ep_z: 0.024681737437127475
   frame: 2
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-34:
+  mass: 373.15735954857456
+  raw_mass: 206999.0
+  signal: 0.6299077642616047
+  size_x: 4.410946422902046
+  size_y: 5.550516883790653
+  size_z: 4.8249226377735495
+  x: 158.84402430790007
+  y: 299.8892640108035
+  z: 14.942943956785955
+55:
   ecc: .nan
   ep_x: 0.010993401690501885
   ep_y: 0.010993401690501885
   ep_z: 0.0157866860939934
   frame: 2
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-35:
+  mass: 264.4352794370216
+  raw_mass: 205350.0
+  signal: 0.5039262114092837
+  size_x: 4.516604271971925
+  size_y: 5.064237191575776
+  size_z: 5.141541155161008
+  x: 182.05097665555027
+  y: 313.1838970938542
+  z: 14.200095283468318
+56:
   ecc: .nan
   ep_x: 0.24792022337459035
   ep_y: 0.24792022337459035
@@ -539,7 +854,7 @@
   x: .nan
   y: .nan
   z: .nan
-36:
+57:
   ecc: .nan
   ep_x: 0.1197828106702453
   ep_y: 0.1197828106702453
@@ -554,7 +869,7 @@
   x: .nan
   y: .nan
   z: .nan
-37:
+58:
   ecc: .nan
   ep_x: 0.12396756346437807
   ep_y: 0.12396756346437807
@@ -569,7 +884,22 @@
   x: .nan
   y: .nan
   z: .nan
-38:
+59:
+  ecc: .nan
+  ep_x: 0.5083291631267817
+  ep_y: 0.5083291631267817
+  ep_z: 0.7299681351258354
+  frame: 2
+  mass: .nan
+  raw_mass: .nan
+  signal: .nan
+  size_x: .nan
+  size_y: .nan
+  size_z: .nan
+  x: .nan
+  y: .nan
+  z: .nan
+60:
   ecc: .nan
   ep_x: 0.13397363463014134
   ep_y: 0.13397363463014134
@@ -584,7 +914,22 @@
   x: .nan
   y: .nan
   z: .nan
-39:
+61:
+  ecc: .nan
+  ep_x: 0.7268962091326101
+  ep_y: 0.7268962091326101
+  ep_z: 1.043833619434169
+  frame: 2
+  mass: 200.68861369374724
+  raw_mass: 204990.0
+  signal: 0.3779446585569628
+  size_x: 5.522254240984524
+  size_y: 4.877211700719444
+  size_z: 4.075095460622079
+  x: 207.57815442561207
+  y: 693.1864406779661
+  z: 13.83427495291902
+62:
   ecc: .nan
   ep_x: 0.32503701917807587
   ep_y: 0.32503701917807587
@@ -599,7 +944,112 @@
   x: .nan
   y: .nan
   z: .nan
-40:
+63:
+  ecc: .nan
+  ep_x: 0.4305265795666097
+  ep_y: 0.4305265795666097
+  ep_z: 0.6182424838174412
+  frame: 2
+  mass: .nan
+  raw_mass: .nan
+  signal: .nan
+  size_x: .nan
+  size_y: .nan
+  size_z: .nan
+  x: .nan
+  y: .nan
+  z: .nan
+64:
+  ecc: .nan
+  ep_x: 0.39326522842093886
+  ep_y: 0.39326522842093886
+  ep_z: 0.5647346369711833
+  frame: 2
+  mass: .nan
+  raw_mass: .nan
+  signal: .nan
+  size_x: .nan
+  size_y: .nan
+  size_z: .nan
+  x: .nan
+  y: .nan
+  z: .nan
+65:
+  ecc: .nan
+  ep_x: 0.7480129522383894
+  ep_y: 0.7480129522383894
+  ep_z: 1.0741575723036851
+  frame: 2
+  mass: .nan
+  raw_mass: .nan
+  signal: .nan
+  size_x: .nan
+  size_y: .nan
+  size_z: .nan
+  x: .nan
+  y: .nan
+  z: .nan
+66:
+  ecc: .nan
+  ep_x: 0.5250742380093227
+  ep_y: 0.5250742380093227
+  ep_z: 0.7540143082971007
+  frame: 2
+  mass: .nan
+  raw_mass: .nan
+  signal: .nan
+  size_x: .nan
+  size_y: .nan
+  size_z: .nan
+  x: .nan
+  y: .nan
+  z: .nan
+67:
+  ecc: .nan
+  ep_x: 0.5636850877704161
+  ep_y: 0.5636850877704161
+  ep_z: 0.809460054951419
+  frame: 2
+  mass: .nan
+  raw_mass: .nan
+  signal: .nan
+  size_x: .nan
+  size_y: .nan
+  size_z: .nan
+  x: .nan
+  y: .nan
+  z: .nan
+68:
+  ecc: .nan
+  ep_x: 0.3894522827356282
+  ep_y: 0.3894522827356282
+  ep_z: 0.5592591910335122
+  frame: 2
+  mass: .nan
+  raw_mass: .nan
+  signal: .nan
+  size_x: .nan
+  size_y: .nan
+  size_z: .nan
+  x: .nan
+  y: .nan
+  z: .nan
+69:
+  ecc: .nan
+  ep_x: 0.6539929416537787
+  ep_y: 0.6539929416537787
+  ep_z: 0.9391434578885297
+  frame: 2
+  mass: .nan
+  raw_mass: .nan
+  signal: .nan
+  size_x: .nan
+  size_y: .nan
+  size_z: .nan
+  x: .nan
+  y: .nan
+  z: .nan
+70:
   ecc: .nan
   ep_x: 0.1875081834967438
   ep_y: 0.1875081834967438
@@ -614,7 +1064,7 @@
   x: .nan
   y: .nan
   z: .nan
-41:
+71:
   ecc: .nan
   ep_x: .nan
   ep_y: .nan
@@ -629,7 +1079,7 @@
   x: 173.56887092613294
   y: 271.2758362713905
   z: 35.003835239487486
-42:
+72:
   ecc: .nan
   ep_x: .nan
   ep_y: .nan
@@ -644,7 +1094,7 @@
   x: 170.76207270900733
   y: 290.08314924736294
   z: 35.59682742007789
-43:
+73:
   ecc: .nan
   ep_x: .nan
   ep_y: .nan
@@ -659,7 +1109,7 @@
   x: 161.000600120024
   y: 863.6026205241049
   z: 35.55941188237647
-44:
+74:
   ecc: .nan
   ep_x: .nan
   ep_y: .nan
@@ -674,7 +1124,7 @@
   x: 164.6643569988107
   y: 901.207042763328
   z: 35.46682868814313
-45:
+75:
   ecc: .nan
   ep_x: .nan
   ep_y: .nan
@@ -689,7 +1139,22 @@
   x: 159.22993167046275
   y: 759.8024554191434
   z: 35.91906005221932
-46:
+76:
+  ecc: .nan
+  ep_x: .nan
+  ep_y: .nan
+  ep_z: .nan
+  frame: 2
+  mass: 472.43082319620345
+  raw_mass: 204908.0
+  signal: 0.7558893171139256
+  size_x: 4.083038084563992
+  size_y: 5.621316571765017
+  size_z: 5.379516706917081
+  x: 197.844
+  y: 993.0818666666667
+  z: 38.266133333333336
+77:
   ecc: .nan
   ep_x: .nan
   ep_y: .nan
@@ -704,7 +1169,22 @@
   x: 158.1897770196174
   y: 607.8041306202023
   z: 38.85506275130986
-47:
+78:
+  ecc: .nan
+  ep_x: .nan
+  ep_y: .nan
+  ep_z: .nan
+  frame: 2
+  mass: 319.23725492778124
+  raw_mass: 204314.0
+  signal: 0.6299077642616047
+  size_x: 4.447536852778979
+  size_y: 3.231956164182631
+  size_z: 7.058052211909868
+  x: 173.3977900552486
+  y: 96.40528808208366
+  z: 47.37490134175217
+79:
   ecc: .nan
   ep_x: .nan
   ep_y: .nan
@@ -719,7 +1199,112 @@
   x: 152.87755834829443
   y: 539.9362657091561
   z: 47.10394973070018
-48:
+80:
+  ecc: .nan
+  ep_x: .nan
+  ep_y: .nan
+  ep_z: .nan
+  frame: 2
+  mass: 520.4297948329378
+  raw_mass: 205265.0
+  signal: 1.1338339756708884
+  size_x: 4.371459559264632
+  size_y: 4.893194776403828
+  size_z: 4.988148626972134
+  x: 195.27741466957153
+  y: 934.842653110627
+  z: 48.70902929072864
+81:
+  ecc: .nan
+  ep_x: .nan
+  ep_y: .nan
+  ep_z: .nan
+  frame: 2
+  mass: 576.4915858522205
+  raw_mass: 205486.0
+  signal: 1.0078524228185675
+  size_x: 3.8318001393199395
+  size_y: 5.964712667245355
+  size_z: 5.112587304980615
+  x: 169.49737762237763
+  y: 219.98907342657344
+  z: 50.21153846153846
+82:
+  ecc: .nan
+  ep_x: .nan
+  ep_y: .nan
+  ep_z: .nan
+  frame: 2
+  mass: 366.8582819059585
+  raw_mass: 204275.0
+  signal: 0.6299077642616047
+  size_x: 4.401158064383999
+  size_y: 5.576854395181476
+  size_z: 5.077726896905784
+  x: 184.66895604395603
+  y: 1015.8705357142857
+  z: 49.810782967032964
+83:
+  ecc: .nan
+  ep_x: .nan
+  ep_y: .nan
+  ep_z: .nan
+  frame: 2
+  mass: 466.1317455535874
+  raw_mass: 204845.0
+  signal: 0.8818708699662464
+  size_x: 3.710248771436485
+  size_y: 5.51359499144884
+  size_z: 5.8572200767110525
+  x: 182.99243243243242
+  y: 1036.3683783783783
+  z: 52.41135135135135
+84:
+  ecc: .nan
+  ep_x: .nan
+  ep_y: .nan
+  ep_z: .nan
+  frame: 2
+  mass: 368.999968304448
+  raw_mass: 204714.0
+  signal: 0.6299077642616047
+  size_x: 4.295662258248538
+  size_y: 4.95758727207696
+  size_z: 6.044474973535882
+  x: 154.46534653465346
+  y: 451.20416524411064
+  z: 51.84738818709457
+85:
+  ecc: .nan
+  ep_x: .nan
+  ep_y: .nan
+  ep_z: .nan
+  frame: 2
+  mass: 290.3874793245997
+  raw_mass: 205511.0
+  signal: 0.3779446585569628
+  size_x: 4.834663342078375
+  size_y: 5.4540080587174895
+  size_z: 5.358068094875946
+  x: 191.99175704989153
+  y: 257.88069414316703
+  z: 53.4646420824295
+86:
+  ecc: .nan
+  ep_x: .nan
+  ep_y: .nan
+  ep_z: .nan
+  frame: 2
+  mass: 226.26286892276838
+  raw_mass: 204468.0
+  signal: 0.5039262114092837
+  size_x: 4.080072709950832
+  size_y: 4.836353151291674
+  size_z: 5.103712784540526
+  x: 198.96659242761692
+  y: 976.9805122494432
+  z: 54.48663697104677
+87:
   ecc: .nan
   ep_x: .nan
   ep_y: .nan
@@ -734,7 +1319,52 @@
   x: 188.29700103412617
   y: 279.92967942088933
   z: 56.29120992761117
-49:
+88:
+  ecc: .nan
+  ep_x: 0.3264587075326823
+  ep_y: 0.3264587075326823
+  ep_z: 0.46879949296512713
+  frame: 3
+  mass: .nan
+  raw_mass: .nan
+  signal: .nan
+  size_x: .nan
+  size_y: .nan
+  size_z: .nan
+  x: .nan
+  y: .nan
+  z: .nan
+89:
+  ecc: .nan
+  ep_x: 0.26260873016535513
+  ep_y: 0.26260873016535513
+  ep_z: 0.37710998882579827
+  frame: 3
+  mass: 307.8512356992798
+  raw_mass: 205949.0
+  signal: 0.7604394459430543
+  size_x: 4.6668333009517236
+  size_y: 4.991388219788383
+  size_z: 3.6680948352038834
+  x: 206.95883079456567
+  y: 707.7595718402634
+  z: 10.901193906957596
+90:
+  ecc: .nan
+  ep_x: 0.5011271826118142
+  ep_y: 0.5011271826118142
+  ep_z: 0.7196259854577232
+  frame: 3
+  mass: .nan
+  raw_mass: .nan
+  signal: .nan
+  size_x: .nan
+  size_y: .nan
+  size_z: .nan
+  x: .nan
+  y: .nan
+  z: .nan
+91:
   ecc: .nan
   ep_x: 0.2997520168662319
   ep_y: 0.2997520168662319
@@ -749,7 +1379,7 @@
   x: .nan
   y: .nan
   z: .nan
-50:
+92:
   ecc: .nan
   ep_x: 0.11560073604869332
   ep_y: 0.11560073604869332
@@ -764,22 +1394,22 @@
   x: .nan
   y: .nan
   z: .nan
-51:
+93:
   ecc: .nan
   ep_x: 0.020075942297252774
   ep_y: 0.020075942297252774
   ep_z: 0.02882934764056505
   frame: 3
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-52:
+  mass: 334.4666163072867
+  raw_mass: 206694.0
+  signal: 0.88717935360023
+  size_x: 4.185179285724411
+  size_y: 5.241460331237935
+  size_z: 4.012532470218123
+  x: 184.85449033724896
+  y: 264.4793482379689
+  z: 12.969306555513452
+94:
   ecc: .nan
   ep_x: 0.13326554549031744
   ep_y: 0.13326554549031744
@@ -794,7 +1424,7 @@
   x: .nan
   y: .nan
   z: .nan
-53:
+95:
   ecc: .nan
   ep_x: 0.011001549869989136
   ep_y: 0.011001549869989136
@@ -809,7 +1439,7 @@
   x: .nan
   y: .nan
   z: .nan
-54:
+96:
   ecc: .nan
   ep_x: 0.12035767472073945
   ep_y: 0.12035767472073945
@@ -824,7 +1454,67 @@
   x: .nan
   y: .nan
   z: .nan
-55:
+97:
+  ecc: .nan
+  ep_x: 0.6558901438822785
+  ep_y: 0.6558901438822785
+  ep_z: 0.9418678681194436
+  frame: 3
+  mass: .nan
+  raw_mass: .nan
+  signal: .nan
+  size_x: .nan
+  size_y: .nan
+  size_z: .nan
+  x: .nan
+  y: .nan
+  z: .nan
+98:
+  ecc: .nan
+  ep_x: 0.9893125722917239
+  ep_y: 0.9893125722917239
+  ep_z: 1.4206673664170992
+  frame: 3
+  mass: 313.8080113591671
+  raw_mass: 204881.0
+  signal: 0.6336995382858785
+  size_x: 4.5918203597787
+  size_y: 5.421305126352971
+  size_z: 4.25376389445747
+  x: 206.63166397415188
+  y: 678.2144588045235
+  z: 13.682552504038773
+99:
+  ecc: .nan
+  ep_x: 0.5111133033151509
+  ep_y: 0.5111133033151509
+  ep_z: 0.7339662012779558
+  frame: 3
+  mass: .nan
+  raw_mass: .nan
+  signal: .nan
+  size_x: .nan
+  size_y: .nan
+  size_z: .nan
+  x: .nan
+  y: .nan
+  z: .nan
+100:
+  ecc: .nan
+  ep_x: 0.8273062129279245
+  ep_y: 0.8273062129279245
+  ep_z: 1.1880238578371605
+  frame: 3
+  mass: .nan
+  raw_mass: .nan
+  signal: .nan
+  size_x: .nan
+  size_y: .nan
+  size_z: .nan
+  x: .nan
+  y: .nan
+  z: .nan
+101:
   ecc: .nan
   ep_x: 0.2270784664925342
   ep_y: 0.2270784664925342
@@ -839,7 +1529,7 @@
   x: .nan
   y: .nan
   z: .nan
-56:
+102:
   ecc: .nan
   ep_x: 0.3296865910477302
   ep_y: 0.3296865910477302
@@ -854,7 +1544,82 @@
   x: .nan
   y: .nan
   z: .nan
-57:
+103:
+  ecc: .nan
+  ep_x: 0.5535384439805586
+  ep_y: 0.5535384439805586
+  ep_z: 0.7948893256241678
+  frame: 3
+  mass: .nan
+  raw_mass: .nan
+  signal: .nan
+  size_x: .nan
+  size_y: .nan
+  size_z: .nan
+  x: .nan
+  y: .nan
+  z: .nan
+104:
+  ecc: .nan
+  ep_x: 1.835045863184195
+  ep_y: 1.835045863184195
+  ep_z: 2.635152778525234
+  frame: 3
+  mass: .nan
+  raw_mass: .nan
+  signal: .nan
+  size_x: .nan
+  size_y: .nan
+  size_z: .nan
+  x: .nan
+  y: .nan
+  z: .nan
+105:
+  ecc: .nan
+  ep_x: 0.5815353621615598
+  ep_y: 0.5815353621615598
+  ep_z: 0.8350933108296338
+  frame: 3
+  mass: .nan
+  raw_mass: .nan
+  signal: .nan
+  size_x: .nan
+  size_y: .nan
+  size_z: .nan
+  x: .nan
+  y: .nan
+  z: .nan
+106:
+  ecc: .nan
+  ep_x: 0.2463133425090254
+  ep_y: 0.2463133425090254
+  ep_z: 0.3537095731080071
+  frame: 3
+  mass: .nan
+  raw_mass: .nan
+  signal: .nan
+  size_x: .nan
+  size_y: .nan
+  size_z: .nan
+  x: .nan
+  y: .nan
+  z: .nan
+107:
+  ecc: .nan
+  ep_x: 0.25349155536803386
+  ep_y: 0.25349155536803386
+  ep_z: 0.3640175920735053
+  frame: 3
+  mass: .nan
+  raw_mass: .nan
+  signal: .nan
+  size_x: .nan
+  size_y: .nan
+  size_z: .nan
+  x: .nan
+  y: .nan
+  z: .nan
+108:
   ecc: .nan
   ep_x: .nan
   ep_y: .nan
@@ -869,7 +1634,7 @@
   x: 161.91386290660338
   y: 859.2364930894877
   z: 31.57964539997208
-58:
+109:
   ecc: .nan
   ep_x: .nan
   ep_y: .nan
@@ -884,7 +1649,7 @@
   x: 165.04284421736122
   y: 897.0026079088829
   z: 33.18180850497632
-59:
+110:
   ecc: .nan
   ep_x: .nan
   ep_y: .nan
@@ -899,7 +1664,7 @@
   x: 175.90040065169944
   y: 272.2977016323226
   z: 35.04830363455646
-60:
+111:
   ecc: .nan
   ep_x: .nan
   ep_y: .nan
@@ -914,7 +1679,7 @@
   x: 160.04124220534666
   y: 761.0066061616349
   z: 33.886090016669755
-61:
+112:
   ecc: .nan
   ep_x: .nan
   ep_y: .nan
@@ -929,7 +1694,7 @@
   x: 174.10671355806284
   y: 289.980758849593
   z: 36.473775915424454
-62:
+113:
   ecc: .nan
   ep_x: .nan
   ep_y: .nan
@@ -944,7 +1709,67 @@
   x: 165.13286009429464
   y: 612.9075594638979
   z: 43.97626741537321
-63:
+114:
+  ecc: .nan
+  ep_x: .nan
+  ep_y: .nan
+  ep_z: .nan
+  frame: 3
+  mass: 414.3127581313074
+  raw_mass: 204410.0
+  signal: 0.7604394459430543
+  size_x: 4.2141003531571295
+  size_y: 4.961059745283055
+  size_z: 5.365502807119088
+  x: 187.01498929336188
+  y: 1005.1832364637504
+  z: 43.00672988681554
+115:
+  ecc: .nan
+  ep_x: .nan
+  ep_y: .nan
+  ep_z: .nan
+  frame: 3
+  mass: 346.50690753471844
+  raw_mass: 203896.0
+  signal: 0.6336995382858785
+  size_x: 4.417122698480411
+  size_y: 5.608378881601201
+  size_z: 5.1669282012921345
+  x: 183.22494513533286
+  y: 1027.9637893196782
+  z: 48.39136795903438
+116:
+  ecc: .nan
+  ep_x: .nan
+  ep_y: .nan
+  ep_z: .nan
+  frame: 3
+  mass: 412.9186191470785
+  raw_mass: 204842.0
+  signal: 0.88717935360023
+  size_x: 3.949730158393764
+  size_y: 5.178934523554372
+  size_z: 5.317887393991617
+  x: 170.62492326580724
+  y: 220.49662369551874
+  z: 49.59361571516268
+117:
+  ecc: .nan
+  ep_x: .nan
+  ep_y: .nan
+  ep_z: .nan
+  frame: 3
+  mass: 279.9684560147012
+  raw_mass: 204094.0
+  signal: 0.6336995382858785
+  size_x: 5.002805912549668
+  size_y: 3.2133295264477573
+  size_z: 6.172266716099303
+  x: 188.34902670891807
+  y: 514.9950203712087
+  z: 49.47215934812132
+118:
   ecc: .nan
   ep_x: .nan
   ep_y: .nan
@@ -959,7 +1784,7 @@
   x: 182.24449877750612
   y: 542.8635252278284
   z: 50.02111580351189
-64:
+119:
   ecc: .nan
   ep_x: .nan
   ep_y: .nan
@@ -974,7 +1799,82 @@
   x: 188.36022298737498
   y: 448.663387440564
   z: 51.20675520577144
-65:
+120:
+  ecc: .nan
+  ep_x: .nan
+  ep_y: .nan
+  ep_z: .nan
+  frame: 3
+  mass: 392.26001419895886
+  raw_mass: 204692.0
+  signal: 0.6336995382858785
+  size_x: 4.238526277856201
+  size_y: 5.07641128502542
+  size_z: 6.281752942635533
+  x: 195.48982229402262
+  y: 944.1964458804523
+  z: 48.941841680129244
+121:
+  ecc: .nan
+  ep_x: .nan
+  ep_y: .nan
+  ep_z: .nan
+  frame: 3
+  mass: 312.6673521902525
+  raw_mass: 203430.0
+  signal: 0.7604394459430543
+  size_x: 3.89973651319093
+  size_y: 4.449555116833383
+  size_z: 5.658072279616263
+  x: 182.5719497365221
+  y: 1045.867450344548
+  z: 50.56222132144305
+122:
+  ecc: .nan
+  ep_x: .nan
+  ep_y: .nan
+  ep_z: .nan
+  frame: 3
+  mass: 405.6944444106195
+  raw_mass: 204605.0
+  signal: 0.88717935360023
+  size_x: 4.171914845372377
+  size_y: 3.831502625750636
+  size_z: 6.557438524302
+  x: 188.9278350515464
+  y: 491.7407060293658
+  z: 53.12464854732896
+123:
+  ecc: .nan
+  ep_x: .nan
+  ep_y: .nan
+  ep_z: .nan
+  frame: 3
+  mass: 244.73476168600632
+  raw_mass: 206946.0
+  signal: 0.6336995382858785
+  size_x: 5.183579619297966
+  size_y: 5.277587132876743
+  size_z: 2.8570281844266034
+  x: 160.2087001553599
+  y: 270.25686172967374
+  z: 57.31382703262558
+124:
+  ecc: .nan
+  ep_x: .nan
+  ep_y: .nan
+  ep_z: .nan
+  frame: 3
+  mass: 556.7684143379729
+  raw_mass: 206831.0
+  signal: 0.88717935360023
+  size_x: 4.661913723240816
+  size_y: 5.670559671129291
+  size_z: 4.077080006508007
+  x: 190.98201684498065
+  y: 279.01138174368316
+  z: 55.890052356020945
+125:
   ecc: .nan
   ep_x: 0.011269949717418883
   ep_y: 0.011269949717418883
@@ -989,7 +1889,22 @@
   x: .nan
   y: .nan
   z: .nan
-66:
+126:
+  ecc: .nan
+  ep_x: 0.978830076620956
+  ep_y: 0.978830076620956
+  ep_z: 1.4056143488621204
+  frame: 4
+  mass: .nan
+  raw_mass: .nan
+  signal: .nan
+  size_x: .nan
+  size_y: .nan
+  size_z: .nan
+  x: .nan
+  y: .nan
+  z: .nan
+127:
   ecc: .nan
   ep_x: 0.01773802851960212
   ep_y: 0.01773802851960212
@@ -1004,7 +1919,22 @@
   x: .nan
   y: .nan
   z: .nan
-67:
+128:
+  ecc: .nan
+  ep_x: 1.2464866434041633
+  ep_y: 1.2464866434041633
+  ep_z: 1.789973105119809
+  frame: 4
+  mass: .nan
+  raw_mass: .nan
+  signal: .nan
+  size_x: .nan
+  size_y: .nan
+  size_z: .nan
+  x: .nan
+  y: .nan
+  z: .nan
+129:
   ecc: .nan
   ep_x: 0.16885338783675027
   ep_y: 0.16885338783675027
@@ -1019,7 +1949,37 @@
   x: .nan
   y: .nan
   z: .nan
-68:
+130:
+  ecc: .nan
+  ep_x: 0.8058013327017541
+  ep_y: 0.8058013327017541
+  ep_z: 1.1571425343690303
+  frame: 4
+  mass: .nan
+  raw_mass: .nan
+  signal: .nan
+  size_x: .nan
+  size_y: .nan
+  size_z: .nan
+  x: .nan
+  y: .nan
+  z: .nan
+131:
+  ecc: .nan
+  ep_x: 1.0015193699306375
+  ep_y: 1.0015193699306375
+  ep_z: 1.4381965068927833
+  frame: 4
+  mass: .nan
+  raw_mass: .nan
+  signal: .nan
+  size_x: .nan
+  size_y: .nan
+  size_z: .nan
+  x: .nan
+  y: .nan
+  z: .nan
+132:
   ecc: .nan
   ep_x: 0.10197207265029146
   ep_y: 0.10197207265029146
@@ -1034,7 +1994,7 @@
   x: .nan
   y: .nan
   z: .nan
-69:
+133:
   ecc: .nan
   ep_x: 0.278809326808772
   ep_y: 0.278809326808772
@@ -1049,7 +2009,7 @@
   x: .nan
   y: .nan
   z: .nan
-70:
+134:
   ecc: .nan
   ep_x: 0.10006225910466594
   ep_y: 0.10006225910466594
@@ -1064,7 +2024,37 @@
   x: .nan
   y: .nan
   z: .nan
-71:
+135:
+  ecc: .nan
+  ep_x: 0.3523614248918881
+  ep_y: 0.3523614248918881
+  ep_z: 0.5059961750698586
+  frame: 4
+  mass: .nan
+  raw_mass: .nan
+  signal: .nan
+  size_x: .nan
+  size_y: .nan
+  size_z: .nan
+  x: .nan
+  y: .nan
+  z: .nan
+136:
+  ecc: .nan
+  ep_x: 0.44220657790494455
+  ep_y: 0.44220657790494455
+  ep_z: 0.6350151327696727
+  frame: 4
+  mass: .nan
+  raw_mass: .nan
+  signal: .nan
+  size_x: .nan
+  size_y: .nan
+  size_z: .nan
+  x: .nan
+  y: .nan
+  z: .nan
+137:
   ecc: .nan
   ep_x: 0.21667923872291595
   ep_y: 0.21667923872291595
@@ -1079,7 +2069,52 @@
   x: .nan
   y: .nan
   z: .nan
-72:
+138:
+  ecc: .nan
+  ep_x: 0.4449787422471041
+  ep_y: 0.4449787422471041
+  ep_z: 0.6389960014309575
+  frame: 4
+  mass: .nan
+  raw_mass: .nan
+  signal: .nan
+  size_x: .nan
+  size_y: .nan
+  size_z: .nan
+  x: .nan
+  y: .nan
+  z: .nan
+139:
+  ecc: .nan
+  ep_x: 1.2204618533336824
+  ep_y: 1.2204618533336824
+  ep_z: 1.7526011248109552
+  frame: 4
+  mass: .nan
+  raw_mass: .nan
+  signal: .nan
+  size_x: .nan
+  size_y: .nan
+  size_z: .nan
+  x: .nan
+  y: .nan
+  z: .nan
+140:
+  ecc: .nan
+  ep_x: 0.4316423345860264
+  ep_y: 0.4316423345860264
+  ep_z: 0.6198447243927625
+  frame: 4
+  mass: .nan
+  raw_mass: .nan
+  signal: .nan
+  size_x: .nan
+  size_y: .nan
+  size_z: .nan
+  x: .nan
+  y: .nan
+  z: .nan
+141:
   ecc: .nan
   ep_x: .nan
   ep_y: .nan
@@ -1094,7 +2129,22 @@
   x: 172.94746291604082
   y: 302.9627466152827
   z: 14.989283203609016
-73:
+142:
+  ecc: .nan
+  ep_x: .nan
+  ep_y: .nan
+  ep_z: .nan
+  frame: 4
+  mass: 227.4705742776
+  raw_mass: 203855.0
+  signal: 0.4841859818595147
+  size_x: 4.432551136596628
+  size_y: 5.626746926122215
+  size_z: 4.544655682731634
+  x: 170.63048105576843
+  y: 896.7054065559813
+  z: 15.265644955300127
+143:
   ecc: .nan
   ep_x: .nan
   ep_y: .nan
@@ -1109,7 +2159,22 @@
   x: 173.99231621457417
   y: 276.92637861405956
   z: 23.119152281905578
-74:
+144:
+  ecc: .nan
+  ep_x: .nan
+  ep_y: .nan
+  ep_z: .nan
+  frame: 4
+  mass: 386.86459950575227
+  raw_mass: 203637.0
+  signal: 0.6778603746033206
+  size_x: 4.810189435251356
+  size_y: 5.7981050808139205
+  size_z: 4.1424267796221415
+  x: 195.4250312891114
+  y: 1024.7106382978723
+  z: 34.52740926157697
+145:
   ecc: .nan
   ep_x: .nan
   ep_y: .nan
@@ -1124,7 +2189,37 @@
   x: 159.8513924503548
   y: 606.7272347784602
   z: 34.602480768083964
-75:
+146:
+  ecc: .nan
+  ep_x: .nan
+  ep_y: .nan
+  ep_z: .nan
+  frame: 4
+  mass: 208.68415818145084
+  raw_mass: 204073.0
+  signal: 0.29051158911570885
+  size_x: 4.916141319738282
+  size_y: 4.2047371362727075
+  size_z: 7.940059670040592
+  x: 156.57911832946635
+  y: 456.04361948955915
+  z: 35.52993039443155
+147:
+  ecc: .nan
+  ep_x: .nan
+  ep_y: .nan
+  ep_z: .nan
+  frame: 4
+  mass: 207.9094606104756
+  raw_mass: 203832.0
+  signal: 0.4841859818595147
+  size_x: 4.231097860020642
+  size_y: 2.9683942957301257
+  size_z: 7.664908028856211
+  x: 156.56544014904517
+  y: 496.24033535165347
+  z: 36.440614811364696
+148:
   ecc: .nan
   ep_x: .nan
   ep_y: .nan
@@ -1139,7 +2234,7 @@
   x: 160.20690666471148
   y: 745.101033800132
   z: 34.85739423711416
-76:
+149:
   ecc: .nan
   ep_x: .nan
   ep_y: .nan
@@ -1154,7 +2249,7 @@
   x: 161.67151805453204
   y: 844.9365327929256
   z: 35.891672807663966
-77:
+150:
   ecc: .nan
   ep_x: .nan
   ep_y: .nan
@@ -1169,7 +2264,37 @@
   x: 164.20456074501612
   y: 882.5811763039552
   z: 36.27516730993945
-78:
+151:
+  ecc: .nan
+  ep_x: .nan
+  ep_y: .nan
+  ep_z: .nan
+  frame: 4
+  mass: 557.685413905789
+  raw_mass: 205660.0
+  signal: 0.8715347673471264
+  size_x: 4.003211074382674
+  size_y: 5.6273863375934505
+  size_z: 5.771612635594136
+  x: 171.03924292411875
+  y: 208.2672338947734
+  z: 36.93592637610696
+152:
+  ecc: .nan
+  ep_x: .nan
+  ep_y: .nan
+  ep_z: .nan
+  frame: 4
+  mass: 498.6147241189282
+  raw_mass: 205087.0
+  signal: 0.7746975709752235
+  size_x: 4.902070699722385
+  size_y: 4.493732282973158
+  size_z: 6.275014033962977
+  x: 154.69974752379102
+  y: 542.1023499708681
+  z: 39.24898038454069
+153:
   ecc: .nan
   ep_x: .nan
   ep_y: .nan
@@ -1184,1188 +2309,48 @@
   x: 188.82986501687287
   y: 284.0431664791901
   z: 48.63807649043869
-79:
-  ecc: .nan
-  ep_x: 0.3029801347402155
-  ep_y: 0.3029801347402155
-  ep_z: 0.43508391801894086
-  frame: 5
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-80:
-  ecc: .nan
-  ep_x: 0.4298238974698999
-  ep_y: 0.4298238974698999
-  ep_z: 0.6172334220186522
-  frame: 5
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-81:
-  ecc: .nan
-  ep_x: 0.26630081049670035
-  ep_y: 0.26630081049670035
-  ep_z: 0.3824118703421548
-  frame: 5
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-82:
-  ecc: .nan
-  ep_x: 0.3747444330641578
-  ep_y: 0.3747444330641578
-  ep_z: 0.5381385031501835
-  frame: 5
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-83:
-  ecc: .nan
-  ep_x: 0.36881944746554834
-  ep_y: 0.36881944746554834
-  ep_z: 0.5296301369146904
-  frame: 5
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-84:
-  ecc: .nan
-  ep_x: 0.29688227849011367
-  ep_y: 0.29688227849011367
-  ep_z: 0.42632730699199867
-  frame: 5
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-85:
-  ecc: .nan
-  ep_x: 0.2665839081377988
-  ep_y: 0.2665839081377988
-  ep_z: 0.3828184027076402
-  frame: 5
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-86:
-  ecc: .nan
-  ep_x: 0.2558407830215583
-  ep_y: 0.2558407830215583
-  ep_z: 0.36739111744568936
-  frame: 5
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-87:
-  ecc: .nan
-  ep_x: 0.5891141556163454
-  ep_y: 0.5891141556163454
-  ep_z: 0.8459765694069388
-  frame: 5
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-88:
-  ecc: .nan
-  ep_x: 0.21755348253720658
-  ep_y: 0.21755348253720658
-  ep_z: 0.31240999229904076
-  frame: 5
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-89:
-  ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
-  frame: 5
-  mass: 925.3562604050395
-  raw_mass: 206140.0
-  signal: 1.8043158280878207
-  size_x: 4.436518340554046
-  size_y: 4.991434166828481
-  size_z: 5.00947222546606
-  x: 206.9657729805014
-  y: 463.98196378830085
-  z: 21.311037604456825
-90:
-  ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
-  frame: 5
-  mass: 794.3500433156631
-  raw_mass: 205163.0
-  signal: 1.6109962750784115
-  size_x: 4.197239181144347
-  size_y: 5.469689038212171
-  size_z: 4.634984995550718
-  x: 164.1989535166707
-  y: 924.0888293988805
-  z: 25.748032773586438
-91:
-  ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
-  frame: 5
-  mass: 1426.0861226249112
-  raw_mass: 206596.0
-  signal: 2.3520545616144806
-  size_x: 5.605159858543903
-  size_y: 5.546531660919207
-  size_z: 3.3899838777757476
-  x: 193.0902826416032
-  y: 285.08675809403314
-  z: 30.43582386299451
-92:
-  ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
-  frame: 5
-  mass: 779.7866369889542
-  raw_mass: 205506.0
-  signal: 1.3854567965674338
-  size_x: 4.919457059861502
-  size_y: 5.63618939150859
-  size_z: 3.896420458453984
-  x: 170.5869762829518
-  y: 267.34749194281466
-  z: 33.42628708371209
-93:
-  ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
-  frame: 5
-  mass: 737.8040740604108
-  raw_mass: 205549.0
-  signal: 1.2243571690595927
-  size_x: 5.207875804175841
-  size_y: 5.603030192132175
-  size_z: 3.9010256069475533
-  x: 169.98934451286084
-  y: 283.946023843836
-  z: 33.65688458011267
-94:
-  ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
-  frame: 5
-  mass: 1224.71158824011
-  raw_mass: 206208.0
-  signal: 2.416494412617617
-  size_x: 4.967183354103616
-  size_y: 5.22120708206009
-  size_z: 3.9392068034973478
-  x: 163.80268869537764
-  y: 893.5656783562653
-  z: 34.001262792349586
-95:
-  ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
-  frame: 5
-  mass: 964.0523909324229
-  raw_mass: 206592.0
-  signal: 1.417676722069002
-  size_x: 4.048996399833022
-  size_y: 4.952138833011761
-  size_z: 6.8756154948392245
-  x: 181.1806089368671
-  y: 540.7523812706795
-  z: 34.94345108786471
-96:
-  ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
-  frame: 5
-  mass: 1332.2616995643446
-  raw_mass: 206750.0
-  signal: 2.706473742131731
-  size_x: 4.785881858888182
-  size_y: 5.304266119135932
-  size_z: 4.031167120185792
-  x: 160.85878739510025
-  y: 763.3833224503616
-  z: 35.058622941304506
-97:
-  ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
-  frame: 5
-  mass: 634.1525737218659
-  raw_mass: 204532.0
-  signal: 1.256577094561161
-  size_x: 4.72529058370995
-  size_y: 5.334397545654414
-  size_z: 4.151283801364537
-  x: 160.70445076719847
-  y: 861.4190122954984
-  z: 34.80129051925617
-98:
-  ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
-  frame: 5
-  mass: 1269.3039651342804
-  raw_mass: 207440.0
-  signal: 2.126515083103503
-  size_x: 5.135876810537998
-  size_y: 4.270683303663225
-  size_z: 5.98081715820957
-  x: 166.5559588780302
-  y: 613.4513516943774
-  z: 36.13037187460338
-99:
-  ecc: .nan
-  ep_x: 0.016763684606323433
-  ep_y: 0.016763684606323433
-  ep_z: 0.024072897007609992
-  frame: 6
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-100:
-  ecc: .nan
-  ep_x: 0.02527240655660514
-  ep_y: 0.02527240655660514
-  ep_z: 0.036291546545925576
-  frame: 6
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-101:
-  ecc: .nan
-  ep_x: 0.15556568484143687
-  ep_y: 0.15556568484143687
-  ep_z: 0.22339460548509743
-  frame: 6
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-102:
-  ecc: .nan
-  ep_x: 0.39759738264782185
-  ep_y: 0.39759738264782185
-  ep_z: 0.5709556739910219
-  frame: 6
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-103:
-  ecc: .nan
-  ep_x: 0.18193320373305416
-  ep_y: 0.18193320373305416
-  ep_z: 0.261258749408724
-  frame: 6
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-104:
-  ecc: .nan
-  ep_x: 0.26206835797807904
-  ep_y: 0.26206835797807904
-  ep_z: 0.37633400643794257
-  frame: 6
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-105:
-  ecc: .nan
-  ep_x: 0.38926105361823465
-  ep_y: 0.38926105361823465
-  ep_z: 0.5589845832157215
-  frame: 6
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-106:
-  ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
-  frame: 6
-  mass: 14355.634422193814
-  raw_mass: 262614.0
-  signal: 17.71078162849219
-  size_x: 4.361017283381432
-  size_y: 4.9886850921968175
-  size_z: 7.113782430413369
-  x: 171.9334813145394
-  y: 289.781928483306
-  z: 27.085553860949474
-107:
-  ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
-  frame: 6
-  mass: 9565.983631474299
-  raw_mass: 242479.0
-  signal: 12.272037663837107
-  size_x: 4.329920593531819
-  size_y: 4.733571913852376
-  size_z: 7.4094898692753715
-  x: 173.66366598392023
-  y: 271.265483887427
-  z: 27.841316121319913
-108:
-  ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
-  frame: 6
-  mass: 2016.8675535595928
-  raw_mass: 209254.0
-  signal: 3.4863743363173603
-  size_x: 4.469974737882013
-  size_y: 5.083992877475295
-  size_z: 5.78170751127161
-  x: 166.19004321521174
-  y: 898.959481417459
-  z: 30.22447709593777
-109:
-  ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
-  frame: 6
-  mass: 771.6740956004845
-  raw_mass: 205331.0
-  signal: 1.4642772212532913
-  size_x: 4.544708778369009
-  size_y: 4.88143511509351
-  size_z: 5.763501127145997
-  x: 162.10897262130658
-  y: 863.2579741574049
-  z: 31.029908737688622
-110:
-  ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
-  frame: 6
-  mass: 1549.2750275727085
-  raw_mass: 208320.0
-  signal: 2.440462035422152
-  size_x: 4.525219249201274
-  size_y: 4.77293497040276
-  size_z: 6.454342374529392
-  x: 161.29416265358478
-  y: 762.7896845042532
-  z: 33.07979657050272
-111:
-  ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
-  frame: 6
-  mass: 1008.8870054435176
-  raw_mass: 206635.0
-  signal: 1.5340047079796384
-  size_x: 5.005367220890508
-  size_y: 3.802642118675986
-  size_z: 7.158943114358254
-  x: 159.99585320340037
-  y: 609.2983620153432
-  z: 37.163729352408595
-112:
-  ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
-  frame: 6
-  mass: 701.8768813874109
-  raw_mass: 205385.0
-  signal: 1.1853672743479025
-  size_x: 4.750918846157414
-  size_y: 4.531563587503317
-  size_z: 6.21756834858152
-  x: 188.4663222729982
-  y: 1013.9370156964037
-  z: 43.569739717862106
-113:
-  ecc: .nan
-  ep_x: 0.023879759176349127
-  ep_y: 0.023879759176349127
-  ep_z: 0.03429168447859851
-  frame: 7
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-114:
-  ecc: .nan
-  ep_x: 0.08117002044434553
-  ep_y: 0.08117002044434553
-  ep_z: 0.11656134007229288
-  frame: 7
-  mass: 13779.756121280963
-  raw_mass: 244535.0
-  signal: 23.866316721637205
-  size_x: 5.16075478337391
-  size_y: 5.667865211328987
-  size_z: 3.5701877508010096
-  x: 181.23798138966242
-  y: 306.9916389322828
-  z: 9.784833254092236
-115:
-  ecc: .nan
-  ep_x: 0.029945716323762007
-  ep_y: 0.029945716323762007
-  ep_z: 0.04300248792613914
-  frame: 7
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-116:
-  ecc: .nan
-  ep_x: 0.35191936155925013
-  ep_y: 0.35191936155925013
-  ep_z: 0.5053613656393936
-  frame: 7
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-117:
-  ecc: .nan
-  ep_x: 0.1818061092722112
-  ep_y: 0.1818061092722112
-  ep_z: 0.26107623989855605
-  frame: 7
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-118:
-  ecc: .nan
-  ep_x: 0.3447430111346148
-  ep_y: 0.3447430111346148
-  ep_z: 0.4950560211569759
-  frame: 7
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-119:
-  ecc: .nan
-  ep_x: 0.17157943434783457
-  ep_y: 0.17157943434783457
-  ep_z: 0.24639058468812797
-  frame: 7
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-120:
-  ecc: .nan
-  ep_x: 0.2986092148685547
-  ep_y: 0.2986092148685547
-  ep_z: 0.4288072129645331
-  frame: 7
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-121:
-  ecc: .nan
-  ep_x: 0.4484315463162487
-  ep_y: 0.4484315463162487
-  ep_z: 0.6439542787247585
-  frame: 7
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-122:
-  ecc: .nan
-  ep_x: 0.2038385426670963
-  ep_y: 0.2038385426670963
-  ep_z: 0.29271513745584066
-  frame: 7
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-123:
-  ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
-  frame: 7
-  mass: 3198.273627497202
-  raw_mass: 215054.0
-  signal: 6.177164327953158
-  size_x: 5.368794038914488
-  size_y: 5.544500361269365
-  size_z: 3.4018572228523687
-  x: 210.81060517382653
-  y: 300.6095048577783
-  z: 14.82207655390378
-124:
-  ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
-  frame: 7
-  mass: 9404.451909111958
-  raw_mass: 236074.0
-  signal: 16.191658011149947
-  size_x: 5.05727038611592
-  size_y: 5.645461067811856
-  size_z: 3.72130248644438
-  x: 211.7294042714118
-  y: 319.0144403972851
-  z: 16.137537071316256
-125:
-  ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
-  frame: 7
-  mass: 1001.9173353142206
-  raw_mass: 205600.0
-  signal: 2.0590547759843862
-  size_x: 3.9331879315636145
-  size_y: 5.7373380681602315
-  size_z: 4.891479977080968
-  x: 164.75600186828586
-  y: 927.8784680056049
-  z: 27.244371788883697
-126:
-  ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
-  frame: 7
-  mass: 1704.710167717255
-  raw_mass: 208252.0
-  signal: 2.527021770526292
-  size_x: 5.755590805367566
-  size_y: 5.57256452171107
-  size_z: 3.6150102504106796
-  x: 186.97979576150215
-  y: 298.1272647414077
-  z: 36.335017019874826
-127:
-  ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
-  frame: 7
-  mass: 691.1872509383951
-  raw_mass: 205659.0
-  signal: 1.2167141858089554
-  size_x: 4.318278450325198
-  size_y: 5.067639978256288
-  size_z: 5.515878476633726
-  x: 179.03872714962762
-  y: 550.1010155721057
-  z: 34.83750846310088
-128:
-  ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
-  frame: 7
-  mass: 1637.5101073010374
-  raw_mass: 208579.0
-  signal: 2.2462415738011487
-  size_x: 5.705837744112595
-  size_y: 5.635276772907453
-  size_z: 3.8114647282226812
-  x: 192.25034293552812
-  y: 282.0724165523548
-  z: 36.541438042981255
-129:
-  ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
-  frame: 7
-  mass: 837.005766437653
-  raw_mass: 206106.0
-  signal: 1.3103075847173367
-  size_x: 4.613691102439414
-  size_y: 5.028266294213975
-  size_z: 6.65024534635547
-  x: 163.72738454657275
-  y: 623.540310857654
-  z: 34.973051548697306
-130:
-  ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
-  frame: 7
-  mass: 736.4864560100516
-  raw_mass: 204990.0
-  signal: 1.5910877814424802
-  size_x: 4.738651994193492
-  size_y: 5.079317499429193
-  size_z: 4.358067964800201
-  x: 162.21718134451646
-  y: 907.9054517727793
-  z: 37.695768204346166
-131:
-  ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
-  frame: 7
-  mass: 1277.5498950994033
-  raw_mass: 207659.0
-  signal: 1.7782745792592427
-  size_x: 5.7278766946025845
-  size_y: 5.706098530481264
-  size_z: 3.729213451524727
-  x: 203.81838827838828
-  y: 307.949010989011
-  z: 41.11069597069597
-132:
-  ecc: .nan
-  ep_x: 0.02710495757845511
-  ep_y: 0.02710495757845511
-  ep_z: 0.03892311669569708
-  frame: 8
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-133:
-  ecc: .nan
-  ep_x: 0.0404840458418974
-  ep_y: 0.0404840458418974
-  ep_z: 0.058135683704985744
-  frame: 8
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-134:
-  ecc: .nan
-  ep_x: 0.2739388095766785
-  ep_y: 0.2739388095766785
-  ep_z: 0.39338014906574614
-  frame: 8
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-135:
-  ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
-  frame: 8
-  mass: 8995.479781836388
-  raw_mass: 239257.0
-  signal: 12.578193118098554
-  size_x: 4.358949891809395
-  size_y: 5.231861045665445
-  size_z: 6.204605500340956
-  x: 172.3961462325969
-  y: 285.129612265377
-  z: 16.229054598693843
-136:
-  ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
-  frame: 8
-  mass: 6149.503278562144
-  raw_mass: 227194.0
-  signal: 8.237483336166504
-  size_x: 4.734210139876775
-  size_y: 4.792339680341439
-  size_z: 6.562955973685722
-  x: 175.61231250501322
-  y: 266.3267827063448
-  z: 16.778094168605115
-137:
-  ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
-  frame: 8
-  mass: 1015.0355215067923
-  raw_mass: 206367.0
-  signal: 1.9237236533562494
-  size_x: 4.16912131668199
-  size_y: 5.112030940465977
-  size_z: 5.750929051449522
-  x: 164.20439304111187
-  y: 902.6842258722908
-  z: 33.966663426960835
-138:
-  ecc: .nan
-  ep_x: 0.4448670974245873
-  ep_y: 0.4448670974245873
-  ep_z: 0.6388356778280626
-  frame: 9
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-139:
-  ecc: .nan
-  ep_x: 0.30605482430797804
-  ep_y: 0.30605482430797804
-  ep_z: 0.4394992173420503
-  frame: 9
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-140:
-  ecc: .nan
-  ep_x: 0.1848806284057665
-  ep_y: 0.1848806284057665
-  ep_z: 0.26549129447564374
-  frame: 9
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-141:
-  ecc: .nan
-  ep_x: 0.13683020466636708
-  ep_y: 0.13683020466636708
-  ep_z: 0.19649018111574096
-  frame: 9
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-142:
-  ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
-  frame: 9
-  mass: 701.4567788615664
-  raw_mass: 205001.0
-  signal: 1.2382290888994993
-  size_x: 4.692434573100164
-  size_y: 5.213670619438132
-  size_z: 5.0934108282332735
-  x: 162.67838957159347
-  y: 779.9330798651187
-  z: 26.506936429266524
-143:
-  ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
-  frame: 9
-  mass: 1120.9465695560443
-  raw_mass: 206016.0
-  signal: 2.174838271528608
-  size_x: 4.474749299677472
-  size_y: 5.395613379706991
-  size_z: 4.70757491092256
-  x: 164.96730017560753
-  y: 926.5308729394437
-  z: 27.74119129892936
-144:
-  ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
-  frame: 9
-  mass: 1565.5025619347825
-  raw_mass: 208148.0
-  signal: 2.412959250163127
-  size_x: 5.722788150042787
-  size_y: 5.73466189439937
-  size_z: 3.5383894022474704
-  x: 208.60152510748765
-  y: 274.95432789810985
-  z: 34.09497444633731
-145:
-  ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
-  frame: 9
-  mass: 2273.0869873132106
-  raw_mass: 210039.0
-  signal: 4.048056636786825
-  size_x: 5.430840209308729
-  size_y: 5.620548204951677
-  size_z: 3.299939462798636
-  x: 208.42100301000775
-  y: 293.80025700298205
-  z: 34.24865736893197
-146:
-  ecc: .nan
-  ep_x: 0.07015514715523676
-  ep_y: 0.07015514715523676
-  ep_z: 0.10074382044772487
-  frame: 10
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-147:
-  ecc: .nan
-  ep_x: 0.04414925310452504
-  ep_y: 0.04414925310452504
-  ep_z: 0.06339897510045242
-  frame: 10
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-148:
-  ecc: .nan
-  ep_x: 0.4977745182822726
-  ep_y: 0.4977745182822726
-  ep_z: 0.7148115102989805
-  frame: 10
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-149:
-  ecc: .nan
-  ep_x: 0.21018585350423108
-  ep_y: 0.21018585350423108
-  ep_z: 0.30182996892910724
-  frame: 10
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-150:
-  ecc: .nan
-  ep_x: 0.1812205379136142
-  ep_y: 0.1812205379136142
-  ep_z: 0.2602353508376395
-  frame: 10
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-151:
-  ecc: .nan
-  ep_x: 0.3534558624659613
-  ep_y: 0.3534558624659613
-  ep_z: 0.5075678034809529
-  frame: 10
-  mass: .nan
-  raw_mass: .nan
-  signal: .nan
-  size_x: .nan
-  size_y: .nan
-  size_z: .nan
-  x: .nan
-  y: .nan
-  z: .nan
-152:
-  ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
-  frame: 10
-  mass: 3394.1932309500153
-  raw_mass: 216793.0
-  signal: 4.610725341390489
-  size_x: 4.504189677813144
-  size_y: 4.5552534375445015
-  size_z: 7.176614570641185
-  x: 175.65210821536232
-  y: 266.5953523867669
-  z: 24.04833823024383
-153:
-  ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
-  frame: 10
-  mass: 5413.509609819556
-  raw_mass: 225074.0
-  signal: 6.6052525958122175
-  size_x: 4.456668513047166
-  size_y: 4.927414393888045
-  size_z: 7.097682422734968
-  x: 173.76466563313429
-  y: 284.89883344817025
-  z: 26.198122416169042
 154:
   ecc: .nan
   ep_x: .nan
   ep_y: .nan
   ep_z: .nan
-  frame: 10
-  mass: 615.480027172918
-  raw_mass: 204716.0
-  signal: 1.0879239569573063
-  size_x: 4.881629868407764
-  size_y: 4.210977855285673
-  size_z: 6.1914349241321665
-  x: 163.98038803080678
-  y: 849.0122048735323
-  z: 32.03068052691385
+  frame: 4
+  mass: 286.347589671717
+  raw_mass: 205073.0
+  signal: 0.38734878548761176
+  size_x: 4.113826829973992
+  size_y: 4.7352283529893615
+  size_z: 7.631432073695904
+  x: 188.23638823131552
+  y: 261.4978018261752
+  z: 50.2915116672303
 155:
   ecc: .nan
   ep_x: .nan
   ep_y: .nan
   ep_z: .nan
-  frame: 10
-  mass: 1353.532820163026
-  raw_mass: 207427.0
-  signal: 2.0981390598462335
-  size_x: 4.556404518698723
-  size_y: 4.739214719792082
-  size_z: 6.329700234902691
-  x: 163.29322157155434
-  y: 748.8679335553259
-  z: 33.39415164389329
+  frame: 4
+  mass: 244.61075803542684
+  raw_mass: 203654.0
+  signal: 0.4841859818595147
+  size_x: 5.2980075132497975
+  size_y: 5.084090970628348
+  size_z: 4.514031962732439
+  x: 192.9865399841647
+  y: 989.1290577988915
+  z: 50.319477434679335
 156:
   ecc: .nan
   ep_x: .nan
   ep_y: .nan
   ep_z: .nan
-  frame: 10
-  mass: 1659.5502874843025
-  raw_mass: 208177.0
-  signal: 3.0565482600229084
-  size_x: 4.4410405713142485
-  size_y: 4.577412642459105
-  size_z: 6.112048442856264
-  x: 167.90077729911968
-  y: 884.9910719860148
-  z: 33.16871136917025
-157:
-  ecc: .nan
-  ep_x: .nan
-  ep_y: .nan
-  ep_z: .nan
-  frame: 10
-  mass: 830.552232282835
-  raw_mass: 205525.0
-  signal: 1.5800800327237068
-  size_x: 4.519160389800578
-  size_y: 4.203759544904685
-  size_z: 6.382092156918544
-  x: 160.35020583832335
-  y: 595.8494261477045
-  z: 38.061813872255485
+  frame: 4
+  mass: 237.44480550390603
+  raw_mass: 205142.0
+  signal: 0.38734878548761176
+  size_x: 5.364031925630601
+  size_y: 4.934191723154694
+  size_z: 5.255502825711385
+  x: 193.92618270799346
+  y: 310.24755301794454
+  z: 54.2173735725938

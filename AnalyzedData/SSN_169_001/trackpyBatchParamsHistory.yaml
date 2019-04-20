@@ -13,3 +13,64 @@ timestamp: 2019-04-16-052700
 top_slice: 59
 tracking_seach_radius: 30
 trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 8
+minmass: 600
+noise_size: 3
+notes: First run
+percentile: 50
+roi: [211, 0, 281, 1074]
+source: null
+timestamp: 2019-04-16-052700
+top_slice: 59
+tracking_seach_radius: 30
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 6
+minmass: 600
+noise_size: 3
+notes: First run
+percentile: 50
+roi: [211, 0, 281, 1074]
+source: null
+timestamp: 2019-04-16-052700
+top_slice: 59
+tracking_seach_radius: 40
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 5
+minmass: 600
+noise_size: 3
+notes: First run
+percentile: 50
+roi: [211, 0, 281, 1074]
+source: null
+timestamp: 2019-04-16-052700
+top_slice: 59
+tracking_seach_radius: 40
+trackpy_version: 0.4.1+35.g10f756b
+---
+bottom_slice: 0
+characterize: true
+diameter: !!python/tuple [21, 15, 15]
+last_timepoint: 9
+minmass: 600
+noise_size: 3
+notes: Decreased minmass and final timepoint. Probably need to reduce final timepoint
+  more
+percentile: 50
+roi: [211, 0, 281, 1074]
+source: null
+timestamp: 2019-04-17-052958
+top_slice: 59
+tracking_seach_radius: 40
+trackpy_version: 0.4.1+35.g10f756b

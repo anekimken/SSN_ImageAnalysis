@@ -242,6 +242,13 @@ class AnalyzeImageFrame(tk.Frame):
         notebook_height = self.parent.winfo_height() - 100
         self.notebook_height_in = notebook_height / screen_dpi
 
+        # Creat a notebook to put all the controls and parameters in
+        self.analysis_notebook = ttk.Notebook(self)
+        self.param_frame = tk.Frame(self.analysis_notebook)
+        self.param_frame_tab = self.analysis_notebook.add(
+                self.param_frame, text="Adjust Parameters")
+        self.analysis_notebook.grid(row=0, column=2, sticky=tk.N)
+
 #        self.create_fig(600, 1200)
 
     def create_fig(self, fig_width, fig_height):
@@ -250,8 +257,10 @@ class AnalyzeImageFrame(tk.Frame):
                                               fig_height / self.screen_dpi))
         # TODO: change figsize to match actual size of image
         self.ax = self.fig.add_axes([0, 0, 1, 1])
+#        self.ax.invert_xaxis()
+#        self.ax.invert_yaxis()
         self.plot_canvas = FigureCanvasTkAgg(self.fig, self)
-        self.plot_canvas.draw()
+#        self.plot_canvas.draw()
         self.plot_canvas.get_tk_widget().grid(sticky=tk.W + tk.N,
                                               row=0,
                                               column=0,
@@ -264,13 +273,6 @@ class AnalyzeImageFrame(tk.Frame):
         self.plot_canvas.get_tk_widget().config(
                 yscrollcommand=self.scrollbar.set,
                 yscrollincrement=5)
-
-        # Creat a notebook to put all the controls and parameters in
-        self.analysis_notebook = ttk.Notebook(self)
-        self.param_frame = tk.Frame(self.analysis_notebook)
-        self.param_frame_tab = self.analysis_notebook.add(
-                self.param_frame, text="Adjust Parameters")
-        self.analysis_notebook.grid(row=0, column=2, sticky=tk.N)
 #        self.root.update()
 #        self.plot_canvas.draw()
 
