@@ -3,9 +3,9 @@
 .ipynb_checkpoints/
 .spyproject/
 
-AnalyzedData/*/*/*.png
-AnalyzedData/*/diag_images
-AnalyzedData/
+#AnalyzedData/*/*/*.png
+#AnalyzedData/*/diag_images
+#AnalyzedData/
 AnalyzedData/**
 Notebooks/
 __pycache__/
