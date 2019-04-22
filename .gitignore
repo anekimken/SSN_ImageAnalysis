@@ -5,6 +5,7 @@
 
 AnalyzedData/*/*/*.png
 AnalyzedData/*/diag_images
+AnalyzedData/
 Notebooks/
 __pycache__/
 __pycache__/*

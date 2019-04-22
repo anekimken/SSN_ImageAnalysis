@@ -105,19 +105,6 @@ tracking_seach_radius: 30
 ---
 bottom_slice: 0
 brightness_percentile: 50
-experiment_id: SSN_155_001
-gaussian_width: 3
-last_timepoint: 11
-min_particle_mass: 800
-notes: 'Increased minmass '
-particle_xy_diameter: 15
-particle_z_diameter: 21
-roi: [357, 0, 443, 1052]
-top_slice: 58
-tracking_seach_radius: 30
----
-bottom_slice: 0
-brightness_percentile: 50
 experiment_id: SSN_169_001
 gaussian_width: 3
 last_timepoint: 9
