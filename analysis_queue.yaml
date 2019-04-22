@@ -1,0 +1,13 @@
+---
+bottom_slice: 0
+brightness_percentile: 50
+experiment_id: SSN_160_001
+gaussian_width: 3
+last_timepoint: 10
+min_particle_mass: 730
+notes: Increased minmass to eliminate spurious particle near top, left off last timepoint
+particle_xy_diameter: 15
+particle_z_diameter: 21
+roi: [305, 97, 385, 1052]
+top_slice: 56
+tracking_seach_radius: 35
