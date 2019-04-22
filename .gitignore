@@ -5,7 +5,7 @@
 
 #AnalyzedData/*/*/*.png
 #AnalyzedData/*/diag_images
-#AnalyzedData/
+AnalyzedData/
 AnalyzedData/**
 Notebooks/
 __pycache__/
