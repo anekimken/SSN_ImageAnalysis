@@ -70,7 +70,7 @@ class StrainGUIController:
             self.gui.analyze_trial_frame.clear_roi_btn.bind(
                     "<ButtonRelease-1>", self.clear_roi)
             self.gui.analyze_trial_frame.update_image_btn.bind(
-                    "<ButtonRelease-1>", func=self.update_inspection_image)
+                    "<ButtonRelease-1>", func=self.new_update_image)
             self.gui.analyze_trial_frame.slice_selector.bind(
                     "<ButtonRelease-1>",
                     func=self.spinbox_delay_then_update_image)
@@ -99,7 +99,7 @@ class StrainGUIController:
             self.gui.analyze_trial_frame.status_dropdown.bind(
                     "<<ComboboxSelected>>", func=self.update_status)
             self.gui.analyze_trial_frame.plot_labels_drop.bind(
-                    "<<ComboboxSelected>>", func=self.update_inspection_image)
+                    "<<ComboboxSelected>>", func=self.new_update_image)
             self.gui.analyze_trial_frame.link_mitos_button.bind(
                     "<ButtonRelease-1>", func=self.link_existing_particles)
             self.gui.analyze_trial_frame.add_to_queue_btn.bind(
@@ -163,7 +163,8 @@ class StrainGUIController:
                         'Plot trajectories')
 
         # load inspection image on inspection tab and related parameters
-        self.update_inspection_image()
+#        self.update_inspection_image()
+        self.new_update_image()
 
         image_stack_size = self.trial.metadata['stack_height']
         num_timepoints = self.trial.metadata['num_timepoints']
@@ -338,7 +339,7 @@ class StrainGUIController:
 
         analysis_frame.max_proj_checkbox.state(['selected'])
         analysis_frame.plot_labels_drop.set('Mitos from param test')
-        self.update_inspection_image()
+        self.new_update_image()
 
         finish_time = time.time()
         print('Time to test parameters for locating mitochondria was ' +
@@ -378,7 +379,7 @@ class StrainGUIController:
 
         analysis_frame.max_proj_checkbox.state(['selected'])
         analysis_frame.plot_labels_drop.set('Plot trajectories')
-        self.update_inspection_image()
+        self.new_update_image()
 
         done_time = time.time()
         print('Done running file. Batch find took ' +
@@ -725,12 +726,9 @@ class StrainGUIController:
             file_load_frame.run_multiple_files_button.config(state=tk.DISABLED)
 
     def spinbox_delay_then_update_image(self, event=None):
-        self.gui.analyze_trial_frame.after(1, self.update_inspection_image)
+        self.gui.analyze_trial_frame.after(1, self.new_update_image)
 
     def new_update_image(self, event=None):
-#        fr = self.gui.file_load_frame
-#        load_images = fr.load_images_box.instate(['selected'])
-#        overwrite_metadata = fr.overwrite_metadata_box.instate(['selected'])
 
         # get parameters
         current_frame = self.gui.analyze_trial_frame
@@ -746,6 +744,8 @@ class StrainGUIController:
         current_frame.ax.clear()
         current_frame.hist_ax.clear()
         df_for_plot = None
+        df_for_inspection = None
+        connect_points = False
 
         # get image that we're going to show
         if self.trial.image_array is not None:
@@ -771,190 +771,240 @@ class StrainGUIController:
             except FileNotFoundError:
                 pass
 
-        # show image
-        current_frame.fig.figimage(image_to_display, origin='upper',
-                                   vmin=min_pixel, vmax=max_pixel)
-
-        # show particle find results
-
-        # show text labels
-
-    def update_inspection_image(self, event=None):
-        fr = self.gui.file_load_frame
-        load_images = fr.load_images_box.instate(['selected'])
-        overwrite_metadata = fr.overwrite_metadata_box.instate(['selected'])
-
-        analysis_frame = self.gui.analyze_trial_frame
-        plot_mitos_status = analysis_frame.plot_labels_drop.get()
-        max_proj_checkbox = analysis_frame.max_proj_checkbox.instate(
-                ['selected'])
-        particle_label_checkbox = analysis_frame.part_label_checkbox.instate(
-                ['selected'])
-        selected_slice = int(analysis_frame.slice_selector.get())
-        selected_timepoint = int(analysis_frame.timepoint_selector.get()) - 1
-        min_pixel = int(analysis_frame.min_pixel_disp.get())
-        max_pixel = int(analysis_frame.max_pixel_disp.get())
-        analysis_frame.ax.clear()
-        analysis_frame.hist_ax.clear()
-        df_for_plot = None
-        # TODO: fix settingwithcopywarning for df_for_plot. deepcopy maybe?
-
-        # Get dataframe with data we're going to plot on top of image
-        if plot_mitos_status == 'Linked mitos for this stack':
-            if (self.trial.linked_mitos is not None and
-                    selected_timepoint - 1 <=
-                    max(self.trial.linked_mitos['frame'])):
-                df_for_plot = self.trial.linked_mitos.loc[
-                        self.trial.linked_mitos[
-                                'frame'] == selected_timepoint].copy()
-                mito_labels = df_for_plot
-                df_columns = ['x', 'y', 'z', 'frame', 'mass', 'particle',
-                              'signal', 'raw_mass', 'size_x', 'size_y',
-                              'size_z', 'ecc', 'ep_x', 'ep_y', 'ep_z']
-                particle_marker = 'o'
-                traj_line = 'None'
-        elif plot_mitos_status == 'Plot trajectories':
-            if self.trial.linked_mitos is not None:
-                df_for_plot = self.trial.linked_mitos.copy()
-                mito_labels = df_for_plot
-                df_columns = ['x', 'y', 'z', 'frame', 'mass', 'particle',
-                              'signal', 'raw_mass', 'size_x', 'size_y',
-                              'size_z', 'ecc', 'ep_x', 'ep_y', 'ep_z']
-                particle_marker = 'None'
-                traj_line = '-'
-#        elif self.trial.linked_mitos is not None:
-#            mito_labels = self.trial.linked_mitos.loc[
-#                            self.trial.linked_mitos[
-#                                    'frame'] == selected_timepoint]
-#            particle_marker = 'None'
-#            traj_line = 'None'
-        else:
-            mito_labels = None
-
-        # Plot data with text
-        try:
-            theCount = 0  # ah ah ah ah
-            for i in mito_labels['particle'].unique():
-                this_particle = mito_labels.loc[mito_labels['particle'] == i]
-                if not this_particle.empty:
-                    theCount += 1
-                    this_particle.plot(
-                            x='x',
-                            y='y',
-                            ax=analysis_frame.ax,
-                            color='#FB8072',
-                            marker=particle_marker,
-                            linestyle=traj_line)
-                    if particle_label_checkbox is True:
-                        analysis_frame.ax.text(
-                            this_particle['x'].mean() + 15,
-                            this_particle['y'].mean(),
-                            str(int(this_particle.iloc[0][
-                                     'particle'])), color='white')
-                    analysis_frame.ax.legend_.remove()
-            analysis_frame.ax.plot(10, 10, 'ro', markersize=12)
-        except ValueError:
-            if len(mito_labels) == 0:
-                pass
-            else:
-                raise
-        except TypeError:
-            if df_for_plot is None:
-                pass
-            else:
-                raise
-        except UnboundLocalError:
-            if mito_labels is None:
-                pass
-            else:
-                raise
-
-        if plot_mitos_status == 'Unlinked mitos for this stack':
-            if (self.trial.mitos_from_batch is not None and
-                    selected_timepoint - 1 <=
-                    max(self.trial.mitos_from_batch['frame'])):
-                df_for_plot = self.trial.mitos_from_batch.loc[
-                        self.trial.mitos_from_batch[
-                                'frame'] == selected_timepoint].copy()
-                df_columns = ['x', 'y', 'z', 'frame', 'mass',
-                              'signal', 'raw_mass', 'size_x', 'size_y',
-                              'size_z', 'ecc', 'ep_x', 'ep_y', 'ep_z']
+        # get particle positions to plot, if any
+        if plot_mitos_status == 'Plot trajectories':
+            df_for_plot = self.trial.linked_mitos[
+                    ['particle', 'x', 'y']].copy()
+            df_for_inspection = self.trial.linked_mitos.copy()
+            connect_points = True
+        elif plot_mitos_status == 'Linked mitos for this stack':
+            df_for_plot = self.trial.linked_mitos.loc[
+                    self.trial.linked_mitos[
+                            'frame'] == selected_timepoint][
+                            ['particle', 'x', 'y']].copy()
+            df_for_inspection = self.trial.linked_mitos.loc[
+                    self.trial.linked_mitos[
+                            'frame'] == selected_timepoint].copy()
+        elif plot_mitos_status == 'Unlinked mitos for this stack':
+            df_for_plot = self.trial.mitos_from_batch.loc[
+                    self.trial.mitos_from_batch[
+                            'frame'] == selected_timepoint][
+                            ['x', 'y']].copy()
+            df_for_inspection = self.trial.mitos_from_batch.loc[
+                    self.trial.mitos_from_batch[
+                            'frame'] == selected_timepoint].copy()
         elif plot_mitos_status == 'Mitos from param test':
-            if self.trial.mito_candidates is not None:
-                df_for_plot = self.trial.mito_candidates.copy()
-                df_columns = ['x', 'y', 'z', 'mass',
-                              'signal', 'raw_mass', 'size_x', 'size_y',
-                              'size_z', 'ecc', 'ep_x', 'ep_y', 'ep_z']
-        # plot data before linking, so no text here
-        if (plot_mitos_status == 'Mitos from param test' or
-                plot_mitos_status == 'Unlinked mitos for this stack'):
-            df_for_plot.plot(x='x', y='y', ax=analysis_frame.ax,
-                             color='#FB8072', marker='o', linestyle='None')
+            df_for_plot = self.trial.mito_candidates[['x', 'y']].copy()
+            df_for_inspection = self.trial.mito_candidates.copy()
+        elif plot_mitos_status == 'No overlay':
+            pass
 
-        if df_for_plot is not None:
-            df_for_plot.sort_values('y', inplace=True)
-            columns = df_columns
+        # show image
+        current_frame.update_image(image=image_to_display,
+                                   plot_data=df_for_plot,
+                                   min_pixel=min_pixel,
+                                   max_pixel=max_pixel,
+                                   connect_points_over_time=connect_points,
+                                   show_text_labels=particle_label_checkbox)
 
-            df_for_plot = df_for_plot[columns]
+        if df_for_inspection is not None:
+            df_for_inspection.sort_values('y', inplace=True)
+            columns = ['x', 'y', 'z', 'mass', 'frame',
+                       'signal', 'raw_mass', 'size_x', 'size_y',
+                       'size_z', 'ecc', 'ep_x', 'ep_y', 'ep_z']
+            if 'particle' in df_for_inspection:
+                columns.insert(5, 'particle')
 
-            analysis_frame.dataframe_widget.show()
-            analysis_frame.dataframe_widget.updateModel(
-                    TableModel(df_for_plot))
+            df_for_inspection = df_for_inspection[columns]
 
-            analysis_frame.dataframe_widget.redraw()
+            current_frame.dataframe_widget.show()
+            current_frame.dataframe_widget.updateModel(
+                    TableModel(df_for_inspection))
 
-        if load_images is True or overwrite_metadata is True:
-            # get image that we're going to show
-            if max_proj_checkbox is True:  # max projection
-                stack = self.trial.image_array[selected_timepoint]
-                image_to_display = np.amax(stack, 0)  # collapse z axis
-                image_to_display = image_to_display.squeeze()
-            else:  # single slice
-                image_to_display = self.trial.image_array[
-                        selected_timepoint, selected_slice]
+            current_frame.dataframe_widget.redraw()
 
-            analysis_frame.fig.set_size_inches(
-                    forward=True,
-                    h=image_to_display.shape[0] / self.gui.dpi,
-                    w=image_to_display.shape[1] / self.gui.dpi)
-#            analysis_frame.ax.imshow(image_to_display, interpolation='none',
-#                                     vmin=min_pixel, vmax=max_pixel)
-            analysis_frame.ax.set_ylim(0, image_to_display.shape[0])
-            analysis_frame.ax.set_xlim(0, image_to_display.shape[1])
-            analysis_frame.fig.figimage(image_to_display, origin='upper')
-            analysis_frame.ax.axis('off')
+        # apply bindings again for scrolling
+        current_frame.plot_canvas._tkcanvas.bind(
+                    "<Enter>", self._bound_to_mousewheel)
+        current_frame.plot_canvas._tkcanvas.bind(
+                    "<Leave>", self._unbound_to_mousewheel)
 
-            analysis_frame.plot_canvas.draw()
-
-            min_pixel = int(np.amin(image_to_display))
-            max_pixel = int(np.amax(image_to_display))
-            bins = max_pixel - min_pixel + 1
-            bin_list = list(range(min_pixel, max_pixel + 1))
-            hist_array = fast_histogram.histogram1d(image_to_display,
-                                                    bins=bins,
-                                                    range=(min_pixel,
-                                                           max_pixel))
-
-            analysis_frame.hist_ax.bar(bin_list, hist_array, width=1)
-            analysis_frame.hist_ax.set_yscale('log')
-            analysis_frame.histogram_canvas.draw()
-        else:
-            try:
-                if plot_mitos_status == 'Unlinked mitos for this stack':
-                    one_stack_fig = self.trial.analyzed_data_location.joinpath(
-                            'diag_images/stack_' +
-                            str(selected_timepoint) + '_fig.png')
-                    self.saved_photo = plt.imread(str(one_stack_fig))
-                else:
-                    traj_fig_file = self.trial.analyzed_data_location.joinpath(
-                            'diag_images/trajectory_fig.png')
-                    self.saved_photo = plt.imread(str(traj_fig_file))
-#                analysis_frame.ax.imshow(self.saved_photo)
-                analysis_frame.fig.figimage(self.saved_photo)
-                analysis_frame.plot_canvas.draw()
-            except FileNotFoundError:
-                pass
-        analysis_frame.ax.invert_yaxis()
+#    def update_inspection_image(self, event=None):
+#        fr = self.gui.file_load_frame
+#        load_images = fr.load_images_box.instate(['selected'])
+#        overwrite_metadata = fr.overwrite_metadata_box.instate(['selected'])
+#
+#        analysis_frame = self.gui.analyze_trial_frame
+#        plot_mitos_status = analysis_frame.plot_labels_drop.get()
+#        max_proj_checkbox = analysis_frame.max_proj_checkbox.instate(
+#                ['selected'])
+#        particle_label_checkbox = analysis_frame.part_label_checkbox.instate(
+#                ['selected'])
+#        selected_slice = int(analysis_frame.slice_selector.get())
+#        selected_timepoint = int(analysis_frame.timepoint_selector.get()) - 1
+#        min_pixel = int(analysis_frame.min_pixel_disp.get())
+#        max_pixel = int(analysis_frame.max_pixel_disp.get())
+#        analysis_frame.ax.clear()
+#        analysis_frame.hist_ax.clear()
+#        df_for_plot = None
+#        # TODO: fix settingwithcopywarning for df_for_plot. deepcopy maybe?
+#
+#        # Get dataframe with data we're going to plot on top of image
+#        if plot_mitos_status == 'Linked mitos for this stack':
+#            if (self.trial.linked_mitos is not None and
+#                    selected_timepoint - 1 <=
+#                    max(self.trial.linked_mitos['frame'])):
+#                df_for_plot = self.trial.linked_mitos.loc[
+#                        self.trial.linked_mitos[
+#                                'frame'] == selected_timepoint].copy()
+#                mito_labels = df_for_plot
+#                df_columns = ['x', 'y', 'z', 'frame', 'mass', 'particle',
+#                              'signal', 'raw_mass', 'size_x', 'size_y',
+#                              'size_z', 'ecc', 'ep_x', 'ep_y', 'ep_z']
+#                particle_marker = 'o'
+#                traj_line = 'None'
+#        elif plot_mitos_status == 'Plot trajectories':
+#            if self.trial.linked_mitos is not None:
+#                df_for_plot = self.trial.linked_mitos.copy()
+#                mito_labels = df_for_plot
+#                df_columns = ['x', 'y', 'z', 'frame', 'mass', 'particle',
+#                              'signal', 'raw_mass', 'size_x', 'size_y',
+#                              'size_z', 'ecc', 'ep_x', 'ep_y', 'ep_z']
+#                particle_marker = 'None'
+#                traj_line = '-'
+##        elif self.trial.linked_mitos is not None:
+##            mito_labels = self.trial.linked_mitos.loc[
+##                            self.trial.linked_mitos[
+##                                    'frame'] == selected_timepoint]
+##            particle_marker = 'None'
+##            traj_line = 'None'
+#        else:
+#            mito_labels = None
+#
+#        # Plot data with text
+#        try:
+#            theCount = 0  # ah ah ah ah
+#            for i in mito_labels['particle'].unique():
+#                this_particle = mito_labels.loc[mito_labels['particle'] == i]
+#                if not this_particle.empty:
+#                    theCount += 1
+#                    this_particle.plot(
+#                            x='x',
+#                            y='y',
+#                            ax=analysis_frame.ax,
+#                            color='#FB8072',
+#                            marker=particle_marker,
+#                            linestyle=traj_line)
+#                    if particle_label_checkbox is True:
+#                        analysis_frame.ax.text(
+#                            this_particle['x'].mean() + 15,
+#                            this_particle['y'].mean(),
+#                            str(int(this_particle.iloc[0][
+#                                     'particle'])), color='white')
+#                    analysis_frame.ax.legend_.remove()
+#            analysis_frame.ax.plot(10, 10, 'ro', markersize=12)
+#        except ValueError:
+#            if len(mito_labels) == 0:
+#                pass
+#            else:
+#                raise
+#        except TypeError:
+#            if df_for_plot is None:
+#                pass
+#            else:
+#                raise
+#        except UnboundLocalError:
+#            if mito_labels is None:
+#                pass
+#            else:
+#                raise
+#
+#        if plot_mitos_status == 'Unlinked mitos for this stack':
+#            if (self.trial.mitos_from_batch is not None and
+#                    selected_timepoint - 1 <=
+#                    max(self.trial.mitos_from_batch['frame'])):
+#                df_for_plot = self.trial.mitos_from_batch.loc[
+#                        self.trial.mitos_from_batch[
+#                                'frame'] == selected_timepoint].copy()
+#                df_columns = ['x', 'y', 'z', 'frame', 'mass',
+#                              'signal', 'raw_mass', 'size_x', 'size_y',
+#                              'size_z', 'ecc', 'ep_x', 'ep_y', 'ep_z']
+#        elif plot_mitos_status == 'Mitos from param test':
+#            if self.trial.mito_candidates is not None:
+#                df_for_plot = self.trial.mito_candidates.copy()
+#                df_columns = ['x', 'y', 'z', 'mass',
+#                              'signal', 'raw_mass', 'size_x', 'size_y',
+#                              'size_z', 'ecc', 'ep_x', 'ep_y', 'ep_z']
+#        # plot data before linking, so no text here
+#        if (plot_mitos_status == 'Mitos from param test' or
+#                plot_mitos_status == 'Unlinked mitos for this stack'):
+#            df_for_plot.plot(x='x', y='y', ax=analysis_frame.ax,
+#                             color='#FB8072', marker='o', linestyle='None')
+#
+#        if df_for_plot is not None:
+#            df_for_plot.sort_values('y', inplace=True)
+#            columns = df_columns
+#
+#            df_for_plot = df_for_plot[columns]
+#
+#            analysis_frame.dataframe_widget.show()
+#            analysis_frame.dataframe_widget.updateModel(
+#                    TableModel(df_for_plot))
+#
+#            analysis_frame.dataframe_widget.redraw()
+#
+#        if load_images is True or overwrite_metadata is True:
+#            # get image that we're going to show
+#            if max_proj_checkbox is True:  # max projection
+#                stack = self.trial.image_array[selected_timepoint]
+#                image_to_display = np.amax(stack, 0)  # collapse z axis
+#                image_to_display = image_to_display.squeeze()
+#            else:  # single slice
+#                image_to_display = self.trial.image_array[
+#                        selected_timepoint, selected_slice]
+#
+#            analysis_frame.fig.set_size_inches(
+#                    forward=True,
+#                    h=image_to_display.shape[0] / self.gui.dpi,
+#                    w=image_to_display.shape[1] / self.gui.dpi)
+##            analysis_frame.ax.imshow(image_to_display, interpolation='none',
+##                                     vmin=min_pixel, vmax=max_pixel)
+#            analysis_frame.ax.set_ylim(0, image_to_display.shape[0])
+#            analysis_frame.ax.set_xlim(0, image_to_display.shape[1])
+#            analysis_frame.fig.figimage(image_to_display, origin='upper')
+#            analysis_frame.ax.axis('off')
+#
+#            analysis_frame.plot_canvas.draw()
+#
+#            min_pixel = int(np.amin(image_to_display))
+#            max_pixel = int(np.amax(image_to_display))
+#            bins = max_pixel - min_pixel + 1
+#            bin_list = list(range(min_pixel, max_pixel + 1))
+#            hist_array = fast_histogram.histogram1d(image_to_display,
+#                                                    bins=bins,
+#                                                    range=(min_pixel,
+#                                                           max_pixel))
+#
+#            analysis_frame.hist_ax.bar(bin_list, hist_array, width=1)
+#            analysis_frame.hist_ax.set_yscale('log')
+#            analysis_frame.histogram_canvas.draw()
+#        else:
+#            try:
+#                if plot_mitos_status == 'Unlinked mitos for this stack':
+#                    one_stack_fig = self.trial.analyzed_data_location.joinpath(
+#                            'diag_images/stack_' +
+#                            str(selected_timepoint) + '_fig.png')
+#                    self.saved_photo = plt.imread(str(one_stack_fig))
+#                else:
+#                    traj_fig_file = self.trial.analyzed_data_location.joinpath(
+#                            'diag_images/trajectory_fig.png')
+#                    self.saved_photo = plt.imread(str(traj_fig_file))
+##                analysis_frame.ax.imshow(self.saved_photo)
+#                analysis_frame.fig.figimage(self.saved_photo)
+#                analysis_frame.plot_canvas.draw()
+#            except FileNotFoundError:
+#                pass
+#        analysis_frame.ax.invert_yaxis()
 
     def on_click_image(self, event=None):
         canvas = event.widget  # analysis_frame.plot_canvas.get_tk_widget()

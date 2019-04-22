@@ -255,12 +255,8 @@ class AnalyzeImageFrame(tk.Frame):
         # Create a figure and a canvas for showing images
         self.fig = mpl.figure.Figure(figsize=(fig_width / self.screen_dpi,
                                               fig_height / self.screen_dpi))
-        # TODO: change figsize to match actual size of image
         self.ax = self.fig.add_axes([0, 0, 1, 1])
-#        self.ax.invert_xaxis()
-#        self.ax.invert_yaxis()
         self.plot_canvas = FigureCanvasTkAgg(self.fig, self)
-#        self.plot_canvas.draw()
         self.plot_canvas.get_tk_widget().grid(sticky=tk.W + tk.N,
                                               row=0,
                                               column=0,
@@ -273,8 +269,44 @@ class AnalyzeImageFrame(tk.Frame):
         self.plot_canvas.get_tk_widget().config(
                 yscrollcommand=self.scrollbar.set,
                 yscrollincrement=5)
-#        self.root.update()
-#        self.plot_canvas.draw()
+
+    def update_image(self,
+                     image: np.ndarray,
+                     plot_data: pd.DataFrame,
+                     min_pixel: int = None,
+                     max_pixel: int = None,
+                     connect_points_over_time: bool = False,
+                     show_text_labels: bool = False):
+
+        self.create_fig(image.shape[1], image.shape[0])
+        self.ax.imshow(image, origin='upper',
+                       vmin=min_pixel, vmax=max_pixel)
+
+        try:
+            plot_opts = {'ax': self.ax, 'color': '#FB8072', 'x': 'x', 'y': 'y'}
+            if connect_points_over_time is False:
+                plot_data.plot(**plot_opts, marker='o', linestyle='None')
+            elif connect_points_over_time is True:
+                for particle in plot_data['particle'].unique():
+                    plot_data.loc[plot_data['particle'] == particle].plot(
+                            **plot_opts, marker='None', linestyle='-')
+
+            if show_text_labels is True:
+                for particle in plot_data['particle'].unique():
+                    self.ax.text(
+                        plot_data.loc[plot_data[
+                                'particle'] == particle].mean()['x'] + 15,
+                        plot_data.loc[plot_data[
+                                'particle'] == particle].mean()['y'],
+                        str(particle), color='white')
+
+            self.ax.legend_.remove()
+        except AttributeError:
+            if plot_data is None:
+                print('No data to plot')
+        except KeyError:
+            if 'particle' not in plot_data:
+                warnings.warn('No particle numbers for text labels.')
 
 
 class AnalyzeTrialFrame(AnalyzeImageFrame):
