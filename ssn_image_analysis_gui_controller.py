@@ -975,37 +975,40 @@ class StrainGUIController:
     def get_analysis_progress(self, event=None):
         """Gets the analysis status of all trials and plots their status"""
 
-        all_statuses_dict = {}
+#        all_statuses_dict = {}
         status_values = self.trial.STATUSES
-        data_dir = self.file_paths['data_dir']
-        data_location = (data_dir + '*/SSN_*.nd2')
-
-        analysis_dir = self.file_paths['analysis_dir']
-        metadata_location = analysis_dir + 'AnalyzedData/'
-
-        # for all subfiles ending in .nd2
-        for nd2_file in glob.glob(data_location):
-            experiment_id = nd2_file[-15:-4]
-            metadata_file = (metadata_location +
-                             experiment_id +
-                             '/metadata.yaml')
-            # try to load metadata
-            try:
-                with open(metadata_file, 'r') as yamlfile:
-                    metadata = yaml.safe_load(yamlfile)
-                    # if metadata exists, get analysis status and store it
-                    all_statuses_dict[experiment_id] = metadata[
-                            'analysis_status'], metadata['neuron']
-            except FileNotFoundError:
-                all_statuses_dict[experiment_id] = ('No metadata.yaml file',
-                                                    'N/A')
-            except KeyError:
-                all_statuses_dict[experiment_id] = ('No analysis status yet',
-                                                    'N/A')
+#        data_dir = self.file_paths['data_dir']
+#        data_location = (data_dir + '*/SSN_*.nd2')
+#
+#        analysis_dir = self.file_paths['analysis_dir']
+#        metadata_location = analysis_dir + 'AnalyzedData/'
+#
+#        # for all subfiles ending in .nd2
+#        for nd2_file in glob.glob(data_location):
+#            experiment_id = nd2_file[-15:-4]
+#            metadata_file = (metadata_location +
+#                             experiment_id +
+#                             '/metadata.yaml')
+#            # try to load metadata
+#            if 'bf' not in experiment_id:
+#                try:
+#                    with open(metadata_file, 'r') as yamlfile:
+#                        metadata = yaml.safe_load(yamlfile)
+#                        # if metadata exists, get analysis status and store it
+#                        all_statuses_dict[experiment_id] = (
+#                                metadata['analysis_status'],
+#                                metadata['neuron'],
+#                                metadata['worm_strain'])
+#                except FileNotFoundError:
+#                    all_statuses_dict[experiment_id] = (
+#                            'No metadata.yaml file', 'N/A', 'N/A')
+#                except KeyError:
+#                    all_statuses_dict[experiment_id] = (
+#                            'No analysis status yet', 'N/A', 'N/A')
 
         # send all analysis statuses to view module for plotting
-        self.gui.plot_results_frame.plot_progress(all_statuses_dict,
-                                                  status_values)
+        self.gui.plot_results_frame.plot_progress(status_values)#all_statuses_dict,
+#                                                  status_values)
 
     def _display_last_test_params(self, event=None):
         analysis_frame = self.gui.analyze_trial_frame
