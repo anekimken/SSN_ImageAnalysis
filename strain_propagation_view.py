@@ -156,6 +156,7 @@ class FileLoadFrame(tk.Frame):
                                                  tags='day')
                 trials = glob.iglob(day + '/*.nd2')
                 trials = [trial for trial in trials if '_bf' not in trial]
+
                 for trial in trials:
                     trial_parts = trial.split('/')
                     iid = self.file_tree.insert(day_item, 'end',
@@ -166,7 +167,7 @@ class FileLoadFrame(tk.Frame):
                                           experiment_id + '/metadata.yaml')
                     bf_filename = glob.glob(day + '/' +
                                             experiment_id + '*_bf.nd2')
-
+                    queue_status = ''
                     try:
                         metadata = self.load_metadata_from_yaml(
                                 metadata_file_path)
@@ -238,6 +239,9 @@ class AnalyzeImageFrame(tk.Frame):
         self.roi_corners = [None, None, None, None]
         self.roi = [None, None, None, None]
 
+        # variable to save scroll position
+        self.scroll_position = (0.8, 0.9)
+
         # get size for making figure
         notebook_height = self.parent.winfo_height() - 100
         self.notebook_height_in = notebook_height / screen_dpi
@@ -269,6 +273,9 @@ class AnalyzeImageFrame(tk.Frame):
         self.plot_canvas.get_tk_widget().config(
                 yscrollcommand=self.scrollbar.set,
                 yscrollincrement=5)
+
+        self.scrollbar.set(*self.scroll_position)
+        print(self.scroll_position)
 
     def update_image(self,
                      image: np.ndarray,

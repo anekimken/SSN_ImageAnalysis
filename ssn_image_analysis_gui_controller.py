@@ -77,12 +77,12 @@ class StrainGUIController:
             self.gui.analyze_trial_frame.timepoint_selector.bind(
                     "<ButtonRelease-1>",
                     func=self.spinbox_delay_then_update_image)
-            self.gui.analyze_trial_frame.min_pixel_disp.bind(
-                    "<ButtonRelease-1>",
-                    func=self.spinbox_delay_then_update_image)
-            self.gui.analyze_trial_frame.max_pixel_disp.bind(
-                    "<ButtonRelease-1>",
-                    func=self.spinbox_delay_then_update_image)
+#            self.gui.analyze_trial_frame.min_pixel_disp.bind(
+#                    "<ButtonRelease-1>",
+#                    func=self.spinbox_delay_then_update_image)
+#            self.gui.analyze_trial_frame.max_pixel_disp.bind(
+#                    "<ButtonRelease-1>",
+#                    func=self.spinbox_delay_then_update_image)
             self.gui.analyze_trial_frame.unbind_all("<Return>")
             self.gui.analyze_trial_frame.min_pixel_disp.bind(
                     "<Return>",
@@ -799,6 +799,17 @@ class StrainGUIController:
         elif plot_mitos_status == 'No overlay':
             pass
 
+        bins = max_pixel - min_pixel + 1
+        bin_list = list(range(min_pixel, max_pixel + 1))
+        hist_array = fast_histogram.histogram1d(image_to_display,
+                                                bins=bins,
+                                                range=(min_pixel,
+                                                       max_pixel))
+
+        current_frame.hist_ax.bar(bin_list, hist_array, width=1)
+        current_frame.hist_ax.set_yscale('log')
+        current_frame.histogram_canvas.draw()
+
         # show image
         current_frame.update_image(image=image_to_display,
                                    plot_data=df_for_plot,
@@ -962,6 +973,7 @@ class StrainGUIController:
                     self.trial.image_array.shape[2]]
 
         print('Selected ROI: ', self.roi)
+        self.update_inspction_image()
 
     def _bound_to_mousewheel(self, event):
         event.widget.bind_all("<MouseWheel>", self._on_mousewheel)
@@ -970,7 +982,9 @@ class StrainGUIController:
         event.widget.unbind_all("<MouseWheel>")
 
     def _on_mousewheel(self, event):
+        frame = self.gui.analyze_trial_frame
         event.widget.yview_scroll(-1*(event.delta), 'units')
+        frame.scroll_position = frame.scrollbar.get()
 
     def get_analysis_progress(self, event=None):
         """Gets the analysis status of all trials and plots their status"""
