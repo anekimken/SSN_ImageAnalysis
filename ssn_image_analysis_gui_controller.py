@@ -17,6 +17,7 @@ import yaml
 import pims
 import matplotlib.pyplot as plt
 import fast_histogram
+import pathlib
 from pandastable import TableModel
 
 import strain_propagation_trial as ssn_trial
@@ -386,52 +387,105 @@ class StrainGUIController:
               str(round(done_time - start_time)) + ' seconds. ')
 
     def run_multiple_files(self, event=None):
-        fr = self.gui.file_load_frame
-        overwrite_metadata = fr.overwrite_metadata_box.instate(['selected'])
-        print('Running lots of files...')
+        data_dir = pathlib.Path(self.file_paths['analysis_dir'])
+        the_queue = data_dir.joinpath('analysis_queue.yaml')
         for i in range(len(self.file_list)):
-            print('Loading file ', self.file_list[i][0])
-            self.trial.load_trial(self.file_list[i][0],
-                                  load_images=True,
-                                  overwrite_metadata=overwrite_metadata)
-            if 'analysis_status' not in self.trial.metadata:
-                self.trial.metadata['analysis_status'] = 'Testing parameters'
-                self.trial.write_metadata_to_yaml(self.trial.metadata)
-
-            params = self.trial.latest_test_params
-
-            print('Looking for particles...')
-
             try:
-                self.roi
-            except AttributeError:
-                self.roi = [0,
-                            0,
-                            self.trial.image_array.shape[3],
-                            self.trial.image_array.shape[2]]
+                cur_file = pathlib.Path(self.file_list[i][0])
+                exp_id = cur_file.stem
+                batch_param_history_file = data_dir.joinpath(
+                        'AnalyzedData', exp_id,
+                        'trackpyBatchParamsHistory.yaml')
 
-            self.trial.run_batch(
-                images_ndarray=self.trial.image_array,
-                roi=self.roi,
-                gaussian_width=params['gaussian_width'],
-                particle_z_diameter=params['particle_z_diameter'],
-                particle_xy_diameter=params['particle_xy_diameter'],
-                brightness_percentile=params['brightness_percentile'],
-                min_particle_mass=params['min_particle_mass'],
-                bottom_slice=params['bottom_slice'],
-                top_slice=params['top_slice'],
-                tracking_seach_radius=params['tracking_seach_radius'],
-                last_timepoint=params['last_timepoint'],
-                notes='none')
+                with open(batch_param_history_file, 'r') as param_file:
+                    entire_history = yaml.safe_load_all(param_file)
+                    params = None
+                    for params in entire_history:
+                        pass  # pass until we get to most recent
+            except FileNotFoundError:
+                params = self.trial.default_test_params
 
-            previous_status = self.trial.metadata['analysis_status']
-            if (previous_status == 'No metadata.yaml file' or
-                    previous_status == 'No analysis status yet' or
-                    previous_status == 'Not started'):
-                self.trial.metadata['analysis_status'] = 'Testing parameters'
-                self.trial.write_metadata_to_yaml(self.trial.metadata)
+            param_dict = {'experiment_id': exp_id,
+                          'gaussian_width': params['gaussian_width'],
+                          'particle_z_diameter': params[
+                                  'particle_z_diameter'],
+                          'particle_xy_diameter': params[
+                                  'particle_xy_diameter'],
+                          'brightness_percentile': params[
+                                  'brightness_percentile'],
+                          'min_particle_mass': params['min_particle_mass'],
+                          'bottom_slice': params['bottom_slice'],
+                          'top_slice': params['top_slice'],
+                          'tracking_seach_radius': params[
+                                  'tracking_seach_radius'],
+                          'last_timepoint': params['last_timepoint'],
+                          'notes': 'Run with defaults'}
 
-            self.trial = ssn_trial.StrainPropagationTrial()  # clear trial var
+            new_queue = []
+            overwrite_flag = False
+            with open(the_queue, 'r') as queue_file:
+                entire_queue = yaml.safe_load_all(queue_file)
+                for queue_member in entire_queue:
+                    if (queue_member['experiment_id'] == exp_id):
+                        new_queue.append(param_dict)
+                        overwrite_flag = True
+                    else:
+                        new_queue.append(queue_member)
+                if overwrite_flag is False:
+                    new_queue.append(param_dict)
+
+            with open(the_queue, 'w') as output_file:
+                    yaml.dump_all(new_queue, output_file,
+                                  default_flow_style=False,
+                                  explicit_start=True)
+
+
+#        fr = self.gui.file_load_frame
+#        overwrite_metadata = fr.overwrite_metadata_box.instate(['selected'])
+#        print('Running lots of files...')
+#        for i in range(len(self.file_list)):
+#            print('Loading file ', self.file_list[i][0])
+#            self.trial.load_trial(self.file_list[i][0],
+#                                  load_images=True,
+#                                  overwrite_metadata=overwrite_metadata)
+#            if 'analysis_status' not in self.trial.metadata:
+#                self.trial.metadata['analysis_status'] = 'Testing parameters'
+#                self.trial.write_metadata_to_yaml(self.trial.metadata)
+#
+#            params = self.trial.latest_test_params
+#
+#            print('Looking for particles...')
+#
+#            try:
+#                self.roi
+#            except AttributeError:
+#                self.roi = [0,
+#                            0,
+#                            self.trial.image_array.shape[3],
+#                            self.trial.image_array.shape[2]]
+#
+#            self.trial.run_batch(
+#                images_ndarray=self.trial.image_array,
+#                roi=self.roi,
+#                gaussian_width=params['gaussian_width'],
+#                particle_z_diameter=params['particle_z_diameter'],
+#                particle_xy_diameter=params['particle_xy_diameter'],
+#                brightness_percentile=params['brightness_percentile'],
+#                min_particle_mass=params['min_particle_mass'],
+#                bottom_slice=params['bottom_slice'],
+#                top_slice=params['top_slice'],
+#                tracking_seach_radius=params['tracking_seach_radius'],
+#                last_timepoint=params['last_timepoint'],
+#                notes='none')
+#
+#            previous_status = self.trial.metadata['analysis_status']
+#            if (previous_status == 'No metadata.yaml file' or
+#                    previous_status == 'No analysis status yet' or
+#                    previous_status == 'Not started'):
+#                self.trial.metadata['analysis_status'] = 'Testing parameters'
+#                self.trial.write_metadata_to_yaml(self.trial.metadata)
+#
+#            self.trial = ssn_trial.StrainPropagationTrial()  # clear trial var
 
     def link_existing_particles(self, event=None):
         """Link previously found particles into trajectories"""
@@ -552,6 +606,11 @@ class StrainGUIController:
 
         if 'notes' not in params:
             params['notes'] = 'none'
+        if 'roi' not in params:
+            params['roi'] = [0,
+                             0,
+                             self.trial.image_array.shape[3],
+                             self.trial.image_array.shape[2]]
 
         self.trial.run_batch(
                 images_ndarray=self.trial.image_array,
@@ -1021,8 +1080,7 @@ class StrainGUIController:
 #                            'No analysis status yet', 'N/A', 'N/A')
 
         # send all analysis statuses to view module for plotting
-        self.gui.plot_results_frame.plot_progress(status_values)#all_statuses_dict,
-#                                                  status_values)
+        self.gui.plot_results_frame.plot_progress(status_values)
 
     def _display_last_test_params(self, event=None):
         analysis_frame = self.gui.analyze_trial_frame

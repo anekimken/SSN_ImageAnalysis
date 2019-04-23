@@ -275,7 +275,6 @@ class AnalyzeImageFrame(tk.Frame):
                 yscrollincrement=5)
 
         self.scrollbar.set(*self.scroll_position)
-        print(self.scroll_position)
 
     def update_image(self,
                      image: np.ndarray,
