@@ -925,43 +925,154 @@ class PlotResultsFrame(AnalyzeImageFrame):
                 pass  # and we ignore these dirs
         self.plot_strain_tree.grid(row=0, column=0, columnspan=2)
 
-    def plot_progress(self, all_statuses_dict: dict, status_values: list):
+    def plot_progress(self, status_values: list):
+        data_dir = self.file_paths['data_dir']
+        data_location = (data_dir + '*/SSN_*.nd2')
+
+        analysis_dir = self.file_paths['analysis_dir']
+        metadata_location = analysis_dir + 'AnalyzedData/'
+
+        progress_df = pd.DataFrame(columns=["experiment_id",
+                                            "analysis_status",
+                                            "neuron",
+                                            "worm_strain",
+                                            "bf_image"])
+        # for all subfiles ending in .nd2
+        for nd2_file in glob.glob(data_location):
+            experiment_id = nd2_file[-15:-4]
+            metadata_file = (metadata_location +
+                             experiment_id +
+                             '/metadata.yaml')
+            # try to load metadata
+            if 'bf' not in experiment_id:
+                try:
+                    with open(metadata_file, 'r') as yamlfile:
+                        metadata = yaml.safe_load(yamlfile)
+                        # if metadata exists, get analysis status and store it
+                        if 'actuator_center' in metadata:
+                            bf_status = True
+                        else:
+                            bf_status = False
+                        progress_df = progress_df.append({
+                                "experiment_id": metadata['Experiment_id'],
+                                "analysis_status": metadata['analysis_status'],
+                                "neuron": metadata['neuron'],
+                                "worm_strain": metadata['worm_strain'],
+                                "bf_image": bf_status},
+                                ignore_index=True)
+#                        all_statuses_dict[experiment_id] = (
+#                                metadata['analysis_status'],
+#                                metadata['neuron'],
+#                                metadata['worm_strain'])
+                except FileNotFoundError:
+                    pass
+                except KeyError:
+                    pass
+
         statuses_to_ignore = ['No metadata.yaml file',
                               'No analysis status yet',
                               'Not started', 'Testing parameters for batch']
-        for key in statuses_to_ignore:
-            status_values.remove(key)
-        alm_counts = dict.fromkeys(status_values, 0)
-        avm_counts = dict.fromkeys(status_values, 0)
-        pvm_counts = dict.fromkeys(status_values, 0)
+#        progress_counts = progress_df.groupby(['analysis_status',
+#                                               'neuron',
+#                                               'worm_strain',
+#                                               'bf_image']).count()
 
-        for experiment_id, status in all_statuses_dict.items():
-            if status[1] == 'ALM':
-                if status[0] not in statuses_to_ignore:
-                    alm_counts[status[0]] += 1
-            elif status[1] == 'AVM':
-                if status[0] not in statuses_to_ignore:
-                    avm_counts[status[0]] += 1
-            elif status[1] == 'PVM':
-                if status[0] not in statuses_to_ignore:
-                    pvm_counts[status[0]] += 1
+        statuses_to_plot = [status for status in status_values
+                            if status not in statuses_to_ignore]
+        colors = ['red', 'green', 'blue']
+        hatches = ['/', '.', '*', 'O']
+        for status in statuses_to_plot:
+            status_bar_height = 0
+            color_index = 0
+            TRN_legend = []
+            for neuron in progress_df['neuron'].unique():
+                color = colors[color_index]
+                hatch_index = 0
+                TRN_legend.append(mpl.patches.Patch(
+                        facecolor=color,
+                        hatch='none',
+                        label=neuron))
+                worm_strain_legend = []
+                for worm_strain in progress_df['worm_strain'].unique():
+                    hatch = hatches[hatch_index]
+                    worm_strain_legend.append(mpl.patches.Patch(
+                        facecolor=None,
+                        hatch=hatch,
+                        label=worm_strain))
+                    treatment_count = progress_df.loc[
+                        (progress_df['analysis_status'] == status) &
+                        (progress_df['neuron'] == neuron) &
+                        (progress_df['worm_strain'] == worm_strain)].count()
+                    self.ax.bar(statuses_to_plot.index(status),
+                                treatment_count, bottom=status_bar_height,
+                                color=color, hatch=hatch)
+                    status_bar_height += treatment_count
+                    hatch_index += 1
+                color_index += 1
 
-        alm_vals = np.fromiter(alm_counts.values(), dtype=int)
-        avm_vals = np.fromiter(avm_counts.values(), dtype=int)
-        pvm_vals = np.fromiter(pvm_counts.values(), dtype=int)
 
-        self.ax.bar(range(len(alm_counts)), alm_vals,
-                    align='center')
-        self.ax.bar(range(len(avm_counts)), avm_vals,
-                    align='center', bottom=alm_vals)
-        self.ax.bar(range(len(pvm_counts)), pvm_vals,
-                    align='center', bottom=alm_vals + avm_vals)
-        self.ax.set_xticks(range(len(alm_counts)))
-        self.ax.set_xticklabels(list(alm_counts.keys()),
+#        for key in statuses_to_ignore:
+#            status_values.remove(key)
+#        alm_counts = dict.fromkeys(status_values, 0)
+#        avm_counts = dict.fromkeys(status_values, 0)
+#        pvm_counts = dict.fromkeys(status_values, 0)
+#        worm_strains = set()
+#        one_strain_selected = False
+#
+#        try:
+#            selected_strain = select_strain_drop.get()
+#            print(selected_strain)
+#        except NameError:
+#            pass
+#
+#        for experiment_id, status in all_statuses_dict.items():
+#            if status[1] == 'ALM':
+#                if status[0] not in statuses_to_ignore:
+#                    if (one_strain_selected is True) & (
+#                            status[2] == selected_strain):
+#                        alm_counts[status[0]] += 1
+#            elif status[1] == 'AVM':
+#                if status[0] not in statuses_to_ignore:
+#                    if (one_strain_selected is True) & (
+#                            status[2] == selected_strain):
+#                        avm_counts[status[0]] += 1
+#            elif status[1] == 'PVM':
+#                if status[0] not in statuses_to_ignore:
+#                    if (one_strain_selected is True) & (
+#                            status[2] == selected_strain):
+#                        pvm_counts[status[0]] += 1
+#            worm_strains.add(status[2])
+#        worm_strains.remove('N/A')
+#
+#        alm_vals = np.fromiter(alm_counts.values(), dtype=int)
+#        avm_vals = np.fromiter(avm_counts.values(), dtype=int)
+#        pvm_vals = np.fromiter(pvm_counts.values(), dtype=int)
+
+#        self.ax.bar(range(len(alm_counts)), alm_vals,
+#                    align='center')
+#        self.ax.bar(range(len(avm_counts)), avm_vals,
+#                    align='center', bottom=alm_vals)
+#        self.ax.bar(range(len(pvm_counts)), pvm_vals,
+#                    align='center', bottom=alm_vals + avm_vals)
+        self.ax.set_xticks(range(len(statuses_to_plot)))
+        self.ax.set_xticklabels(list(statuses_to_plot),
                                 rotation=30, horizontalalignment='right')
-        self.ax.legend(['ALM', 'AVM', 'PVM'])
+#        legend_elements = [mpl.patches.Patch(facecolor='red', label='ALM'),
+#                           mpl.patches.Patch(facecolor='green', label='AVM'),
+#                           mpl.patches.Patch(facecolor='blue', label='PVM'),]
+        print(TRN_legend)
+        print(worm_strain_legend)
+        self.ax.legend(TRN_legend + worm_strain_legend)
 
         self.plot_canvas.draw()
+
+        # Create option to select worm strain
+#        print(worm_strains)
+#        self.select_strain_drop = ttk.Combobox(
+#                self.param_frame,
+#                state="readonly",
+#                values=list(worm_strains))
+#        self.select_strain_drop.grid(column=1, row=1)
 
     def plot_strain_one_trial(self, strain, ycoords):
         """Plots the strain results from a np.ndarray"""
