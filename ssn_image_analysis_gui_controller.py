@@ -1032,7 +1032,7 @@ class StrainGUIController:
                     self.trial.image_array.shape[2]]
 
         print('Selected ROI: ', self.roi)
-        self.update_inspction_image()
+        self.update_inspection_image()
 
     def _bound_to_mousewheel(self, event):
         event.widget.bind_all("<MouseWheel>", self._on_mousewheel)

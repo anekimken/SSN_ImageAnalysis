@@ -173,6 +173,7 @@ class FileLoadFrame(tk.Frame):
                                 metadata_file_path)
                         if 'analysis_status' in metadata:
                             analysis_status = metadata['analysis_status']
+                            print(experiment_id, analysis_status)
                         else:
                             analysis_status = 'no parameters tested'
                         if 'trial_rating' in metadata:
@@ -838,7 +839,7 @@ class AnalysisQueueFrame(tk.Frame):
                         else:
                             rating = None
                     except FileNotFoundError:
-                            pass
+                        rating = None
                     self.queue_tree.item(queue_item, values=('', rating))
 
                     for param, value in queue_member.items():

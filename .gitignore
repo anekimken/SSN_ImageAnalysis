@@ -7,7 +7,7 @@
 #AnalyzedData/*/diag_images
 #AnalyzedData/
 AnalyzedData/**
-Notebooks/
+#Notebooks/
 __pycache__/
 __pycache__/*
 test/results_data/
