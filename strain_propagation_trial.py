@@ -778,18 +778,20 @@ class StrainPropagationTrial(object):
 
     def _load_images_from_disk(self) -> Tuple[np.array, ND2Reader]:
         """Accesses the image data from the file."""
-        images = pims.open(self.filename)
-        try:
-            images.bundle_axes = ['z', 'y', 'x']
-            image_array = np.asarray(images)
-            image_array = image_array.squeeze()
-        except ValueError:
-            if self.filename[-6:-4] == 'bf':
-                # This is a brightfield image to locate actuator
+#        images = pims.open(self.filename)
+        with ND2Reader(self.filename) as images:
+#            plt.imshow(images[0])
+            try:
+                images.bundle_axes = ['z', 'y', 'x']
                 image_array = np.asarray(images)
                 image_array = image_array.squeeze()
-            else:
-                raise
+            except ValueError:
+                if self.filename[-6:-4] == 'bf':
+                    # This is a brightfield image to locate actuator
+                    image_array = np.asarray(images)
+                    image_array = image_array.squeeze()
+                else:
+                    raise
 
         return image_array, images
 
