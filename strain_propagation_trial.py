@@ -132,8 +132,8 @@ class StrainPropagationTrial(object):
         basename = os.path.basename(self.filename)
         self.experiment_id = os.path.splitext(basename)[0]
         self.analyzed_data_location = pathlib.Path(
-                self.file_paths['analysis_dir'] + 'AnalyzedData/' +
-                self.experiment_id + '/')
+                self.file_paths['analysis_dir'], #+ 'AnalyzedData/' +
+                self.experiment_id)# + '/')
 
         self.metadata_file_path = self.analyzed_data_location.joinpath(
                  'metadata.yaml')

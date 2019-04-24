@@ -393,8 +393,8 @@ class StrainGUIController:
             try:
                 cur_file = pathlib.Path(self.file_list[i][0])
                 exp_id = cur_file.stem
-                batch_param_history_file = data_dir.joinpath(
-                        'AnalyzedData', exp_id,
+                batch_param_history_file = data_dir.joinpath(  # 'AnalyzedData',
+                        exp_id,
                         'trackpyBatchParamsHistory.yaml')
 
                 with open(batch_param_history_file, 'r') as param_file:

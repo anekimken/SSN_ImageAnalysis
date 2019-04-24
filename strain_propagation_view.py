@@ -162,8 +162,7 @@ class FileLoadFrame(tk.Frame):
                     iid = self.file_tree.insert(day_item, 'end',
                                                 text=trial_parts[-1])
                     experiment_id = trial[-15:-4]
-                    metadata_file_path = (self.file_paths['analysis_dir'] +
-                                          '/AnalyzedData/' +
+                    metadata_file_path = (self.file_paths['analysis_dir'] +  # '/AnalyzedData/' +
                                           experiment_id + '/metadata.yaml')
                     bf_filename = glob.glob(day + '/' +
                                             experiment_id + '*_bf.nd2')
@@ -173,7 +172,6 @@ class FileLoadFrame(tk.Frame):
                                 metadata_file_path)
                         if 'analysis_status' in metadata:
                             analysis_status = metadata['analysis_status']
-                            print(experiment_id, analysis_status)
                         else:
                             analysis_status = 'no parameters tested'
                         if 'trial_rating' in metadata:
@@ -828,8 +826,7 @@ class AnalysisQueueFrame(tk.Frame):
                     queue_item = self.queue_tree.insert(
                             '', 'end',
                             text=experiment_id)
-                    metadata_file_path = (self.file_paths['analysis_dir'] +
-                                          '/AnalyzedData/' +
+                    metadata_file_path = (self.file_paths['analysis_dir'] + #  '/AnalyzedData/' +
                                           experiment_id + '/metadata.yaml')
                     try:
                         with open(metadata_file_path, 'r') as yamlfile:
@@ -913,8 +910,7 @@ class PlotResultsFrame(AnalyzeImageFrame):
                                     tags=trial)
                     experiment_id = trial[-15:-4]
 
-                    metadata_path = (self.file_paths['analysis_dir'] +
-                                     '/AnalyzedData/' +
+                    metadata_path = (self.file_paths['analysis_dir'] + #  '/AnalyzedData/' +
                                      experiment_id + '/metadata.yaml')
                     try:
                         metadata = self.load_metadata_from_yaml(
@@ -937,7 +933,7 @@ class PlotResultsFrame(AnalyzeImageFrame):
         data_location = (data_dir + '*/SSN_*.nd2')
 
         analysis_dir = self.file_paths['analysis_dir']
-        metadata_location = analysis_dir + 'AnalyzedData/'
+#        metadata_location = analysis_dir + 'AnalyzedData/'
 
         progress_df = pd.DataFrame(columns=["experiment_id",
                                             "analysis_status",
@@ -947,7 +943,7 @@ class PlotResultsFrame(AnalyzeImageFrame):
         # for all subfiles ending in .nd2
         for nd2_file in glob.glob(data_location):
             experiment_id = nd2_file[-15:-4]
-            metadata_file = (metadata_location +
+            metadata_file = (analysis_dir +
                              experiment_id +
                              '/metadata.yaml')
             # try to load metadata
