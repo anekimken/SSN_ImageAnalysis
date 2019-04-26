@@ -87,7 +87,7 @@ class StrainPropagationTrial(object):
                                     'bottom_slice': 0,
                                     'top_slice': 2,
                                     'time_point': 1,
-                                    'tracking_seach_radius': 30,
+                                    'tracking_seach_radius': 40,
                                     'last_timepoint': 11}
 
         def construct_python_tuple(self, node):

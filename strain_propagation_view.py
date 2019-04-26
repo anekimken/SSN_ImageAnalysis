@@ -196,6 +196,9 @@ class FileLoadFrame(tk.Frame):
                             queue_status = ''
                     except FileNotFoundError:
                         analysis_status = 'no metadata.yaml file'
+                        bf_status = ''
+                        rating = ''
+                        queue_status = ''
                     if analysis_status[:6] == 'Failed':
                         color_tag = 'failed'
                     elif analysis_status == 'Strain calculated':
