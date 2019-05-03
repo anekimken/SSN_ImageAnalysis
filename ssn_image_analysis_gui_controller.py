@@ -791,12 +791,13 @@ class StrainGUIController:
 
         # get parameters
         current_frame = self.gui.analyze_trial_frame
+        scroll_pos = current_frame.scrollbar.get()
         plot_mitos_status = current_frame.plot_labels_drop.get()
         max_proj_checkbox = current_frame.max_proj_checkbox.instate(
                 ['selected'])
         particle_label_checkbox = current_frame.part_label_checkbox.instate(
                 ['selected'])
-        selected_slice = int(current_frame.slice_selector.get())
+        selected_slice = int(current_frame.slice_selector.get()) - 1
         selected_timepoint = int(current_frame.timepoint_selector.get()) - 1
         min_pixel = int(current_frame.min_pixel_disp.get())
         max_pixel = int(current_frame.max_pixel_disp.get())
@@ -876,18 +877,23 @@ class StrainGUIController:
                                    max_pixel=max_pixel,
                                    connect_points_over_time=connect_points,
                                    show_text_labels=particle_label_checkbox)
+#        current_frame.scrollbar.set(scroll_pos[0],
+#                                    scroll_pos[1])
+        current_frame.plot_canvas.get_tk_widget().yview_moveto(scroll_pos[0])
 
         if df_for_inspection is not None:
             df_for_inspection.sort_values('y', inplace=True)
-            columns = ['x', 'y', 'z', 'mass', 'frame',
+            columns = ['x', 'y', 'z', 'mass',
                        'signal', 'raw_mass', 'size_x', 'size_y',
                        'size_z', 'ecc', 'ep_x', 'ep_y', 'ep_z']
             if 'particle' in df_for_inspection:
-                columns.insert(5, 'particle')
+                columns.insert(4, 'particle')
+            if 'frame' in df_for_inspection:
+                columns.insert(4, 'frame')
 
             df_for_inspection = df_for_inspection[columns]
 
-            current_frame.dataframe_widget.show()
+#            current_frame.dataframe_widget.show()
             current_frame.dataframe_widget.updateModel(
                     TableModel(df_for_inspection))
 
@@ -1043,7 +1049,6 @@ class StrainGUIController:
     def _on_mousewheel(self, event):
         frame = self.gui.analyze_trial_frame
         event.widget.yview_scroll(-1*(event.delta), 'units')
-        frame.scroll_position = frame.scrollbar.get()
 
     def get_analysis_progress(self, event=None):
         """Gets the analysis status of all trials and plots their status"""

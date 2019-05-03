@@ -162,7 +162,7 @@ class FileLoadFrame(tk.Frame):
                     iid = self.file_tree.insert(day_item, 'end',
                                                 text=trial_parts[-1])
                     experiment_id = trial[-15:-4]
-                    metadata_file_path = (self.file_paths['analysis_dir'] +  # '/AnalyzedData/' +
+                    metadata_file_path = (self.file_paths['analysis_dir'] +
                                           experiment_id + '/metadata.yaml')
                     bf_filename = glob.glob(day + '/' +
                                             experiment_id + '*_bf.nd2')
@@ -241,9 +241,6 @@ class AnalyzeImageFrame(tk.Frame):
         self.roi_corners = [None, None, None, None]
         self.roi = [None, None, None, None]
 
-        # variable to save scroll position
-        self.scroll_position = (0.8, 0.9)
-
         # get size for making figure
         notebook_height = self.parent.winfo_height() - 100
         self.notebook_height_in = notebook_height / screen_dpi
@@ -269,14 +266,13 @@ class AnalyzeImageFrame(tk.Frame):
                                               rowspan=3)
 
         self.scrollbar = tk.Scrollbar(
-                self, command=self.plot_canvas.get_tk_widget().yview)
+                self)
         self.scrollbar.grid(row=0, column=1, sticky=tk.NE + tk.SE)
 
         self.plot_canvas.get_tk_widget().config(
                 yscrollcommand=self.scrollbar.set,
                 yscrollincrement=5)
-
-        self.scrollbar.set(*self.scroll_position)
+        self.scrollbar.config(command=self.plot_canvas.get_tk_widget().yview)
 
     def update_image(self,
                      image: np.ndarray,
@@ -289,6 +285,8 @@ class AnalyzeImageFrame(tk.Frame):
         self.create_fig(image.shape[1], image.shape[0])
         self.ax.imshow(image, origin='upper',
                        vmin=min_pixel, vmax=max_pixel)
+        self.plot_canvas.get_tk_widget().config(
+                scrollregion=(0, 0, 600, 2000))
 
         try:
             plot_opts = {'ax': self.ax, 'color': '#FB8072', 'x': 'x', 'y': 'y'}
@@ -311,10 +309,15 @@ class AnalyzeImageFrame(tk.Frame):
             self.ax.legend_.remove()
         except AttributeError:
             if plot_data is None:
-                print('No data to plot')
+                #  print('No data to plot')
+                pass
+        except TypeError:
+            if plot_data.empty is True:
+                pass
         except KeyError:
             if 'particle' not in plot_data:
-                warnings.warn('No particle numbers for text labels.')
+                #  warnings.warn('No particle numbers for text labels.')
+                pass
 
 
 class AnalyzeTrialFrame(AnalyzeImageFrame):
@@ -575,7 +578,7 @@ class AnalyzeTrialFrame(AnalyzeImageFrame):
         self.dataframe_widget = Table(self.explore_data_frame,
                                       dataframe=self.dataframe)
 #        self.dataframe_widget.redraw()
-#        self.dataframe_widget.show()
+        self.dataframe_widget.show()
 
         self.param_history_frame = tk.Frame(self.analysis_notebook)
         self.param_history_tab = self.analysis_notebook.add(
@@ -829,7 +832,7 @@ class AnalysisQueueFrame(tk.Frame):
                     queue_item = self.queue_tree.insert(
                             '', 'end',
                             text=experiment_id)
-                    metadata_file_path = (self.file_paths['analysis_dir'] + #  '/AnalyzedData/' +
+                    metadata_file_path = (self.file_paths['analysis_dir'] +
                                           experiment_id + '/metadata.yaml')
                     try:
                         with open(metadata_file_path, 'r') as yamlfile:
@@ -913,7 +916,7 @@ class PlotResultsFrame(AnalyzeImageFrame):
                                     tags=trial)
                     experiment_id = trial[-15:-4]
 
-                    metadata_path = (self.file_paths['analysis_dir'] + #  '/AnalyzedData/' +
+                    metadata_path = (self.file_paths['analysis_dir'] +
                                      experiment_id + '/metadata.yaml')
                     try:
                         metadata = self.load_metadata_from_yaml(
