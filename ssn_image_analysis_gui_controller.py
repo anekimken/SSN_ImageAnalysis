@@ -1047,7 +1047,7 @@ class StrainGUIController:
         event.widget.unbind_all("<MouseWheel>")
 
     def _on_mousewheel(self, event):
-        frame = self.gui.analyze_trial_frame
+#        frame = self.gui.analyze_trial_frame
         event.widget.yview_scroll(-1*(event.delta), 'units')
 
     def get_analysis_progress(self, event=None):

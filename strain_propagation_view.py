@@ -286,7 +286,7 @@ class AnalyzeImageFrame(tk.Frame):
         self.ax.imshow(image, origin='upper',
                        vmin=min_pixel, vmax=max_pixel)
         self.plot_canvas.get_tk_widget().config(
-                scrollregion=(0, 0, 600, 2000))
+                scrollregion=(0, -20, 600, 1800))
 
         try:
             plot_opts = {'ax': self.ax, 'color': '#FB8072', 'x': 'x', 'y': 'y'}
