@@ -38,9 +38,6 @@ def run_queue():
             try:
                 controller.run_queue_item(queue_location)
             except Exception as error:
-                if error.args[0] == ("'DataFrame' object has "
-                                     "no attribute 'dtype'"):
-                    print('dataframe error')
                     error_list.append((controller.trial.experiment_id, error))
                     # Remove first trial in queue, since it throws an error
                     with open(the_queue, 'r') as queue_file:

@@ -946,9 +946,6 @@ class StrainPropagationTrial(object):
                 'microscope_channel': combined_metadata['channels'][0],
                 'pixel_microns': float(combined_metadata[
                         'pixel_microns']),
-                'bleach_time': datetime.datetime.strptime(
-                        bleach_date + ' ' + bleach_time,
-                        '%m/%d/%Y %H:%M:%S %p'),
                 'cultivation_temp': int(combined_metadata[
                         'Cultivation Temperature (°C)']),
                 'device_ID': combined_metadata['Device ID'],
@@ -969,6 +966,11 @@ class StrainPropagationTrial(object):
                         'Worm vulva orientation'],
                 'trial_rating': combined_metadata['Trial rating'],
                 'pressure_kPa': combined_metadata['pressure_kPa']}
+
+        if 'bleach_time' in combined_metadata:
+            metadata_dict['bleach_time'] = datetime.datetime.strptime(
+                        bleach_date + ' ' + bleach_time,
+                        '%m/%d/%Y %H:%M:%S %p'),
 
         return metadata_dict
 
