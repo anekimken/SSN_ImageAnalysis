@@ -49,6 +49,10 @@ class StrainGUIController:
             self.gui = ssn_view.SSN_analysis_GUI(self.root)
 
             # Bind UI elements to functions
+            # Bind keys to root
+            self.root.bind("<Down>", self.on_arrow_key)
+            self.root.bind("<Up>", self.on_arrow_key)
+
             # Load trial tab
             self.gui.file_load_frame.load_trial_button.bind(
                     "<ButtonRelease-1>", func=self.load_trial)
@@ -67,6 +71,10 @@ class StrainGUIController:
             self.gui.analyze_trial_frame.plot_canvas._tkcanvas.bind(
                     "<Enter>", self._bound_to_mousewheel)
             self.gui.analyze_trial_frame.plot_canvas._tkcanvas.bind(
+                    "<Leave>", self._unbound_to_mousewheel)
+            self.gui.analyze_trial_frame.side_canvas._tkcanvas.bind(
+                    "<Enter>", self._bound_to_mousewheel)
+            self.gui.analyze_trial_frame.side_canvas._tkcanvas.bind(
                     "<Leave>", self._unbound_to_mousewheel)
             self.gui.analyze_trial_frame.clear_roi_btn.bind(
                     "<ButtonRelease-1>", self.clear_roi)
@@ -109,6 +117,8 @@ class StrainGUIController:
                     "<ButtonRelease-1>", func=self.remove_from_review_queue)
             self.gui.analyze_trial_frame.calc_strain_button.bind(
                     "<ButtonRelease-1>", func=self.calculate_strain)
+            self.gui.analyze_trial_frame.analysis_notebook.bind(
+                    "<<NotebookTabChanged>>", func=self.update_histogram)
 
             # Queue frame
             self.gui.queue_frame.run_queue_button.bind(
@@ -164,7 +174,7 @@ class StrainGUIController:
                         'Plot trajectories')
 
         # load inspection image on inspection tab and related parameters
-#        self.update_inspection_image()
+        self.roi = self.trial.latest_test_params['roi']
         self.update_inspection_image()
 
         image_stack_size = self.trial.metadata['stack_height']
@@ -193,8 +203,6 @@ class StrainGUIController:
         if 'notes' in self.trial.latest_test_params:
             self.gui.analyze_trial_frame.notes_entry.insert(
                     tk.END, self.trial.latest_test_params['notes'])
-
-        self.roi = self.trial.latest_test_params['roi']
 
         self._display_last_test_params()
 
@@ -393,9 +401,8 @@ class StrainGUIController:
             try:
                 cur_file = pathlib.Path(self.file_list[i][0])
                 exp_id = cur_file.stem
-                batch_param_history_file = data_dir.joinpath(  # 'AnalyzedData',
-                        exp_id,
-                        'trackpyBatchParamsHistory.yaml')
+                batch_param_history_file = data_dir.joinpath(
+                        exp_id, 'trackpyBatchParamsHistory.yaml')
 
                 with open(batch_param_history_file, 'r') as param_file:
                     entire_history = yaml.safe_load_all(param_file)
@@ -438,7 +445,6 @@ class StrainGUIController:
                     yaml.dump_all(new_queue, output_file,
                                   default_flow_style=False,
                                   explicit_start=True)
-
 
 #        fr = self.gui.file_load_frame
 #        overwrite_metadata = fr.overwrite_metadata_box.instate(['selected'])
@@ -788,7 +794,7 @@ class StrainGUIController:
         self.gui.analyze_trial_frame.after(1, self.update_inspection_image)
 
     def update_inspection_image(self, event=None):
-
+        # TODO: arrange roi lines on top of image
         # get parameters
         current_frame = self.gui.analyze_trial_frame
         scroll_pos = current_frame.scrollbar.get()
@@ -802,7 +808,6 @@ class StrainGUIController:
         min_pixel = int(current_frame.min_pixel_disp.get())
         max_pixel = int(current_frame.max_pixel_disp.get())
         current_frame.ax.clear()
-        current_frame.hist_ax.clear()
         df_for_plot = None
         df_for_inspection = None
         connect_points = False
@@ -859,17 +864,6 @@ class StrainGUIController:
         elif plot_mitos_status == 'No overlay':
             pass
 
-        bins = max_pixel - min_pixel + 1
-        bin_list = list(range(min_pixel, max_pixel + 1))
-        hist_array = fast_histogram.histogram1d(image_to_display,
-                                                bins=bins,
-                                                range=(min_pixel,
-                                                       max_pixel))
-
-        current_frame.hist_ax.bar(bin_list, hist_array, width=1)
-        current_frame.hist_ax.set_yscale('log')
-        current_frame.histogram_canvas.draw()
-
         # show image
         current_frame.update_image(image=image_to_display,
                                    plot_data=df_for_plot,
@@ -877,9 +871,35 @@ class StrainGUIController:
                                    max_pixel=max_pixel,
                                    connect_points_over_time=connect_points,
                                    show_text_labels=particle_label_checkbox)
-#        current_frame.scrollbar.set(scroll_pos[0],
-#                                    scroll_pos[1])
+        # roi: [271, 0, 339, 1054]
+        #        controller.trial.image_array.shape
+        # (11, 67, 1070, 602)
+
+        if self.roi is not None:
+            side_stack = self.trial.image_array[selected_timepoint,
+                                                :, :, self.roi[0]:self.roi[2]]
+            image_to_display = np.amax(side_stack, 2).transpose()
+            current_frame.update_side_view(
+                    image=image_to_display,
+                    plot_data=df_for_plot,
+                    min_pixel=min_pixel,
+                    max_pixel=max_pixel,
+                    connect_points_over_time=connect_points,
+                    show_text_labels=particle_label_checkbox)
+            if max_proj_checkbox is False:
+                side_im = current_frame.side_canvas.get_tk_widget()
+                try:
+                    side_im.delete('side_line')
+                except NameError:
+                    pass
+                side_im.create_line(selected_slice, 0,
+                                    selected_slice, 1200,
+                                    fill="white",
+                                    dash=(4, 4),
+                                    tags='side_line')
+
         current_frame.plot_canvas.get_tk_widget().yview_moveto(scroll_pos[0])
+        current_frame.side_canvas.get_tk_widget().yview_moveto(scroll_pos[0])
 
         if df_for_inspection is not None:
             df_for_inspection.sort_values('y', inplace=True)
@@ -910,6 +930,52 @@ class StrainGUIController:
                 "<Enter>", self._bound_to_mousewheel)
         self.gui.analyze_trial_frame.plot_canvas._tkcanvas.bind(
                 "<Leave>", self._unbound_to_mousewheel)
+
+    def update_histogram(self, event=None):
+        current_frame = self.gui.analyze_trial_frame
+        nb = current_frame.analysis_notebook
+        tab = nb.tab(nb.select(), "text")
+        if tab == 'Histogram':
+            min_pixel = int(current_frame.min_pixel_disp.get())
+            max_pixel = int(current_frame.max_pixel_disp.get())
+            max_proj_checkbox = current_frame.max_proj_checkbox.instate(
+                    ['selected'])
+            selected_timepoint = int(
+                    current_frame.timepoint_selector.get()) - 1
+            selected_slice = int(current_frame.slice_selector.get()) - 1
+            current_frame.hist_ax.clear()
+
+            if max_proj_checkbox is True:  # max projection
+                stack = self.trial.image_array[selected_timepoint]
+                image_to_display = np.amax(stack, 0)  # collapse z axis
+                image_to_display = image_to_display.squeeze()
+            else:  # single slice
+                image_to_display = self.trial.image_array[
+                            selected_timepoint, selected_slice]
+
+            bins = max_pixel - min_pixel + 1
+            bin_list = list(range(min_pixel, max_pixel + 1))
+            hist_array = fast_histogram.histogram1d(image_to_display,
+                                                    bins=bins,
+                                                    range=(min_pixel,
+                                                           max_pixel))
+
+            current_frame.hist_ax.bar(bin_list, hist_array, width=1)
+            current_frame.hist_ax.set_yscale('log')
+            current_frame.histogram_canvas.draw()
+
+    def on_arrow_key(self, event=None):
+        nb = self.gui.notebook
+        tab = nb.tab(nb.select(), "text")
+        if tab == 'Inspect Images':
+            current_slice = self.gui.analyze_trial_frame.slice_selector.get()
+            if event.keysym == 'Down':
+                new_slice = int(current_slice) - 1
+            if event.keysym == 'Up':
+                new_slice = int(current_slice) + 1
+            self.gui.analyze_trial_frame.slice_selector.delete(0, 'end')
+            self.gui.analyze_trial_frame.slice_selector.insert(0, new_slice)
+            self.update_inspection_image(event=event.keysym)
 
     def on_click_image(self, event=None):
         canvas = event.widget  # analysis_frame.plot_canvas.get_tk_widget()
@@ -1047,8 +1113,14 @@ class StrainGUIController:
         event.widget.unbind_all("<MouseWheel>")
 
     def _on_mousewheel(self, event):
-#        frame = self.gui.analyze_trial_frame
         event.widget.yview_scroll(-1*(event.delta), 'units')
+        frame = self.gui.analyze_trial_frame
+        if event.widget == frame.side_canvas.get_tk_widget():
+            frame.plot_canvas.get_tk_widget().yview_scroll(
+                    -1 * (event.delta), 'units')
+        elif event.widget == frame.plot_canvas.get_tk_widget():
+            frame.side_canvas.get_tk_widget().yview_scroll(
+                    -1 * (event.delta), 'units')
 
     def get_analysis_progress(self, event=None):
         """Gets the analysis status of all trials and plots their status"""

@@ -67,7 +67,6 @@ class StrainPropagationTrial(object):
                 'No analysis status yet',
                 'Not started',
                 'Testing parameters',
-                'Testing parameters for batch',
                 'Strain calculated',
                 'Failed - too close to edge',
                 'Failed - not bright enough',

@@ -8,6 +8,7 @@ Created on Fri Jan 11 14:41:44 2019
 
 import tkinter as tk
 from tkinter import ttk
+from typing import Tuple
 import glob
 import matplotlib as mpl
 import numpy as np
@@ -246,11 +247,11 @@ class AnalyzeImageFrame(tk.Frame):
         self.notebook_height_in = notebook_height / screen_dpi
 
         # Creat a notebook to put all the controls and parameters in
-        self.analysis_notebook = ttk.Notebook(self)
+        self.analysis_notebook = ttk.Notebook(self, width=200)
         self.param_frame = tk.Frame(self.analysis_notebook)
         self.param_frame_tab = self.analysis_notebook.add(
                 self.param_frame, text="Adjust Parameters")
-        self.analysis_notebook.grid(row=0, column=2, sticky=tk.N)
+        self.analysis_notebook.grid(row=0, column=3, sticky=tk.N + tk.W)
 
 #        self.create_fig(600, 1200)
 
@@ -267,7 +268,7 @@ class AnalyzeImageFrame(tk.Frame):
 
         self.scrollbar = tk.Scrollbar(
                 self)
-        self.scrollbar.grid(row=0, column=1, sticky=tk.NE + tk.SE)
+        self.scrollbar.grid(row=0, column=2, sticky=tk.NE + tk.SE)
 
         self.plot_canvas.get_tk_widget().config(
                 yscrollcommand=self.scrollbar.set,
@@ -325,7 +326,9 @@ class AnalyzeTrialFrame(AnalyzeImageFrame):
         AnalyzeImageFrame.__init__(self, parent, screen_dpi, root)
 
         self.create_fig(600, 1200)
+        self.create_side_fig(75, 1200)
 
+        # Start adding buttons and such
         param_frame_row = 0
 
         # Clear ROI button
@@ -359,7 +362,7 @@ class AnalyzeTrialFrame(AnalyzeImageFrame):
 
         # Select slice to show
         self.slice_selector_label = ttk.Label(self.param_frame,
-                                              text='Choose slice to display: ')
+                                              text='Slice to display: ')
         self.slice_selector_label.grid(row=param_frame_row, column=1)
         self.slice_selector = tk.Spinbox(self.param_frame,
                                          values=(1, 2), width=5)
@@ -368,7 +371,7 @@ class AnalyzeTrialFrame(AnalyzeImageFrame):
 
         # Select timepoint to show
         self.timepoint_selector_label = ttk.Label(
-                self.param_frame, text='Choose timepoint to display: ')
+                self.param_frame, text='Timepoint to display: ')
         self.timepoint_selector_label.grid(row=param_frame_row, column=1)
         self.timepoint_selector = tk.Spinbox(self.param_frame,
                                              values=(1, 2),  width=5)
@@ -379,6 +382,7 @@ class AnalyzeTrialFrame(AnalyzeImageFrame):
         self.plot_labels_drop = ttk.Combobox(
                 self.param_frame,
                 state="readonly",
+                width=10,
                 values=[
                         'Plot trajectories',
                         'Linked mitos for this stack',
@@ -420,7 +424,7 @@ class AnalyzeTrialFrame(AnalyzeImageFrame):
 
         # Selector for last timepoint
         self.last_time_label = ttk.Label(self.param_frame,
-                                         text='Final timepoint to analyze: ')
+                                         text='Final timepoint:')
         self.last_time_label.grid(row=param_frame_row, column=1)
         self.last_time_selector = tk.Spinbox(self.param_frame,
                                              values=(1, 2), width=5)
@@ -429,7 +433,7 @@ class AnalyzeTrialFrame(AnalyzeImageFrame):
 
         # gaussian_width,
         self.gaussian_blur_width_label = ttk.Label(
-                self.param_frame, text='Width of Gaussian blur kernel: ')
+                self.param_frame, text='Gaussian blur size:')
         self.gaussian_blur_width_label.grid(row=param_frame_row, column=1)
         self.gaussian_blur_width = tk.Spinbox(self.param_frame,
                                               values=list(range(0, 10)),
@@ -439,7 +443,7 @@ class AnalyzeTrialFrame(AnalyzeImageFrame):
 
         # particle_z_diameter,
         self.z_diameter_label = ttk.Label(self.param_frame,
-                                          text='Particle z diameter: ')
+                                          text='Particle z diameter:')
         self.z_diameter_label.grid(row=param_frame_row, column=1)
         self.z_diameter_selector = tk.Spinbox(self.param_frame,
                                               values=list(range(1, 45, 2)),
@@ -449,7 +453,7 @@ class AnalyzeTrialFrame(AnalyzeImageFrame):
 
         #                 particle_xy_diameter,
         self.xy_diameter_label = ttk.Label(self.param_frame,
-                                           text='Particle xy diameter: ')
+                                           text='Particle xy diameter:')
         self.xy_diameter_label.grid(row=param_frame_row, column=1)
         self.xy_diameter_selector = tk.Spinbox(self.param_frame,
                                                values=list(range(1, 45, 2)),
@@ -459,7 +463,7 @@ class AnalyzeTrialFrame(AnalyzeImageFrame):
 
         #                 brightness_percentile,
         self.brightness_percentile_label = ttk.Label(
-                self.param_frame, text='Brightness percentile: ')
+                self.param_frame, text='Brightness percentile:')
         self.brightness_percentile_label.grid(row=param_frame_row, column=1)
         self.brightness_percentile_selector = tk.Spinbox(
                 self.param_frame, values=list(range(1, 100)), width=5)
@@ -468,7 +472,7 @@ class AnalyzeTrialFrame(AnalyzeImageFrame):
 
         #                 min_particle_mass,
         self.min_particle_mass_label = ttk.Label(
-                self.param_frame, text='Minimum particle mass: ')
+                self.param_frame, text='Min particle mass:')
         self.min_particle_mass_label.grid(row=param_frame_row, column=1)
         self.min_mass_selector = tk.Entry(self.param_frame, width=5)
         self.min_mass_selector.grid(row=param_frame_row, column=2)
@@ -476,7 +480,7 @@ class AnalyzeTrialFrame(AnalyzeImageFrame):
 
         # radius for linking particles
         self.linking_radius_label = ttk.Label(
-                self.param_frame, text='Linking search radius: ')
+                self.param_frame, text='Linking radius:')
         self.linking_radius_label.grid(row=param_frame_row, column=1)
         self.linking_radius_selector = tk.Spinbox(
                 self.param_frame, values=list(range(1, 100)), width=5)
@@ -491,14 +495,14 @@ class AnalyzeTrialFrame(AnalyzeImageFrame):
 
         # Button to analyze all timepoints with these parameters
         self.full_analysis_button = ttk.Button(
-                self.param_frame, text='Run full analysis')
+                self.param_frame, text='Run all')
         self.full_analysis_button.grid(
                 row=param_frame_row, column=2)
         param_frame_row += 1
 
         # Button to link previously found mitochondria
         self.link_mitos_button = ttk.Button(
-                self.param_frame, text='Link existing data')
+                self.param_frame, text='Link particles')
         self.link_mitos_button.grid(
                 row=param_frame_row, column=1)
 
@@ -510,7 +514,7 @@ class AnalyzeTrialFrame(AnalyzeImageFrame):
 
         # Button to remove trial from queue results
         self.remove_q_result = ttk.Button(
-                self.param_frame, text='Done reviewing', state=tk.DISABLED)
+                self.param_frame, text='Review done', state=tk.DISABLED)
         self.remove_q_result.grid(row=param_frame_row, column=2)
 
         # Button to calculate strain
@@ -570,16 +574,7 @@ class AnalyzeTrialFrame(AnalyzeImageFrame):
         self.notes_entry.bind("<FocusIn>", click_note_entry)
         self.notes_entry.grid(row=save_frame_row, column=3, sticky=tk.N+tk.S)
         save_frame_row += 1
-
-        self.explore_data_frame = tk.Frame(self.analysis_notebook)
-        self.df_tab = self.analysis_notebook.add(
-                self.explore_data_frame, text="Explore Data")
-        self.dataframe = None  # TableModel.getSampleData()
-        self.dataframe_widget = Table(self.explore_data_frame,
-                                      dataframe=self.dataframe)
-#        self.dataframe_widget.redraw()
-        self.dataframe_widget.show()
-
+#
         self.param_history_frame = tk.Frame(self.analysis_notebook)
         self.param_history_tab = self.analysis_notebook.add(
                 self.param_history_frame, text="Analysis History")
@@ -591,10 +586,22 @@ class AnalyzeTrialFrame(AnalyzeImageFrame):
         self.history_scroll.config(command=self.param_history.yview)
         self.param_history.config(yscrollcommand=self.history_scroll.set)
 
+        self.explore_data_frame = tk.Frame(master=self.analysis_notebook)
+        self.df_tab = self.analysis_notebook.add(
+                self.explore_data_frame, text="Explore Data")
+        self.dataframe = None  # TableModel.getSampleData()
+        self.dataframe_widget = Table(parent=self.explore_data_frame,
+                                      dataframe=self.dataframe,
+                                      width=400,
+                                      showtoolbar=False,
+                                      cols=4)
+#        self.dataframe_widget.redraw()
+        self.dataframe_widget.show()
+#
         self.histogram_frame = tk.Frame(self.analysis_notebook)
         self.histogram_tab = self.analysis_notebook.add(
                 self.histogram_frame, text="Histogram")
-        self.histogram = mpl.figure.Figure()
+        self.histogram = mpl.figure.Figure(figsize=(1, 1))
         self.hist_ax = self.histogram.add_axes([0.1, 0.1, 0.8, 0.8])
         self.histogram_canvas = FigureCanvasTkAgg(self.histogram,
                                                   master=self.histogram_frame)
@@ -606,15 +613,95 @@ class AnalyzeTrialFrame(AnalyzeImageFrame):
                 self.histogram_frame, text='Minimum')
         self.min_pixel_disp_label.pack(side=tk.LEFT)
         self.min_pixel_disp = tk.Spinbox(self.histogram_frame,
+                                         width=10,
                                          values=list(range(0, 299)))
         self.min_pixel_disp.pack(side=tk.LEFT)
         self.max_pixel_disp = tk.Spinbox(self.histogram_frame,
+                                         width=10,
                                          values=list(range(1, 300)))
         self.max_pixel_disp.insert(tk.END, 300)
         self.max_pixel_disp.pack(side=tk.LEFT)
         self.max_pixel_disp_label = ttk.Label(
                 self.histogram_frame, text='Maximum')
         self.max_pixel_disp_label.pack(side=tk.LEFT)
+
+    def create_side_fig(self, stack_depth, fig_height):
+        # create figure for side view of ROI
+        self.side_fig = mpl.figure.Figure(
+                figsize=(stack_depth / self.screen_dpi,
+                         fig_height / self.screen_dpi))
+        self.side_ax = self.side_fig.add_axes([0, 0, 1, 1])
+        self.side_canvas = FigureCanvasTkAgg(self.side_fig, self)
+        self.side_canvas.get_tk_widget().grid(sticky=tk.W + tk.N,
+                                              row=0,
+                                              column=1,
+                                              padx=(10, 0))
+
+        # Make the two views scroll together
+        def scroll_both(*args):
+            '''Scrolls both canvas widgets when the scrollbar is moved'''
+            self.plot_canvas.get_tk_widget().yview(*args)
+            self.side_canvas.get_tk_widget().yview(*args)
+
+        def update_scroll(*args):
+            self.scrollbar.set(*args)
+
+        self.scrollbar.config(command=scroll_both)
+
+        self.side_canvas.get_tk_widget().config(
+                yscrollcommand=update_scroll,
+                yscrollincrement=5)
+        self.plot_canvas.get_tk_widget().config(
+                yscrollcommand=update_scroll,
+                yscrollincrement=5)
+
+    def update_side_view(self,
+                         image: np.ndarray,
+                         plot_data: pd.DataFrame,
+                         min_pixel: int = None,
+                         max_pixel: int = None,
+                         connect_points_over_time: bool = False,
+                         show_text_labels: bool = False):
+
+        self.create_side_fig(image.shape[1], image.shape[0])
+        self.side_ax.imshow(image, origin='upper',
+                            vmin=min_pixel, vmax=max_pixel)
+        self.side_canvas.get_tk_widget().config(
+                scrollregion=(0, -20, 75, 1800))
+
+        try:
+            plot_opts = {'ax': self.side_ax, 'color': '#FB8072',
+                         'x': 'z', 'y': 'y'}
+            if connect_points_over_time is False:
+                plot_data.plot(**plot_opts, marker='o', linestyle='None')
+            elif connect_points_over_time is True:
+                for particle in plot_data['particle'].unique():
+                    plot_data.loc[plot_data['particle'] == particle].plot(
+                            **plot_opts, marker='None', linestyle='-')
+
+            if show_text_labels is True:
+                for particle in plot_data['particle'].unique():
+                    self.side_ax.text(
+                        plot_data.loc[plot_data[
+                                'particle'] == particle].mean()['z'] + 15,
+                        plot_data.loc[plot_data[
+                                'particle'] == particle].mean()['y'],
+                        str(particle), color='white')
+
+            self.side_ax.legend_.remove()
+        except AttributeError:
+            if plot_data is None:
+                #  print('No data to plot')
+                pass
+        except TypeError:
+            if plot_data.empty is True:
+                pass
+        except KeyError:
+            if 'particle' not in plot_data:
+                #  warnings.warn('No particle numbers for text labels.')
+                pass
+        else:
+            raise
 
 
 class BrightfieldImageFrame(AnalyzeImageFrame):
