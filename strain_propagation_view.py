@@ -130,9 +130,14 @@ class FileLoadFrame(tk.Frame):
         experiment_days = glob.iglob(self.file_paths['data_dir'] + '*')
 
         self.file_tree = tk.ttk.Treeview(self, height=37,
-                                         columns=("status", "bf_status",
+                                         columns=("status", "strain", "neuron",
+                                                  "bf_status",
                                                   "rating", "queue"))
         self.file_tree.heading("status", text="Analysis Status")
+        self.file_tree.heading("strain", text="Strain Name")
+        self.file_tree.column("strain", width=100)
+        self.file_tree.heading("neuron", text="Neuron")
+        self.file_tree.column("neuron", width=100)
         self.file_tree.heading("bf_status", text="Brightfield Image Status")
         self.file_tree.heading("queue", text="Queue status")
         self.file_tree.heading("rating",
@@ -171,6 +176,8 @@ class FileLoadFrame(tk.Frame):
                     try:
                         metadata = self.load_metadata_from_yaml(
                                 metadata_file_path)
+                        neuron = metadata['neuron']
+                        worm_strain = metadata['worm_strain']
                         if 'analysis_status' in metadata:
                             analysis_status = metadata['analysis_status']
                         else:
@@ -200,6 +207,8 @@ class FileLoadFrame(tk.Frame):
                         bf_status = ''
                         rating = ''
                         queue_status = ''
+                        neuron = ''
+                        worm_strain = ''
                     if analysis_status[:6] == 'Failed':
                         color_tag = 'failed'
                     elif analysis_status == 'Strain calculated':
@@ -208,8 +217,8 @@ class FileLoadFrame(tk.Frame):
                         color_tag = 'working'
                     self.file_tree.item(
                             iid,
-                            values=(analysis_status, bf_status,
-                                    rating, queue_status),
+                            values=(analysis_status, worm_strain, neuron,
+                                    bf_status, rating, queue_status),
                             tags=(trial, color_tag))
 
             except ValueError:  # we get here if dir name is not a number
@@ -287,7 +296,7 @@ class AnalyzeImageFrame(tk.Frame):
         self.ax.imshow(image, origin='upper',
                        vmin=min_pixel, vmax=max_pixel)
         self.plot_canvas.get_tk_widget().config(
-                scrollregion=(0, -20, 600, 1800))
+                scrollregion=(0, 0, 600, 1800))
 
         try:
             plot_opts = {'ax': self.ax, 'color': '#FB8072', 'x': 'x', 'y': 'y'}
@@ -667,7 +676,11 @@ class AnalyzeTrialFrame(AnalyzeImageFrame):
         self.side_ax.imshow(image, origin='upper',
                             vmin=min_pixel, vmax=max_pixel)
         self.side_canvas.get_tk_widget().config(
-                scrollregion=(0, -20, 75, 1800))
+                scrollregion=(0, 0, 75, 1800))
+        self.root.update_idletasks()
+        self.side_canvas.get_tk_widget().create_line([5, -5000,
+                                                           5, 5000],
+                                                          fill='red')
 
         try:
             plot_opts = {'ax': self.side_ax, 'color': '#FB8072',
@@ -691,17 +704,22 @@ class AnalyzeTrialFrame(AnalyzeImageFrame):
             self.side_ax.legend_.remove()
         except AttributeError:
             if plot_data is None:
-                #  print('No data to plot')
+                # print('No data to plot')
                 pass
+            else:
+                raise
         except TypeError:
             if plot_data.empty is True:
+                # print('Type error')
                 pass
+            else:
+                raise
         except KeyError:
             if 'particle' not in plot_data:
-                #  warnings.warn('No particle numbers for text labels.')
+                warnings.warn('No particle numbers for text labels.')
                 pass
-        else:
-            raise
+            else:
+                raise
 
 
 class BrightfieldImageFrame(AnalyzeImageFrame):
@@ -1080,21 +1098,24 @@ class PlotResultsFrame(AnalyzeImageFrame):
         for status in statuses_to_plot:
             status_bar_height = 0
             color_index = 0
-            TRN_legend = []
+            TRN_legend_colors = []
+            TRN_legend_names = []
             for neuron in progress_df['neuron'].unique():
                 color = colors[color_index]
                 hatch_index = 0
-                TRN_legend.append(mpl.patches.Patch(
+                TRN_legend_colors.append(mpl.patches.Patch(
                         facecolor=color,
-                        hatch='none',
                         label=neuron))
-                worm_strain_legend = []
+                TRN_legend_names.append(neuron)
+                worm_strain_legend_colors = []
+                worm_strain_legend_name = []
                 for worm_strain in progress_df['worm_strain'].unique():
                     hatch = hatches[hatch_index]
-                    worm_strain_legend.append(mpl.patches.Patch(
-                        facecolor=None,
+                    worm_strain_legend_colors.append(mpl.patches.Patch(
+                        facecolor='white',
                         hatch=hatch,
                         label=worm_strain))
+                    worm_strain_legend_name.append(worm_strain)
                     treatment_count = progress_df.loc[
                         (progress_df['analysis_status'] == status) &
                         (progress_df['neuron'] == neuron) &
@@ -1156,9 +1177,10 @@ class PlotResultsFrame(AnalyzeImageFrame):
 #        legend_elements = [mpl.patches.Patch(facecolor='red', label='ALM'),
 #                           mpl.patches.Patch(facecolor='green', label='AVM'),
 #                           mpl.patches.Patch(facecolor='blue', label='PVM'),]
-        print(TRN_legend)
-        print(worm_strain_legend)
-        self.ax.legend(TRN_legend + worm_strain_legend)
+
+        self.ax.legend(TRN_legend_colors + worm_strain_legend_colors,
+                       TRN_legend_names + worm_strain_legend_name,
+                       fontsize=18)
 
         self.plot_canvas.draw()
 

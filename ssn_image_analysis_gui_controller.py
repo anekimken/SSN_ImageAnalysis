@@ -119,6 +119,7 @@ class StrainGUIController:
                     "<ButtonRelease-1>", func=self.calculate_strain)
             self.gui.analyze_trial_frame.analysis_notebook.bind(
                     "<<NotebookTabChanged>>", func=self.update_histogram)
+            self.roi = None
 
             # Queue frame
             self.gui.queue_frame.run_queue_button.bind(
@@ -221,40 +222,6 @@ class StrainGUIController:
             self.gui.analyze_trial_frame.remove_q_result.config(
                     state=tk.ACTIVE)
 
-        self.gui.notebook.select(1)
-
-        analysis_frame = self.gui.analyze_trial_frame
-        canvas = analysis_frame.plot_canvas.get_tk_widget()
-        if analysis_frame.rect is None:
-            analysis_frame.rect = canvas.create_rectangle(
-                    self.roi[0], self.roi[1], self.roi[2], self.roi[3],
-                    fill='', outline='white', tag='rect')
-            self.root.update_idletasks()
-            for index in range(len(analysis_frame.roi_corners)):
-                if index == 0:
-                    x_coord = self.roi[0]
-                    y_coord = self.roi[1]
-                elif index == 1:
-                    x_coord = self.roi[2]
-                    y_coord = self.roi[1]
-                elif index == 2:
-                    x_coord = self.roi[2]
-                    y_coord = self.roi[3]
-                elif index == 3:
-                    x_coord = self.roi[0]
-                    y_coord = self.roi[3]
-
-                analysis_frame.roi_corners[index] = canvas.create_oval(
-                    x_coord - analysis_frame.drag_btn_size,
-                    y_coord - analysis_frame.drag_btn_size,
-                    x_coord + analysis_frame.drag_btn_size,
-                    y_coord + analysis_frame.drag_btn_size,
-                    fill='red', tag='corner')
-            canvas.tag_bind('corner', "<Any-Enter>", self.mouseEnter)
-            canvas.tag_bind('corner', "<Any-Leave>", self.mouseLeave)
-            canvas.tag_raise('rect')
-            canvas.tag_raise('corner')
-
         # Check for brightfield image to process
         if self.trial.brightfield_file is not None:
             self.bf_image = pims.open(str(self.trial.brightfield_file))
@@ -311,9 +278,46 @@ class StrainGUIController:
                     "<Leave>", self._unbound_to_mousewheel)
             self.gui.bf_image_frame.save_actuator_loc_btn.bind(
                     "<ButtonRelease-1>", func=self.save_actuator_bounds)
-            self.gui.bf_image_frame.plot_canvas.draw()
-            self.root.update()
-            self.gui.bf_image_frame.plot_canvas.draw()
+#            self.gui.bf_image_frame.plot_canvas.draw()
+#            self.root.update()
+#            self.gui.bf_image_frame.plot_canvas.draw()
+
+        self.gui.notebook.select(1)
+        self.root.update_idletasks()
+
+        analysis_frame = self.gui.analyze_trial_frame
+        canvas = analysis_frame.plot_canvas.get_tk_widget()
+        if analysis_frame.rect is None:
+            analysis_frame.rect = canvas.create_rectangle(
+                    self.roi[0], self.roi[1], self.roi[2], self.roi[3],
+                    fill='', outline='white', tags=('rect',))
+            for index in range(len(analysis_frame.roi_corners)):
+                if index == 0:
+                    x_coord = self.roi[0]
+                    y_coord = self.roi[1]
+                elif index == 1:
+                    x_coord = self.roi[2]
+                    y_coord = self.roi[1]
+                elif index == 2:
+                    x_coord = self.roi[2]
+                    y_coord = self.roi[3]
+                elif index == 3:
+                    x_coord = self.roi[0]
+                    y_coord = self.roi[3]
+
+                analysis_frame.roi_corners[index] = canvas.create_oval(
+                    x_coord - analysis_frame.drag_btn_size,
+                    y_coord - analysis_frame.drag_btn_size,
+                    x_coord + analysis_frame.drag_btn_size,
+                    y_coord + analysis_frame.drag_btn_size,
+                    fill='red', tag='corner')
+            canvas.tag_bind('corner', "<Any-Enter>", self.mouseEnter)
+            canvas.tag_bind('corner', "<Any-Leave>", self.mouseLeave)
+            canvas.tag_raise('rect')
+            canvas.tag_raise('corner')
+            canvas.coords(analysis_frame.rect,
+                          [self.roi[0], self.roi[1], self.roi[2], self.roi[3]])
+            self.root.update_idletasks()
 
         finish_time = time.time()
         print('Loaded file in ' + str(round(finish_time - start_time)) +
@@ -839,14 +843,14 @@ class StrainGUIController:
         # get particle positions to plot, if any
         if plot_mitos_status == 'Plot trajectories':
             df_for_plot = self.trial.linked_mitos[
-                    ['particle', 'x', 'y']].copy()
+                    ['particle', 'x', 'y', 'z']].copy()
             df_for_inspection = self.trial.linked_mitos.copy()
             connect_points = True
         elif plot_mitos_status == 'Linked mitos for this stack':
             df_for_plot = self.trial.linked_mitos.loc[
                     self.trial.linked_mitos[
                             'frame'] == selected_timepoint][
-                            ['particle', 'x', 'y']].copy()
+                            ['particle', 'x', 'y', 'z']].copy()
             df_for_inspection = self.trial.linked_mitos.loc[
                     self.trial.linked_mitos[
                             'frame'] == selected_timepoint].copy()
@@ -854,12 +858,12 @@ class StrainGUIController:
             df_for_plot = self.trial.mitos_from_batch.loc[
                     self.trial.mitos_from_batch[
                             'frame'] == selected_timepoint][
-                            ['x', 'y']].copy()
+                            ['x', 'y', 'z']].copy()
             df_for_inspection = self.trial.mitos_from_batch.loc[
                     self.trial.mitos_from_batch[
                             'frame'] == selected_timepoint].copy()
         elif plot_mitos_status == 'Mitos from param test':
-            df_for_plot = self.trial.mito_candidates[['x', 'y']].copy()
+            df_for_plot = self.trial.mito_candidates[['x', 'y', 'z']].copy()
             df_for_inspection = self.trial.mito_candidates.copy()
         elif plot_mitos_status == 'No overlay':
             pass
@@ -875,31 +879,8 @@ class StrainGUIController:
         #        controller.trial.image_array.shape
         # (11, 67, 1070, 602)
 
-        if self.roi is not None:
-            side_stack = self.trial.image_array[selected_timepoint,
-                                                :, :, self.roi[0]:self.roi[2]]
-            image_to_display = np.amax(side_stack, 2).transpose()
-            current_frame.update_side_view(
-                    image=image_to_display,
-                    plot_data=df_for_plot,
-                    min_pixel=min_pixel,
-                    max_pixel=max_pixel,
-                    connect_points_over_time=connect_points,
-                    show_text_labels=particle_label_checkbox)
-            if max_proj_checkbox is False:
-                side_im = current_frame.side_canvas.get_tk_widget()
-                try:
-                    side_im.delete('side_line')
-                except NameError:
-                    pass
-                side_im.create_line(selected_slice, 0,
-                                    selected_slice, 1200,
-                                    fill="white",
-                                    dash=(4, 4),
-                                    tags='side_line')
-
-        current_frame.plot_canvas.get_tk_widget().yview_moveto(scroll_pos[0])
-        current_frame.side_canvas.get_tk_widget().yview_moveto(scroll_pos[0])
+#        current_frame.side_canvas.get_tk_widget()
+#        print(current_frame.plot_canvas.get_tk_widget().find_all())
 
         if df_for_inspection is not None:
             df_for_inspection.sort_values('y', inplace=True)
@@ -919,6 +900,16 @@ class StrainGUIController:
 
             current_frame.dataframe_widget.redraw()
 
+        if current_frame.rect is not None:
+            # TODO: test roi rectangle in update image
+            self.root.update_idletasks()
+            canvas = current_frame.plot_canvas.get_tk_widget()
+            canvas.tag_raise('rect')
+            canvas.tag_raise('corner')
+            canvas.coords(current.rect,
+                          [self.roi[0], self.roi[1], self.roi[2], self.roi[3]])
+            self.root.update_idletasks()
+
         # reapply bindings again for scrolling
         self.gui.analyze_trial_frame.plot_canvas._tkcanvas.bind(
                 "<ButtonPress-1>", self.on_click_image)
@@ -930,6 +921,21 @@ class StrainGUIController:
                 "<Enter>", self._bound_to_mousewheel)
         self.gui.analyze_trial_frame.plot_canvas._tkcanvas.bind(
                 "<Leave>", self._unbound_to_mousewheel)
+
+        if self.roi is not None:
+            side_stack = self.trial.image_array[selected_timepoint,
+                                                :, :, self.roi[0]:self.roi[2]]
+            image_to_display = np.amax(side_stack, 2).transpose()
+            current_frame.update_side_view(
+                    image=image_to_display,
+                    plot_data=df_for_plot,
+                    min_pixel=min_pixel,
+                    max_pixel=max_pixel,
+                    connect_points_over_time=connect_points,
+                    show_text_labels=particle_label_checkbox)
+
+        current_frame.plot_canvas.get_tk_widget().yview_moveto(scroll_pos[0])
+        current_frame.side_canvas.get_tk_widget().yview_moveto(scroll_pos[0])
 
     def update_histogram(self, event=None):
         current_frame = self.gui.analyze_trial_frame
@@ -977,22 +983,26 @@ class StrainGUIController:
             self.gui.analyze_trial_frame.slice_selector.insert(0, new_slice)
             self.update_inspection_image(event=event.keysym)
 
-    def on_click_image(self, event=None):
-        canvas = event.widget  # analysis_frame.plot_canvas.get_tk_widget()
+    def on_click_image(self, event):
+        analysis_frame = self.gui.analyze_trial_frame
+        canvas = event.widget
         init_size = 100
         cur_x = canvas.canvasx(event.x)
         cur_y = canvas.canvasy(event.y)
-        analysis_frame = self.gui.analyze_trial_frame
-        self.roi = [cur_x,
-                    cur_y,
-                    cur_x + init_size,
-                    cur_y + init_size]
+        if self.roi is None:
+            self.roi = [cur_x,
+                        cur_y,
+                        cur_x + init_size,
+                        cur_y + init_size]
 
         # create rectangle if not yet existing
         if analysis_frame.rect is None:
             analysis_frame.rect = canvas.create_rectangle(
-                    cur_x, cur_y, cur_x + init_size, cur_y + init_size,
-                    fill='', outline='white')
+                    [cur_x,
+                     cur_y,
+                     cur_x + init_size,
+                     cur_y + init_size],
+                    fill='', outline='white', tags=('rect',))
             for index in range(len(analysis_frame.roi_corners)):
                 if index == 0:
                     x_shift = 0
@@ -1074,7 +1084,7 @@ class StrainGUIController:
             ymax = int(max([self.roi[1], self.roi[3]]))
             self.roi = [xmin, ymin, xmax, ymax]
 
-            print('Selected ROI: ', self.roi)
+        print('Selected ROI: ', self.roi)
 
     def mouseEnter(self, event):
         analysis_frame = self.gui.analyze_trial_frame
