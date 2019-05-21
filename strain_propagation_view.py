@@ -672,15 +672,16 @@ class AnalyzeTrialFrame(AnalyzeImageFrame):
                          connect_points_over_time: bool = False,
                          show_text_labels: bool = False):
 
+        selected_slice = int(self.slice_selector.get()) - 1
         self.create_side_fig(image.shape[1], image.shape[0])
         self.side_ax.imshow(image, origin='upper',
                             vmin=min_pixel, vmax=max_pixel)
         self.side_canvas.get_tk_widget().config(
                 scrollregion=(0, 0, 75, 1800))
         self.root.update_idletasks()
-        self.side_canvas.get_tk_widget().create_line([5, -5000,
-                                                           5, 5000],
-                                                          fill='red')
+        self.side_canvas.get_tk_widget().create_line([selected_slice, 0,
+                                                      selected_slice, 1200],
+                                                     fill='white')
 
         try:
             plot_opts = {'ax': self.side_ax, 'color': '#FB8072',

@@ -906,9 +906,9 @@ class StrainGUIController:
             canvas = current_frame.plot_canvas.get_tk_widget()
             canvas.tag_raise('rect')
             canvas.tag_raise('corner')
-            canvas.coords(current.rect,
+            canvas.coords(current_frame.rect,
                           [self.roi[0], self.roi[1], self.roi[2], self.roi[3]])
-            self.root.update_idletasks()
+#            self.root.update_idletasks()
 
         # reapply bindings again for scrolling
         self.gui.analyze_trial_frame.plot_canvas._tkcanvas.bind(
@@ -926,6 +926,7 @@ class StrainGUIController:
             side_stack = self.trial.image_array[selected_timepoint,
                                                 :, :, self.roi[0]:self.roi[2]]
             image_to_display = np.amax(side_stack, 2).transpose()
+            self.root.update_idletasks()
             current_frame.update_side_view(
                     image=image_to_display,
                     plot_data=df_for_plot,
