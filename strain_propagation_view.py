@@ -256,7 +256,7 @@ class AnalyzeImageFrame(tk.Frame):
         self.notebook_height_in = notebook_height / screen_dpi
 
         # Creat a notebook to put all the controls and parameters in
-        self.analysis_notebook = ttk.Notebook(self, width=200)
+        self.analysis_notebook = ttk.Notebook(self, width=500)
         self.param_frame = tk.Frame(self.analysis_notebook)
         self.param_frame_tab = self.analysis_notebook.add(
                 self.param_frame, text="Adjust Parameters")
@@ -678,29 +678,28 @@ class AnalyzeTrialFrame(AnalyzeImageFrame):
                             vmin=min_pixel, vmax=max_pixel)
         self.side_canvas.get_tk_widget().config(
                 scrollregion=(0, 0, 75, 1800))
-        self.root.update_idletasks()
-        self.side_canvas.get_tk_widget().create_line([selected_slice, 0,
-                                                      selected_slice, 1200],
-                                                     fill='white')
 
         try:
-            plot_opts = {'ax': self.side_ax, 'color': '#FB8072',
-                         'x': 'z', 'y': 'y'}
+            plot_opts = {'color': '#FB8072', 'x': 'z', 'y': 'y'}
             if connect_points_over_time is False:
-                plot_data.plot(**plot_opts, marker='o', linestyle='None')
+                plot_data.plot(ax=self.side_ax, marker='o',
+                               linestyle='None', **plot_opts)
+                self.side_canvas.get_tk_widget().update_idletasks()
+
             elif connect_points_over_time is True:
                 for particle in plot_data['particle'].unique():
                     plot_data.loc[plot_data['particle'] == particle].plot(
-                            **plot_opts, marker='None', linestyle='-')
+                             ax=self.side_ax, marker='None',
+                             linestyle='-', **plot_opts,)
 
-            if show_text_labels is True:
-                for particle in plot_data['particle'].unique():
-                    self.side_ax.text(
-                        plot_data.loc[plot_data[
-                                'particle'] == particle].mean()['z'] + 15,
-                        plot_data.loc[plot_data[
-                                'particle'] == particle].mean()['y'],
-                        str(particle), color='white')
+    #        if show_text_labels is True:
+    #            for particle in plot_data['particle'].unique():
+    #                self.side_ax.text(
+    #                    plot_data.loc[plot_data[
+    #                            'particle'] == particle].mean()['z'] + 15,
+    #                    plot_data.loc[plot_data[
+    #                            'particle'] == particle].mean()['y'],
+    #                    str(particle), color='white')
 
             self.side_ax.legend_.remove()
         except AttributeError:
@@ -721,6 +720,11 @@ class AnalyzeTrialFrame(AnalyzeImageFrame):
                 pass
             else:
                 raise
+
+        self.side_canvas.get_tk_widget().update_idletasks()
+        self.side_canvas.get_tk_widget().create_line([selected_slice, 0,
+                                                      selected_slice, 1200],
+                                                     fill='white')
 
 
 class BrightfieldImageFrame(AnalyzeImageFrame):

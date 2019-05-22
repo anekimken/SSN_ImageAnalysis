@@ -798,7 +798,6 @@ class StrainGUIController:
         self.gui.analyze_trial_frame.after(1, self.update_inspection_image)
 
     def update_inspection_image(self, event=None):
-        # TODO: arrange roi lines on top of image
         # get parameters
         current_frame = self.gui.analyze_trial_frame
         scroll_pos = current_frame.scrollbar.get()
@@ -875,12 +874,6 @@ class StrainGUIController:
                                    max_pixel=max_pixel,
                                    connect_points_over_time=connect_points,
                                    show_text_labels=particle_label_checkbox)
-        # roi: [271, 0, 339, 1054]
-        #        controller.trial.image_array.shape
-        # (11, 67, 1070, 602)
-
-#        current_frame.side_canvas.get_tk_widget()
-#        print(current_frame.plot_canvas.get_tk_widget().find_all())
 
         if df_for_inspection is not None:
             df_for_inspection.sort_values('y', inplace=True)
@@ -900,33 +893,10 @@ class StrainGUIController:
 
             current_frame.dataframe_widget.redraw()
 
-        if current_frame.rect is not None:
-            # TODO: test roi rectangle in update image
-            self.root.update_idletasks()
-            canvas = current_frame.plot_canvas.get_tk_widget()
-            canvas.tag_raise('rect')
-            canvas.tag_raise('corner')
-            canvas.coords(current_frame.rect,
-                          [self.roi[0], self.roi[1], self.roi[2], self.roi[3]])
-#            self.root.update_idletasks()
-
-        # reapply bindings again for scrolling
-        self.gui.analyze_trial_frame.plot_canvas._tkcanvas.bind(
-                "<ButtonPress-1>", self.on_click_image)
-        self.gui.analyze_trial_frame.plot_canvas._tkcanvas.bind(
-                "<B1-Motion>", self.on_drag_roi)
-        self.gui.analyze_trial_frame.plot_canvas._tkcanvas.bind(
-                "<ButtonRelease-1>", self.on_click_image_release)
-        self.gui.analyze_trial_frame.plot_canvas._tkcanvas.bind(
-                "<Enter>", self._bound_to_mousewheel)
-        self.gui.analyze_trial_frame.plot_canvas._tkcanvas.bind(
-                "<Leave>", self._unbound_to_mousewheel)
-
         if self.roi is not None:
             side_stack = self.trial.image_array[selected_timepoint,
                                                 :, :, self.roi[0]:self.roi[2]]
             image_to_display = np.amax(side_stack, 2).transpose()
-            self.root.update_idletasks()
             current_frame.update_side_view(
                     image=image_to_display,
                     plot_data=df_for_plot,
@@ -934,6 +904,46 @@ class StrainGUIController:
                     max_pixel=max_pixel,
                     connect_points_over_time=connect_points,
                     show_text_labels=particle_label_checkbox)
+
+            canvas = current_frame.plot_canvas.get_tk_widget()
+            canvas.update_idletasks()
+
+            canvas.create_rectangle([self.roi[0], self.roi[1],
+                                     self.roi[2], self.roi[3]],
+                                    fill='', outline='white',
+                                    tags=('rect',))
+            for index in range(len(current_frame.roi_corners)):
+                if index == 0:
+                    x_coord = self.roi[0]
+                    y_coord = self.roi[1]
+                elif index == 1:
+                    x_coord = self.roi[2]
+                    y_coord = self.roi[1]
+                elif index == 2:
+                    x_coord = self.roi[2]
+                    y_coord = self.roi[3]
+                elif index == 3:
+                    x_coord = self.roi[0]
+                    y_coord = self.roi[3]
+
+                current_frame.roi_corners[index] = canvas.create_oval(
+                    x_coord - current_frame.drag_btn_size,
+                    y_coord - current_frame.drag_btn_size,
+                    x_coord + current_frame.drag_btn_size,
+                    y_coord + current_frame.drag_btn_size,
+                    fill='red', tag='corner')
+
+        # reapply bindings again for scrolling
+        self.gui.analyze_trial_frame.plot_canvas.get_tk_widget().bind(
+                "<ButtonPress-1>", self.on_click_image)
+        self.gui.analyze_trial_frame.plot_canvas.get_tk_widget().bind(
+                "<B1-Motion>", self.on_drag_roi)
+        self.gui.analyze_trial_frame.plot_canvas.get_tk_widget().bind(
+                "<ButtonRelease-1>", self.on_click_image_release)
+        self.gui.analyze_trial_frame.plot_canvas.get_tk_widget().bind(
+                "<Enter>", self._bound_to_mousewheel)
+        self.gui.analyze_trial_frame.plot_canvas.get_tk_widget().bind(
+                "<Leave>", self._unbound_to_mousewheel)
 
         current_frame.plot_canvas.get_tk_widget().yview_moveto(scroll_pos[0])
         current_frame.side_canvas.get_tk_widget().yview_moveto(scroll_pos[0])
@@ -1062,6 +1072,7 @@ class StrainGUIController:
                                sum(new_bounds[1::2]) / 2,
                                sum(opposite_corner_coords[0::2]) / 2,
                                sum(opposite_corner_coords[1::2]) / 2]
+            canvas.update_idletasks()
             canvas.coords(analysis_frame.rect, new_rect_coords)
 
             self.roi = new_rect_coords
