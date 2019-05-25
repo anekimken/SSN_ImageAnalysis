@@ -162,7 +162,7 @@ class FileLoadFrame(tk.Frame):
                                                  tags='day')
                 trials = glob.iglob(day + '/*.nd2')
                 trials = [trial for trial in trials if '_bf' not in trial]
-
+                open_status = False
                 for trial in trials:
                     trial_parts = trial.split('/')
                     iid = self.file_tree.insert(day_item, 'end',
@@ -211,15 +211,19 @@ class FileLoadFrame(tk.Frame):
                         worm_strain = ''
                     if analysis_status[:6] == 'Failed':
                         color_tag = 'failed'
+                        open_status = False
                     elif analysis_status == 'Strain calculated':
                         color_tag = 'done'
+                        open_status = False
                     else:
                         color_tag = 'working'
+                        open_status = True
                     self.file_tree.item(
                             iid,
                             values=(analysis_status, worm_strain, neuron,
                                     bf_status, rating, queue_status),
                             tags=(trial, color_tag))
+                self.file_tree.item(day_item, open=open_status)
 
             except ValueError:  # we get here if dir name is not a number
                 pass  # and we ignore these dirs

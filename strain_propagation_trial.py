@@ -521,7 +521,7 @@ class StrainPropagationTrial(object):
             this_frame = mito_locations.loc[
                     (mito_locations['frame'] == frame)].copy()
             this_frame.sort_values(by=['y'], inplace=True)
-            this_frame.reset_index(inplace=True)
+            this_frame.reset_index(inplace=True, drop=True)
             # make dataframe of adjacent mitos
             for this_particle in range(mito_locations.particle.nunique() - 1):
                 x_1 = this_frame.iloc[this_particle]['x']
