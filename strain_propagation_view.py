@@ -1072,17 +1072,21 @@ class PlotResultsFrame(AnalyzeImageFrame):
                     with open(metadata_file, 'r') as yamlfile:
                         metadata = yaml.safe_load(yamlfile)
                         # if metadata exists, get analysis status and store it
-                        if 'actuator_center' in metadata:
+                        bf_file = pathlib.Path((nd2_file[:-4] + '_bf.nd2'))
+#                        print(bf_file)
+#                        print(bf_file.exists())
+#                        if 'actuator_center' in metadata:
+                        if bf_file.exists():
                             bf_status = True
-                        else:
-                            bf_status = False
-                        progress_df = progress_df.append({
+                            progress_df = progress_df.append({
                                 "experiment_id": metadata['Experiment_id'],
                                 "analysis_status": metadata['analysis_status'],
                                 "neuron": metadata['neuron'],
                                 "worm_strain": metadata['worm_strain'],
                                 "bf_image": bf_status},
                                 ignore_index=True)
+                        else:
+                            bf_status = False
 #                        all_statuses_dict[experiment_id] = (
 #                                metadata['analysis_status'],
 #                                metadata['neuron'],
@@ -1128,14 +1132,14 @@ class PlotResultsFrame(AnalyzeImageFrame):
                     treatment_count = progress_df.loc[
                         (progress_df['analysis_status'] == status) &
                         (progress_df['neuron'] == neuron) &
-                        (progress_df['worm_strain'] == worm_strain)].count()
+                        (progress_df['worm_strain'] == worm_strain) &
+                        (progress_df['bf_image'] is True)].count()
                     self.ax.bar(statuses_to_plot.index(status),
                                 treatment_count, bottom=status_bar_height,
                                 color=color, hatch=hatch)
                     status_bar_height += treatment_count
                     hatch_index += 1
                 color_index += 1
-
 
 #        for key in statuses_to_ignore:
 #            status_values.remove(key)
