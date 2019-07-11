@@ -333,7 +333,7 @@ class StrainPropagationTrial(object):
         # link the particles we found between time points
         linked = tp.link_df(self.mitos_from_batch,
                             tracking_seach_radius,
-                            pos_columns=['x', 'y', 'z'])
+                            pos_columns=['z', 'y', 'x'])
 
         # only keep trajectories where point appears in all frames
         self.linked_mitos = tp.filter_stubs(

@@ -8,7 +8,7 @@ Created on Fri Jan 11 14:41:44 2019
 
 import tkinter as tk
 from tkinter import ttk
-from typing import Tuple
+# from typing import Tuple
 import glob
 import matplotlib as mpl
 import numpy as np

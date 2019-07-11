@@ -518,7 +518,7 @@ class StrainGUIController:
         self.trial.calculate_strain()
         self.gui.plot_results_frame.plot_strain_one_trial(
                 self.trial.strain, self.trial.ycoords_for_strain)
-        self.gui.notebook.select(4)
+        self.gui.notebook.select(2)
 
     def add_trial_to_queue(self, event=None):
         """Add trial and analysis parameters to queue for running later"""
