@@ -211,10 +211,10 @@ class FileLoadFrame(tk.Frame):
                         worm_strain = ''
                     if analysis_status[:6] == 'Failed':
                         color_tag = 'failed'
-                        open_status = False
                     elif analysis_status == 'Strain calculated':
                         color_tag = 'done'
-                        open_status = False
+#                    elif open_status is True:
+#                        pass
                     else:
                         color_tag = 'working'
                         open_status = True

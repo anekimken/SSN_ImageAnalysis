@@ -13,7 +13,6 @@ import warnings
 from typing import Tuple
 import glob
 import numpy as np
-import pims
 import pandas as pd
 from nd2reader import ND2Reader
 from scipy.spatial import distance
@@ -131,8 +130,8 @@ class StrainPropagationTrial(object):
         basename = os.path.basename(self.filename)
         self.experiment_id = os.path.splitext(basename)[0]
         self.analyzed_data_location = pathlib.Path(
-                self.file_paths['analysis_dir'], #+ 'AnalyzedData/' +
-                self.experiment_id)# + '/')
+                self.file_paths['analysis_dir'],  # + 'AnalyzedData/' +
+                self.experiment_id)  # + '/')
 
         self.metadata_file_path = self.analyzed_data_location.joinpath(
                  'metadata.yaml')
@@ -777,9 +776,7 @@ class StrainPropagationTrial(object):
 
     def _load_images_from_disk(self) -> Tuple[np.array, ND2Reader]:
         """Accesses the image data from the file."""
-#        images = pims.open(self.filename)
         with ND2Reader(self.filename) as images:
-#            plt.imshow(images[0])
             try:
                 images.bundle_axes = ['z', 'y', 'x']
                 image_array = np.asarray(images)

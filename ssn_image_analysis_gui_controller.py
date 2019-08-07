@@ -11,7 +11,6 @@ import numpy as np
 import tkinter as tk
 import pandas as pd
 from scipy import spatial
-import matplotlib as mpl
 import glob
 import yaml
 import pims
