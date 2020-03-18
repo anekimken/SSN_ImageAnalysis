@@ -8,6 +8,12 @@
 #AnalyzedData/
 AnalyzedData/**
 #Notebooks/
+Notebooks/Image*
+Notebooks/BMES*
+Notebooks/Calculating*
+Notebooks/Parameter*
+Notebooks/Progress*
+Notebooks/Touch*
 __pycache__/
 __pycache__/*
 test/results_data/
